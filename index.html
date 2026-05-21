@@ -66,13 +66,18 @@
           <i class="fas fa-shopping-cart text-2xl"></i>
           <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
         </button>
-        <a href="https://wa.me/6281357683151" target="_blank"
-           class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold flex items-center gap-2 transition text-sm">
-          <i class="fab fa-whatsapp"></i><span class="hidden sm:inline">Pesan WA</span>
-        </a>
+        <button onclick="toggleMobileMenu()" class="text-white md:hidden">
+  <i class="fas fa-bars text-2xl"></i>
+        </button>
       </div>
     </div>
   </nav>
+  <div id="mobile-menu" class="hidden bg-[#3d2010] text-white px-6 py-4 space-y-3 md:hidden">
+  <a href="#menu" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Menu</a>
+  <a href="#galeri" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Galeri</a>
+  <a href="#pesan" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Pesan</a>
+  <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2">Lokasi</a>
+  </div>
 
   <!-- HERO -->
   <section class="hero-bg text-white py-24 md:py-36">
@@ -284,6 +289,9 @@
   <div id="toast"></div>
 
   <script>
+    function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
     const menuItems = [
       {id:1,  name:"Kebab Original",           price:15000, desc:"Sayur segar + Daging Premium",  badge:"Signature"},
       {id:2,  name:"Kebab Telur",               price:20000, desc:"Daging + Telur",                badge:""},
