@@ -112,6 +112,32 @@
     </div>
   </section>
 
+  <!-- MODAL VARIAN -->
+<div id="modal-varian" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeModal(event)">
+  <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h3 id="modal-nama" style="font-weight:900;font-size:1.2rem"></h3>
+      <button onclick="document.getElementById('modal-varian').style.display='none'" style="font-size:2rem;color:#9ca3af">&times;</button>
+    </div>
+    <p id="modal-harga" style="color:#ea580c;font-weight:900;font-size:1.3rem;margin-bottom:1rem"></p>
+
+    <p style="font-weight:700;margin-bottom:0.5rem">Pilih Varian *</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
+      <button onclick="selectVarian(this,'Tidak Pedas')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">Tidak Pedas</button>
+      <button onclick="selectVarian(this,'Pedas')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">🌶️ Pedas</button>
+      <button onclick="selectVarian(this,'Summer')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">🌿 Summer</button>
+    </div>
+
+    <p style="font-weight:700;margin-bottom:0.5rem">Catatan Khusus</p>
+    <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll"
+      style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem"></textarea>
+
+    <button onclick="confirmAddToCart()"
+      style="width:100%;background:#ea580c;color:white;font-weight:900;padding:1rem;border-radius:1rem;font-size:1.1rem">
+      + Tambah ke Keranjang
+    </button>
+  </div>
+</div>
   <!-- GALERI -->
   <section id="galeri" class="py-20 bg-gray-50">
     <div class="max-w-5xl mx-auto px-6">
@@ -389,14 +415,50 @@
     }
 
     // ===== CART =====
-    function addToCart(id) {
-      const item = menuItems.find(m => m.id === id);
-      const existing = cart.find(i => i.id === id);
-      if (existing) existing.quantity++;
-      else cart.push({...item, quantity: 1});
-      renderCart();
-      showToast(item.name + ' ditambahkan 🛒');
-    }
+    let pendingItemId = null;
+let selectedVarian = '';
+
+function addToCart(id) {
+  pendingItemId = id;
+  selectedVarian = '';
+  const item = menuItems.find(m => m.id === id);
+  document.getElementById('modal-nama').textContent = item.name;
+  document.getElementById('modal-harga').textContent = 'Rp ' + item.price.toLocaleString('id-ID');
+  document.getElementById('modal-catatan').value = '';
+  document.querySelectorAll('.varian-btn').forEach(b => b.style.background = 'white');
+  document.getElementById('modal-varian').style.display = 'flex';
+}
+
+function selectVarian(btn, varian) {
+  selectedVarian = varian;
+  document.querySelectorAll('.varian-btn').forEach(b => {
+    b.style.background = 'white';
+    b.style.borderColor = '#e5e7eb';
+    b.style.color = '#111';
+  });
+  btn.style.background = '#ea580c';
+  btn.style.borderColor = '#ea580c';
+  btn.style.color = 'white';
+}
+
+function closeModal(e) {
+  if (e.target.id === 'modal-varian') document.getElementById('modal-varian').style.display = 'none';
+}
+
+function confirmAddToCart() {
+  if (!selectedVarian) { showToast('⚠️ Pilih varian dulu!'); return; }
+  const item = menuItems.find(m => m.id === pendingItemId);
+  const catatan = document.getElementById('modal-catatan').value.trim();
+  const existing = cart.find(i => i.id === pendingItemId && i.varian === selectedVarian);
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({...item, quantity:1, varian: selectedVarian, catatan: catatan});
+  }
+  document.getElementById('modal-varian').style.display = 'none';
+  renderCart();
+  showToast(item.name + ' (' + selectedVarian + ') ditambahkan 🛒');
+}
 
     function changeCartQty(id, delta) {
       const idx = cart.findIndex(i => i.id === id);
@@ -432,6 +494,11 @@
             </div>
             <span style="font-weight:900;color:#ea580c">Rp ${(item.price*item.quantity).toLocaleString('id-ID')}</span>
           </div>
+          <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">
+  ${item.name}<br>
+  <span style="color:#ea580c;font-size:0.8rem">${item.varian}</span>
+  ${item.catatan ? `<span style="color:#9ca3af;font-size:0.75rem;display:block">${item.catatan}</span>` : ''}
+</p>
         </div>`).join('');
 
       const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
