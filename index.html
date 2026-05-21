@@ -1,48 +1,393 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <img src="./logo.png" alt="The Kebab Factory" class="h-12 w-auto">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nama Usaha</title>
+  <title>The Kebab Factory - Kebab & Burger Premium</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    .hero-bg {
+      background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
+        url('https://images.unsplash.com/photo-1600585154340-be6161a56a26?q=80&w=1920') center/cover no-repeat;
+    }
+    .menu-card { transition: transform 0.3s, box-shadow 0.3s; }
+    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); }
+    .floating-wa { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+
+    /* Carousel */
+    .carousel-track { display:flex; transition: transform 0.5s ease; }
+    .carousel-slide { min-width:100%; }
+    .carousel-slide img { width:100%; height:380px; object-fit:cover; border-radius:1rem; }
+
+    /* Cart sidebar */
+    #cart-sidebar {
+      position:fixed; top:0; right:0; height:100%; width:100%; max-width:420px;
+      background:white; box-shadow:-4px 0 30px rgba(0,0,0,0.15);
+      transform:translateX(100%); transition:transform 0.4s ease;
+      z-index:100; overflow-y:auto;
+    }
+    #cart-sidebar.open { transform:translateX(0); }
+    #cart-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:99;
+    }
+    #cart-overlay.open { display:block; }
+    #toast {
+      position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
+      background:#1f2937; color:white; padding:0.75rem 1.5rem; border-radius:1rem;
+      z-index:200; opacity:0; transition:opacity 0.3s; pointer-events:none; font-size:0.875rem;
+      white-space:nowrap;
+    }
+  </style>
 </head>
-<body class="bg-white font-sans">
+<body class="bg-gray-50">
+
+  <!-- NAVBAR -->
+  <nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
+        <div id="lt" style="display:none">
+          <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
+          <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
+        </div>
+      </div>
+      <div class="hidden md:flex gap-8 text-white/80 font-medium text-sm">
+        <a href="#menu" class="hover:text-orange-400 transition">Menu</a>
+        <a href="#galeri" class="hover:text-orange-400 transition">Galeri</a>
+        <a href="#pesan" class="hover:text-orange-400 transition">Pesan</a>
+        <a href="#lokasi" class="hover:text-orange-400 transition">Lokasi</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="toggleCart()" class="relative text-white hover:text-orange-400 transition">
+          <i class="fas fa-shopping-cart text-2xl"></i>
+          <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+        <a href="https://wa.me/6281357683151" target="_blank"
+           class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold flex items-center gap-2 transition text-sm">
+          <i class="fab fa-whatsapp"></i><span class="hidden sm:inline">Pesan WA</span>
+        </a>
+      </div>
+    </div>
+  </nav>
 
   <!-- HERO -->
-  <section class="bg-blue-600 text-white text-center py-20 px-6">
-    <h1 class="text-4xl font-bold mb-4">Nama Usaha Anda</h1>
-    <p class="text-lg mb-8">Deskripsi singkat produk atau layanan Anda</p>
-    <a href="#kontak" class="bg-white text-blue-600 font-bold px-6 py-3 rounded-full">Hubungi Kami</a>
-  </section>
-
-  <!-- LAYANAN -->
-  <section class="py-16 px-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold text-center mb-10">Layanan Kami</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-gray-50 p-6 rounded-xl text-center">
-        <p class="text-4xl mb-3">⭐</p>
-        <h3 class="font-bold mb-2">Layanan 1</h3>
-        <p class="text-gray-500 text-sm">Deskripsi layanan pertama Anda</p>
+  <section class="hero-bg text-white py-24 md:py-36">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <p class="text-orange-400 font-semibold tracking-widest uppercase text-sm mb-3">A Grilled Passion</p>
+      <h1 class="text-5xl md:text-7xl font-black mb-4">The Kebab Factory</h1>
+      <p class="text-xl md:text-2xl font-light mb-10 text-white/80">Kebab Premium &bull; Burger Fresh &bull; Grilled with Passion</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#menu" class="bg-orange-600 hover:bg-orange-700 px-8 py-4 rounded-full font-bold text-lg transition">
+          <i class="fas fa-utensils mr-2"></i>Lihat Menu
+        </a>
+        <a href="#pesan" class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition">
+          Pesan Sekarang
+        </a>
       </div>
-      <div class="bg-gray-50 p-6 rounded-xl text-center">
-        <p class="text-4xl mb-3">🚀</p>
-        <h3 class="font-bold mb-2">Layanan 2</h3>
-        <p class="text-gray-500 text-sm">Deskripsi layanan kedua Anda</p>
-      </div>
-      <div class="bg-gray-50 p-6 rounded-xl text-center">
-        <p class="text-4xl mb-3">💎</p>
-        <h3 class="font-bold mb-2">Layanan 3</h3>
-        <p class="text-gray-500 text-sm">Deskripsi layanan ketiga Anda</p>
+      <div class="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/70">
+        <span><i class="fas fa-clock mr-1 text-orange-400"></i><strong class="text-white">11.00 – 23.00 WIB</strong></span>
+        <span><i class="fas fa-map-marker-alt mr-1 text-orange-400"></i>Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart</span>
       </div>
     </div>
   </section>
 
-  <!-- KONTAK -->
-  <section id="kontak" class="bg-gray-100 py-16 px-6 text-center">
-    <h2 class="text-2xl font-bold mb-4">Hubungi Kami</h2>
-    <p class="text-gray-600 mb-6">Siap membantu Anda sekarang</p>
-    <a href="https://wa.me/628xxxxxxxxx" class="bg-green-500 text-white font-bold px-8 py-3 rounded-full">Chat WhatsApp</a>
+  <!-- MENU -->
+  <section id="menu" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Pilihan Terbaik</p>
+        <h2 class="text-4xl font-black mt-1">Menu Kami</h2>
+        <p class="text-gray-500 mt-2">Tap Tambah untuk masukkan ke keranjang</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container"></div>
+    </div>
   </section>
 
-</body>
-</html>
+  <!-- GALERI -->
+  <section id="galeri" class="py-20 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Lihat Langsung</p>
+        <h2 class="text-4xl font-black mt-1">Galeri Kami</h2>
+      </div>
+      <div class="relative overflow-hidden rounded-2xl">
+        <div class="carousel-track" id="carousel-track"></div>
+        <button onclick="moveCarousel(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button onclick="moveCarousel(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" id="carousel-dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM PEMESANAN -->
+  <section id="pesan" class="py-20 bg-white">
+    <div class="max-w-2xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Mudah & Cepat</p>
+        <h2 class="text-4xl font-black mt-1">Form Pemesanan</h2>
+        <p class="text-gray-500 mt-2">Pesanan langsung terkirim ke WhatsApp kami</p>
+      </div>
+      <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-5">
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-2">Nama Lengkap *</label>
+            <input id="f-nama" type="text" placeholder="Nama kamu"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">No. WhatsApp *</label>
+            <input id="f-wa" type="tel" placeholder="08xxxxxxxxxx"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Pilih Menu *</label>
+          <select id="f-menu" onchange="updateFormTotal()"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none bg-white transition">
+            <option value="">-- Pilih Menu --</option>
+          </select>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold mb-2">Jumlah *</label>
+            <div class="flex items-center gap-3">
+              <button onclick="changeFormQty(-1)" class="w-10 h-10 border rounded-xl font-bold text-lg hover:bg-gray-100 transition">-</button>
+              <input id="f-jumlah" type="number" value="1" min="1" onchange="updateFormTotal()"
+                class="w-16 text-center px-2 py-2 border rounded-xl outline-none">
+              <button onclick="changeFormQty(1)" class="w-10 h-10 border rounded-xl font-bold text-lg hover:bg-gray-100 transition">+</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">Pengiriman</label>
+            <select id="f-delivery" onchange="updateFormTotal()"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none bg-white transition">
+              <option value="0">Ambil di Tempat (Gratis)</option>
+              <option value="5000">Delivery Dekat – Rp 5.000</option>
+              <option value="10000">Delivery Jauh – Rp 10.000</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Alamat Pengiriman</label>
+          <input id="f-alamat" type="text" placeholder="Isi jika delivery, kosongkan jika pickup"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-2">Catatan Khusus</label>
+          <textarea id="f-catatan" rows="2" placeholder="Contoh: tanpa bawang, extra saus, pedas banget, dll"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition resize-none"></textarea>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex justify-between items-center">
+          <p class="text-gray-600 font-medium">Total Estimasi</p>
+          <p id="f-total" class="text-3xl font-black text-orange-600">Rp 0</p>
+        </div>
+        <button onclick="submitOrder()"
+          class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-xl transition flex items-center justify-center gap-3">
+          <i class="fab fa-whatsapp text-2xl"></i> KIRIM PESANAN VIA WHATSAPP
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOKASI -->
+  <section id="lokasi" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Temukan Kami</p>
+        <h2 class="text-4xl font-black mt-1">Lokasi Kami</h2>
+        <p class="text-gray-500 mt-2">Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Malang</p>
+      </div>
+      <div class="rounded-3xl overflow-hidden shadow-xl">
+        <iframe src="https://maps.google.com/maps?q=-7.919438,111.496355&hl=id&z=17&output=embed"
+          width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+      <div class="mt-6 text-center">
+        <a href="https://www.google.com/maps?q=-7.919438,111.496355" target="_blank"
+           class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition">
+          <i class="fas fa-directions"></i> Buka di Google Maps
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <section class="bg-[#3d2010] text-white py-16">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl font-black mb-6">The Kebab Factory</h2>
+        <div class="space-y-4 text-white/70">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-clock text-orange-400 mt-1"></i>
+            <div><p class="font-semibold text-white">Jam Operasional</p><p>Setiap Hari: 11.00 – 23.00 WIB</p></div>
+          </div>
+          <div class="flex items-start gap-3">
+            <i class="fas fa-map-marker-alt text-orange-400 mt-1"></i>
+            <p>Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Malang</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <i class="fab fa-whatsapp text-green-400"></i>
+            <a href="https://wa.me/6281357683151" class="hover:text-orange-400 transition">0813-5768-3151</a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center md:text-left">
+        <p class="text-white/60 mb-6 text-lg">Pesanan langsung diproses setelah konfirmasi WhatsApp. Kami siap melayani!</p>
+        <a href="https://wa.me/6281357683151" target="_blank"
+           class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition">
+          <i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+  <footer class="bg-black text-gray-600 text-center py-5 text-sm">
+    © 2026 The Kebab Factory &bull; Malang &bull; A Grilled Passion
+  </footer>
+
+  <!-- CART SIDEBAR -->
+  <div id="cart-sidebar">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-black">Keranjang</h2>
+        <button onclick="toggleCart()" class="text-4xl text-gray-400 hover:text-gray-700 leading-none">&times;</button>
+      </div>
+      <div id="cart-items" class="space-y-4 min-h-[200px]">
+        <p class="text-gray-400 text-center mt-10">Keranjang masih kosong</p>
+      </div>
+      <div class="border-t pt-6 mt-6">
+        <div class="flex justify-between text-xl font-black mb-6">
+          <span>Total</span>
+          <span id="cart-total-price" class="text-orange-600">Rp 0</span>
+        </div>
+        <button onclick="checkoutCart()"
+          class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-2">
+          <i class="fab fa-whatsapp text-xl"></i> Checkout via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="cart-overlay" onclick="toggleCart()"></div>
+
+  <!-- FLOATING WA -->
+  <a href="https://wa.me/6281357683151" target="_blank"
+     class="floating-wa fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl text-3xl z-50 hover:scale-110 transition">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <div id="toast"></div>
+
+  <script>
+    const menuItems = [
+      {id:1,  name:"Kebab Original",           price:15000, desc:"Sayur segar + Daging Premium",  badge:"Signature"},
+      {id:2,  name:"Kebab Telur",               price:20000, desc:"Daging + Telur",                badge:""},
+      {id:3,  name:"Kebab Keju",                price:20000, desc:"Daging + Keju",                 badge:""},
+      {id:4,  name:"Kebab Sosis",               price:20000, desc:"Daging + Sosis",                badge:""},
+      {id:5,  name:"Double Bid: Telur + Keju",  price:25000, desc:"Daging + Telur + Keju",         badge:"Double"},
+      {id:6,  name:"Double Bid: Telur + Sosis", price:25000, desc:"Daging + Telur + Sosis",        badge:"Double"},
+      {id:7,  name:"Double Bid: Keju + Sosis",  price:25000, desc:"Daging + Keju + Sosis",         badge:"Double"},
+      {id:8,  name:"Triple Bid",                price:30000, desc:"Daging + Telur + Keju + Sosis", badge:"Best Value"},
+      {id:9,  name:"Burger Lite",               price:15000, desc:"Burger Original",               badge:""},
+      {id:10, name:"Cheese Lite",               price:20000, desc:"Burger dengan Keju",            badge:""},
+    ];
+
+    const galleryImages = [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a26?w=900",
+      "https://images.unsplash.com/photo-1568908868789-5a0f3f3e6c3e?w=900",
+      "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=900",
+      "https://images.unsplash.com/photo-1603894584373-5ac82b2ae784?w=900",
+      "https://images.unsplash.com/photo-1631515243349-e0cb75fb8bd7?w=900",
+    ];
+
+    let cart = [];
+    let carouselIdx = 0;
+
+    // ===== MENU =====
+    function renderMenu() {
+      document.getElementById('menu-container').innerHTML = menuItems.map(item => {
+        const badgeColor = item.badge === 'Best Value' ? 'bg-green-100 text-green-700'
+                         : item.badge === 'Double'     ? 'bg-blue-100 text-blue-700'
+                         : item.badge                  ? 'bg-red-100 text-red-700' : '';
+        return `
+        <div class="menu-card bg-white border border-gray-100 rounded-2xl p-6 flex flex-col">
+          <div class="flex-1">
+            ${item.badge ? `<span class="inline-block text-xs font-bold px-3 py-1 rounded-full mb-2 ${badgeColor}">${item.badge}</span>` : ''}
+            <h3 class="font-bold text-lg leading-tight">${item.name}</h3>
+            <p class="text-gray-500 text-sm mt-1">${item.desc}</p>
+          </div>
+          <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-50">
+            <span class="text-2xl font-black text-orange-600">Rp ${(item.price/1000).toFixed(0)}rb</span>
+            <button onclick="addToCart(${item.id})"
+              class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm">
+              <i class="fas fa-plus"></i> Tambah
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+
+      const sel = document.getElementById('f-menu');
+      menuItems.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = item.name + ' – Rp ' + item.price.toLocaleString('id-ID');
+        sel.appendChild(opt);
+      });
+    }
+
+    // ===== CAROUSEL =====
+    function renderCarousel() {
+      const track = document.getElementById('carousel-track');
+      const dots  = document.getElementById('carousel-dots');
+      track.innerHTML = galleryImages.map(src =>
+        `<div class="carousel-slide"><img src="${src}" alt="Kebab Factory"></div>`
+      ).join('');
+      dots.innerHTML = galleryImages.map((_, i) =>
+        `<button onclick="goCarousel(${i})" class="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white transition" id="dot-${i}"></button>`
+      ).join('');
+      updateCarousel();
+      setInterval(() => moveCarousel(1), 4000);
+    }
+
+    function moveCarousel(dir) {
+      carouselIdx = (carouselIdx + dir + galleryImages.length) % galleryImages.length;
+      updateCarousel();
+    }
+
+    function goCarousel(i) { carouselIdx = i; updateCarousel(); }
+
+    function updateCarousel() {
+      document.getElementById('carousel-track').style.transform = `translateX(-${carouselIdx * 100}%)`;
+      galleryImages.forEach((_, i) => {
+        const dot = document.getElementById('dot-' + i);
+        if (dot) dot.style.background = i === carouselIdx ? 'white' : 'rgba(255,255,255,0.5)';
+      });
+    }
+
+    // ===== CART =====
+    function addToCart(id) {
+      const item = menuItems.find(m => m.id === id);
+      const existing = cart.find(i => i.id === id);
+      if (existing) existing.quantity++;
+      else cart.push({...item, quantity: 1});
+      renderCart();
+      showToast(item.name + ' ditambahkan 🛒');
+    }
+
+    function changeCartQty(id, delta) {
+      const idx = cart.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      cart[idx].quantity += delta;
+      if (cart[idx].quantity < 1) cart.splice(idx, 1);
+      renderCart();
+    }
+
+    function renderCart() {
+      const count = cart.reduce((s, i) => s + i.quantity, 0);
+      document.getElementById('cart-c
