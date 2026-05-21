@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="icon" type="image/png" href="./logo.png">
-  <img src="./logo.png" alt="The Kebab Factory" class="h-12 w-auto">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Kebab Factory - Kebab & Burger Premium</title>
@@ -390,4 +388,118 @@
 
     function renderCart() {
       const count = cart.reduce((s, i) => s + i.quantity, 0);
-      document.getElementById('cart-c
+      document.getElementById('cart-count').textContent = count;
+
+      const container = document.getElementById('cart-items');
+      if (!cart.length) {
+        container.innerHTML = '<p style="color:#9ca3af;text-align:center;margin-top:2.5rem">Keranjang masih kosong</p>';
+        document.getElementById('cart-total-price').textContent = 'Rp 0';
+        return;
+      }
+      container.innerHTML = cart.map(item => `
+        <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
+            <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">${item.name}</p>
+            <button onclick="changeCartQty(${item.id},-${item.quantity})" style="color:#f87171;font-size:0.85rem">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <button onclick="changeCartQty(${item.id},-1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">-</button>
+              <span style="width:1.5rem;text-align:center;font-weight:700">${item.quantity}</span>
+              <button onclick="changeCartQty(${item.id},1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">+</button>
+            </div>
+            <span style="font-weight:900;color:#ea580c">Rp ${(item.price*item.quantity).toLocaleString('id-ID')}</span>
+          </div>
+        </div>`).join('');
+
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      document.getElementById('cart-total-price').textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    function toggleCart() {
+      document.getElementById('cart-sidebar').classList.toggle('open');
+      document.getElementById('cart-overlay').classList.toggle('open');
+    }
+
+    function checkoutCart() {
+      if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
+      let msg = 'Halo The Kebab Factory!%0A%0A*Pesanan Saya:*%0A';
+      let total = 0;
+      cart.forEach(item => {
+        const sub = item.price * item.quantity;
+        total += sub;
+        msg += '- ' + item.name + ' (' + item.quantity + 'x) = Rp ' + sub.toLocaleString('id-ID') + '%0A';
+      });
+      msg += '%0A*Total: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
+      window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
+      setTimeout(() => { cart = []; renderCart(); toggleCart(); }, 800);
+    }
+
+    // ===== FORM =====
+    function updateFormTotal() {
+      const id     = parseInt(document.getElementById('f-menu').value);
+      const item   = menuItems.find(m => m.id === id);
+      const qty    = Math.max(1, parseInt(document.getElementById('f-jumlah').value) || 1);
+      const ongkir = parseInt(document.getElementById('f-delivery').value) || 0;
+      const total  = item ? (item.price * qty) + ongkir : 0;
+      document.getElementById('f-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    function changeFormQty(delta) {
+      const el  = document.getElementById('f-jumlah');
+      el.value  = Math.max(1, (parseInt(el.value) || 1) + delta);
+      updateFormTotal();
+    }
+
+    function submitOrder() {
+      const nama    = document.getElementById('f-nama').value.trim();
+      const wa      = document.getElementById('f-wa').value.trim();
+      const id      = parseInt(document.getElementById('f-menu').value);
+      const item    = menuItems.find(m => m.id === id);
+      const qty     = Math.max(1, parseInt(document.getElementById('f-jumlah').value) || 1);
+      const ongkir  = parseInt(document.getElementById('f-delivery').value) || 0;
+      const alamat  = document.getElementById('f-alamat').value.trim();
+      const catatan = document.getElementById('f-catatan').value.trim();
+
+      if (!nama)  { showToast('⚠️ Nama wajib diisi!'); return; }
+      if (!wa)    { showToast('⚠️ No. WhatsApp wajib diisi!'); return; }
+      if (!item)  { showToast('⚠️ Pilih menu terlebih dahulu!'); return; }
+
+      const sub   = item.price * qty;
+      const total = sub + ongkir;
+      const delivLabel = ongkir === 0 ? 'Ambil di Tempat' : ongkir === 5000 ? 'Delivery Dekat (Rp 5.000)' : 'Delivery Jauh (Rp 10.000)';
+
+      let msg = 'Halo The Kebab Factory!%0A%0A';
+      msg += '*Nama:* ' + nama + '%0A';
+      msg += '*No. WA:* ' + wa + '%0A';
+      msg += '%0A*Pesanan:*%0A';
+      msg += '- ' + item.name + ' (' + qty + 'x) = Rp ' + sub.toLocaleString('id-ID') + '%0A';
+      msg += '%0A*Pengiriman:* ' + delivLabel + '%0A';
+      if (alamat)  msg += '*Alamat:* ' + alamat + '%0A';
+      if (catatan) msg += '*Catatan:* ' + catatan + '%0A';
+      msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
+
+      window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
+      showToast('✅ Pesanan dikirim ke WhatsApp!');
+      ['f-nama','f-wa','f-alamat','f-catatan'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-menu').value = '';
+      document.getElementById('f-jumlah').value = 1;
+      updateFormTotal();
+    }
+
+    // ===== TOAST =====
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = '1';
+      clearTimeout(window._tt);
+      window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+    }
+
+    // ===== INIT =====
+    window.onload = () => { renderMenu(); renderCarousel(); renderCart(); };
+  </script>
+</body>
+</html>
