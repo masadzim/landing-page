@@ -311,13 +311,99 @@
           <span>Total</span>
           <span id="cart-total-price" class="text-orange-600">Rp 0</span>
         </div>
-        <button onclick="checkoutCart()"
+        <button onclick="openCheckout()""
           class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-2">
           <i class="fab fa-whatsapp text-xl"></i> Checkout via WhatsApp
         </button>
       </div>
     </div>
   </div>
+  <!-- MODAL CHECKOUT -->
+<div id="modal-checkout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeCheckout(event)">
+  <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:92vh;overflow-y:auto">
+    
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <h3 style="font-weight:900;font-size:1.2rem">Detail Pesanan</h3>
+      <button onclick="document.getElementById('modal-checkout').style.display='none'" style="font-size:2rem;color:#9ca3af">&times;</button>
+    </div>
+
+    <!-- Ringkasan -->
+    <div style="background:#fff7ed;border-radius:1rem;padding:1rem;margin-bottom:1rem">
+      <p style="font-weight:700;font-size:0.85rem;color:#c2410c;margin-bottom:0.5rem">Ringkasan Pesanan</p>
+      <div id="co-summary" style="font-size:0.85rem"></div>
+      <div style="border-top:1px solid #fed7aa;margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;font-weight:900">
+        <span>Subtotal</span><span id="co-subtotal" style="color:#ea580c"></span>
+      </div>
+    </div>
+
+    <!-- Nama -->
+    <div style="margin-bottom:1rem">
+      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nama Pemesan *</p>
+      <input id="co-nama" type="text" placeholder="Nama lengkap"
+        style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
+    </div>
+
+    <!-- Metode Pengiriman -->
+    <div style="margin-bottom:1rem">
+      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div id="card-pickup" onclick="selectDelivery('pickup')"
+          style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+          <p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p>
+          <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p>
+        </div>
+        <div id="card-delivery" onclick="selectDelivery('delivery')"
+          style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+          <p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p>
+          <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alamat (muncul jika delivery) -->
+    <div id="section-alamat" style="display:none;margin-bottom:1rem">
+      <div style="margin-bottom:0.75rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Pin Lokasi</p>
+        <button onclick="getLocation()"
+          style="width:100%;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer">
+          📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
+        </button>
+        <p id="loc-result" style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;text-align:center"></p>
+      </div>
+      <div style="margin-bottom:0.75rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Detail Alamat *</p>
+        <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan"
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem"></textarea>
+      </div>
+      <div style="background:#f9fafb;border-radius:0.75rem;padding:0.875rem;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <p style="font-weight:700;font-size:0.875rem">Ongkos Kirim</p>
+          <p id="ongkir-info" style="font-size:0.75rem;color:#6b7280">Belum ada lokasi</p>
+        </div>
+        <span id="ongkir-harga" style="font-weight:900;color:#ea580c;font-size:1.1rem">-</span>
+      </div>
+    </div>
+
+    <!-- Pembayaran -->
+    <div style="margin-bottom:1rem">
+      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pembayaran *</p>
+      <div id="payment-options">
+        <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
+      <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
+    </div>
+
+    <button onclick="submitCheckout()"
+      style="width:100%;background:#16a34a;color:white;font-weight:900;padding:1.25rem;border-radius:1rem;font-size:1.1rem;cursor:pointer;border:none">
+      <i class="fab fa-whatsapp"></i> Kirim Pesanan via WhatsApp
+    </button>
+  </div>
+</div>
   <div id="cart-overlay" onclick="toggleCart()"></div>
 
   <!-- FLOATING WA -->
@@ -510,20 +596,135 @@ function confirmAddToCart() {
       document.getElementById('cart-overlay').classList.toggle('open');
     }
 
-    function checkoutCart() {
-      if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
-      let msg = 'Halo The Kebab Factory!%0A%0A*Pesanan Saya:*%0A';
-      let total = 0;
-      cart.forEach(item => {
-        const sub = item.price * item.quantity;
-        total += sub;
-        msg += '- ' + item.name + ' (' + item.quantity + 'x) = Rp ' + sub.toLocaleString('id-ID') + '%0A';
-      });
-      msg += '%0A*Total: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
-      window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
-      setTimeout(() => { cart = []; renderCart(); toggleCart(); }, 800);
-    }
+    function checkoutCart() { openCheckout(); }
 
+const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
+let deliveryMode = '', selectedPayment = '', userLat = null, userLng = null, ongkir = 0;
+
+function openCheckout() {
+  if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
+  deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0;
+  document.getElementById('co-nama').value = '';
+  document.getElementById('co-alamat').value = '';
+  document.getElementById('loc-result').textContent = '';
+  document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
+  document.getElementById('section-alamat').style.display = 'none';
+  document.getElementById('card-pickup').style.border = '2px solid #e5e7eb';
+  document.getElementById('card-delivery').style.border = '2px solid #e5e7eb';
+  document.getElementById('payment-options').innerHTML = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
+
+  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
+  document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+  document.getElementById('co-summary').innerHTML = cart.map(i =>
+    `<div style="display:flex;justify-content:space-between">
+      <span>${i.name} (${i.varian}) ×${i.quantity}</span>
+      <span>Rp ${(i.price*i.quantity).toLocaleString('id-ID')}</span>
+    </div>`
+  ).join('');
+  updateCoTotal();
+  toggleCart();
+  document.getElementById('modal-checkout').style.display = 'flex';
+}
+
+function closeCheckout(e) {
+  if (e.target.id === 'modal-checkout') document.getElementById('modal-checkout').style.display = 'none';
+}
+
+function selectDelivery(mode) {
+  deliveryMode = mode;
+  document.getElementById('card-pickup').style.border = mode==='pickup' ? '2px solid #ea580c' : '2px solid #e5e7eb';
+  document.getElementById('card-pickup').style.background = mode==='pickup' ? '#fff7ed' : 'white';
+  document.getElementById('card-delivery').style.border = mode==='delivery' ? '2px solid #ea580c' : '2px solid #e5e7eb';
+  document.getElementById('card-delivery').style.background = mode==='delivery' ? '#fff7ed' : 'white';
+  document.getElementById('section-alamat').style.display = mode==='delivery' ? 'block' : 'none';
+  if (mode === 'pickup') ongkir = 0;
+  selectedPayment = '';
+  updatePaymentOptions();
+  updateCoTotal();
+}
+
+function updatePaymentOptions() {
+  const c = document.getElementById('payment-options');
+  const opts = deliveryMode === 'pickup'
+    ? [{val:'cash',label:'💵 Cash'}, {val:'qris',label:'📱 QRIS'}]
+    : [{val:'qris',label:'📱 QRIS'}];
+  c.innerHTML = opts.map(o => `
+    <div id="pay-${o.val}" onclick="selectPayment('${o.val}')"
+      style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">
+      ${o.label}
+    </div>`).join('');
+}
+
+function selectPayment(val) {
+  selectedPayment = val;
+  document.querySelectorAll('#payment-options div').forEach(d => {
+    d.style.border = '2px solid #e5e7eb';
+    d.style.background = 'white';
+  });
+  const el = document.getElementById('pay-' + val);
+  if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
+}
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function getLocation() {
+  if (!navigator.geolocation) { showToast('GPS tidak tersedia'); return; }
+  document.getElementById('loc-btn-text').textContent = 'Mendeteksi lokasi...';
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+    const dist = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
+    ongkir = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
+    const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
+    document.getElementById('loc-btn-text').textContent = '✅ Lokasi Terdeteksi';
+    document.getElementById('loc-result').textContent = 'Jarak: ' + dist.toFixed(1) + ' km';
+    document.getElementById('ongkir-info').textContent = label;
+    document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
+    updateCoTotal();
+  }, () => {
+    document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
+    showToast('❌ Gagal deteksi GPS. Izinkan akses lokasi.');
+  });
+}
+
+function updateCoTotal() {
+  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
+  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
+  document.getElementById('co-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+function submitCheckout() {
+  const nama = document.getElementById('co-nama').value.trim();
+  if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
+  if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
+  if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
+  if (!selectedPayment) { showToast('⚠️ Pilih metode pembayaran!'); return; }
+
+  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
+  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
+
+  let msg = 'Halo The Kebab Factory!%0A%0A';
+  msg += '*Nama:* ' + nama + '%0A';
+  msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
+  if (deliveryMode === 'delivery') {
+    msg += '*Alamat:* ' + document.getElementById('co-alamat').value.trim() + '%0A';
+    if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
+    msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID')) + '%0A';
+  }
+  msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
+  msg += '%0A*Pesanan:*%0A';
+  cart.forEach(i => {
+    msg += '- ' + i.name + ' (' + i.varian + ') x' + i.quantity + ' = Rp ' + (i.price*i.quantity).toLocaleString('id-ID') + '%0A';
+    if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
+  });
+  msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
+
+  window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
+  setTimeout(() => { cart = []; renderCart(); document.getElementById('modal-checkout').style.display = 'none'; }, 800);
+}
     // ===== FORM =====
     function updateFormTotal() {
       const id     = parseInt(document.getElementById('f-menu').value);
