@@ -952,75 +952,109 @@ function showOrderConfirm(orderId) {
       clearTimeout(window._tt);
       window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
     }
-    // ===== GRABBER BERITA BAHAN BAKU KHUSUS =====
+        // ===== GRABBER MULTI-PORTAL BERITA BAHAN BAKU =====
     function loadDynamicNews() {
-      // 1. URL RSS dari Google News yang difilter khusus untuk komoditas Anda
-      const searchQuery = 'harga (tepung OR susu OR saus OR mentega OR "bawang bombay" OR timun OR selada OR tomat OR plastik OR kertas)';
-      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(searchQuery)}&hl=id&gl=ID&ceid=ID:id`;
-      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+      // 1. Daftar sumber berita raksasa (Fokus Ekonomi/Pasar)
+      const sumberBerita = [
+        'https://www.cnnindonesia.com/ekonomi/rss',
+        'https://www.cnbcindonesia.com/market/rss',
+        'https://www.antaranews.com/rss/ekonomi.xml'
+      ];
 
-      // 2. Daftar kata kunci untuk penyaringan ketat di dalam sistem web Anda
-      const kataKunci = ['tepung', 'susu', 'saos', 'saus', 'mentega', 'bombay', 'timun', 'letuce', 'lettuce', 'selada', 'tomat', 'plastik', 'kertas'];
+      // 2. Kata kunci spesifik The Kebab Factory
+      const kataKunci = ['tepung', 'susu', 'saus', 'saos', 'mentega', 'bawang', 'bombay', 'timun', 'selada', 'lettuce', 'tomat', 'plastik', 'kertas', 'daging', 'sapi', 'ayam', 'pangan', 'sembako', 'komoditas'];
 
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'ok' && data.items.length > 0) {
+      // Mengubah URL agar bisa dibaca oleh API rss2json
+      const prosesAmbilBerita = sumberBerita.map(url => {
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+        // Jika ada 1 portal error, abaikan dan lanjut ke portal lain (tahan banting)
+        return fetch(apiUrl).then(res => res.json()).catch(err => null); 
+      });
+
+      // 3. Jalankan semua proses pengambilan secara bersamaan
+      Promise.all(prosesAmbilBerita)
+        .then(hasil => {
+          let semuaArtikel = [];
+          
+          // Gabungkan semua berita dari CNN, CNBC, dan Antara ke satu wadah
+          hasil.forEach(data => {
+            if (data && data.status === 'ok' && data.items) {
+              semuaArtikel = semuaArtikel.concat(data.items);
+            }
+          });
+
+          // Jika ada berita yang berhasil dikumpulkan
+          if (semuaArtikel.length > 0) {
             
-            // 3. Cari berita yang judulnya BENAR-BENAR mengandung kata kunci di atas
-            let itemTerpilih = data.items.find(item => {
-              const judulBerita = item.title.toLowerCase();
-              return kataKunci.some(kunci => judulBerita.includes(kunci));
+            // Urutkan dari waktu terbit paling baru (opsional agar selalu update)
+            semuaArtikel.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+            // Filter: Cari 1 artikel yang memuat kata kunci bahan baku Anda
+            let itemTerpilih = semuaArtikel.find(item => {
+              const teks = (item.title + " " + item.description).toLowerCase();
+              return kataKunci.some(kunci => teks.includes(kunci));
             });
 
-            // Jika kebetulan hari ini tidak ada berita spesifik, ambil berita pertama sebagai cadangan
+            // Jika hari ini di semua portal tidak ada berita bahan baku, ambil berita terbaru urutan ke-1
             if (!itemTerpilih) {
-              itemTerpilih = data.items[0];
+              itemTerpilih = semuaArtikel[0];
             }
             
-            // Format tanggal agar rapi
-            const pubDate = new Date(itemTerpilih.pubDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            
-            // Membersihkan deskripsi dari tag HTML bawaan Google
-            let cleanDesc = itemTerpilih.description.replace(/<[^>]+>/g, '').trim();
-            // Google News kadang deskripsinya kosong, kita beri teks cadangan yang relevan
-            if (cleanDesc.length < 15) {
-                cleanDesc = "Pantau terus pergerakan harga bahan baku harian untuk operasional bisnis yang lebih optimal.";
-            } else {
-                cleanDesc = cleanDesc.substring(0, 110) + '...';
-            }
+            tampilkanBerita(itemTerpilih);
 
-            // Memasukkan data ke dalam kartu HTML
-            const slot = document.getElementById('dynamic-news-slot');
-            slot.className = "bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
-            slot.innerHTML = `
-              <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Info Komoditas" class="w-full h-48 object-cover">
-              <div class="p-6 flex flex-col flex-1">
-                <div class="flex justify-between items-center mb-3">
-                  <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Info Bahan Baku</span>
-                  <span class="text-xs text-gray-400 font-medium">${pubDate}</span>
-                </div>
-                
-                <h3 class="font-bold text-lg leading-tight mb-2 line-clamp-3">${itemTerpilih.title}</h3>
-                
-                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${cleanDesc}</p>
-                
-                <a href="${itemTerpilih.link}" target="_blank" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1">
-                  Baca di Sumber <i class="fas fa-external-link-alt text-xs"></i>
-                </a>
-              </div>
-            `;
+          } else {
+             // Jika semua API error / internet putus
+             tampilkanBeritaCadangan();
           }
         })
         .catch(error => {
-          console.error('Gagal mengambil berita:', error);
-          document.getElementById('dynamic-news-slot').innerHTML = `
-            <div class="p-6 text-center text-gray-500">
-              <i class="fas fa-newspaper text-3xl mb-2 text-gray-300"></i>
-              <p class="text-sm">Server berita sedang sibuk.</p>
-            </div>`;
+          console.error('Gagal merakit berita:', error);
+          tampilkanBeritaCadangan();
         });
-  }
+    }
+
+    // Fungsi untuk merender berita asli ke HTML
+    function tampilkanBerita(item) {
+        const pubDate = new Date(item.pubDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        let cleanDesc = item.description.replace(/<[^>]+>/g, '').trim();
+        if (cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + '...';
+
+        const slot = document.getElementById('dynamic-news-slot');
+        slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
+        slot.innerHTML = `
+          <img src="${item.thumbnail || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}" alt="Info Pasar" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex justify-between items-center mb-3">
+              <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Info Pasar</span>
+              <span class="text-xs text-gray-400 font-medium">${pubDate}</span>
+            </div>
+            <h3 class="font-bold text-lg leading-tight mb-2 line-clamp-2">${item.title}</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${cleanDesc}</p>
+            <a href="${item.link}" target="_blank" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1">
+              Baca Selengkapnya <i class="fas fa-external-link-alt text-xs"></i>
+            </a>
+          </div>
+        `;
+    }
+
+    // Fungsi penyelamat jika API diblokir / mati
+    function tampilkanBeritaCadangan() {
+        const slot = document.getElementById('dynamic-news-slot');
+        slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
+        slot.innerHTML = `
+          <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Info Komoditas" class="w-full h-48 object-cover">
+          <div class="p-6 flex flex-col flex-1">
+            <div class="flex justify-between items-center mb-3">
+              <span class="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">Info Harga</span>
+              <span class="text-xs text-gray-400 font-medium">Hari Ini</span>
+            </div>
+            <h3 class="font-bold text-lg leading-tight mb-2">Pantau Terus Harga Bahan Baku UMKM</h3>
+            <p class="text-gray-600 text-sm mb-4">Kami memantau pergerakan pasar untuk memastikan racikan rempah, sayur segar, dan kualitas The Kebab Factory tetap optimal.</p>
+          </div>
+        `;
+    }
+
     
     // ===== INIT =====
     window.onload = () => { renderMenu(); renderCarousel(); renderCart(); };
