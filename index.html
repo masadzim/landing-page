@@ -803,8 +803,11 @@ function submitCheckout() {
 
 fetch(APPS_SCRIPT_URL, {
   method: 'POST',
-  body: payload
-});
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
+})
 
   // Kirim ke WhatsApp
   let msg = 'Halo The Kebab Factory!%0A%0A';
