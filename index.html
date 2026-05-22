@@ -789,20 +789,23 @@ function submitCheckout() {
   const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
 
   // Kirim ke Google Sheets
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      orderId, timestamp, nama,
-      pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-      alamat,
-      ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
-      pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-      items: itemsText,
-      total: 'Rp '+total.toLocaleString('id-ID')
-    })
-  });
+  const payload = new URLSearchParams({
+  data: JSON.stringify({
+    orderId, timestamp, nama,
+    pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
+    alamat,
+    ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
+    pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
+    items: itemsText,
+    total: 'Rp '+total.toLocaleString('id-ID')
+  })
+});
+
+fetch(APPS_SCRIPT_URL, {
+  method: 'POST',
+  mode: 'no-cors',
+  body: payload
+});
 
   // Kirim ke WhatsApp
   let msg = 'Halo The Kebab Factory!%0A%0A';
