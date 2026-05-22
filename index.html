@@ -79,7 +79,7 @@
   <div id="mobile-menu" class="hidden bg-[#3d2010] text-white px-6 py-4 space-y-3 md:hidden">
   <a href="#menu" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Menu</a>
   <a href="#galeri" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Galeri</a>
-  <a href="#pesan" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Pesan</a>
+  <a href="#pesan" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Info & Edukasi</a>
   <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2">Lokasi</a>
   </div>
 
@@ -196,72 +196,40 @@
     </div>
   </section>
 
-  <!-- FORM PEMESANAN -->
+  <!-- INFO & EDUKASI -->
   <section id="pesan" class="py-20 bg-white">
-    <div class="max-w-2xl mx-auto px-6">
+    <section id="informasi" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12">
-        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Mudah & Cepat</p>
-        <h2 class="text-4xl font-black mt-1">Form Pemesanan</h2>
-        <p class="text-gray-500 mt-2">Pesanan langsung terkirim ke WhatsApp kami</p>
+        <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Info & Edukasi</p>
+        <h2 class="text-4xl font-black mt-1">Jurnal Kebab Factory</h2>
+        <p class="text-gray-500 mt-2">Ketahui rahasia di balik bahan premium kami & info terkini</p>
       </div>
-      <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-5">
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Nama Lengkap *</label>
-            <input id="f-nama" type="text" placeholder="Nama kamu"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">No. WhatsApp *</label>
-            <input id="f-wa" type="tel" placeholder="08xxxxxxxxxx"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
+      
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container">
+        
+        <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
+          <img src="https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?auto=format&fit=crop&w=600&q=80" alt="Selada & Sayuran" class="w-full h-48 object-cover">
+          <div class="p-6 flex flex-col flex-1">
+            <span class="inline-block bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-3 w-max">Nutrisi</span>
+            <h3 class="font-bold text-xl leading-tight mb-2">Khasiat Head Lettuce & Bombai</h3>
+            <p class="text-gray-600 text-sm mb-4">Head lettuce kaya akan vitamin K dan folat untuk kesehatan jantung. Paduan timun segar dan bawang bombai tak hanya renyah, tapi juga menetralkan kolesterol.</p>
           </div>
         </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Pilih Menu *</label>
-          <select id="f-menu" onchange="updateFormTotal()"
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none bg-white transition">
-            <option value="">-- Pilih Menu --</option>
-          </select>
-        </div>
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-semibold mb-2">Jumlah *</label>
-            <div class="flex items-center gap-3">
-              <button onclick="changeFormQty(-1)" class="w-10 h-10 border rounded-xl font-bold text-lg hover:bg-gray-100 transition">-</button>
-              <input id="f-jumlah" type="number" value="1" min="1" onchange="updateFormTotal()"
-                class="w-16 text-center px-2 py-2 border rounded-xl outline-none">
-              <button onclick="changeFormQty(1)" class="w-10 h-10 border rounded-xl font-bold text-lg hover:bg-gray-100 transition">+</button>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2">Pengiriman</label>
-            <select id="f-delivery" onchange="updateFormTotal()"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none bg-white transition">
-              <option value="0">Ambil di Tempat (Gratis)</option>
-              <option value="5000">Delivery Dekat – Rp 5.000</option>
-              <option value="10000">Delivery Jauh – Rp 10.000</option>
-            </select>
+
+        <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
+          <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=600&q=80" alt="Daging Kebab" class="w-full h-48 object-cover">
+          <div class="p-6 flex flex-col flex-1">
+            <span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full mb-3 w-max">Kualitas Bahan</span>
+            <h3 class="font-bold text-xl leading-tight mb-2">Kandungan Gizi Daging Sapi & Ayam</h3>
+            <p class="text-gray-600 text-sm mb-4">Kami menggunakan potongan daging pilihan. Sapi kaya akan zat besi dan Zinc, sementara ayam memberikan protein tanpa lemak esensial untuk energi harian Anda.</p>
           </div>
         </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Alamat Pengiriman</label>
-          <input id="f-alamat" type="text" placeholder="Isi jika delivery, kosongkan jika pickup"
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition">
+
+        <div id="dynamic-news-slot" class="bg-white border border-gray-100 rounded-2xl p-6 flex items-center justify-center">
+          <p class="text-gray-400 font-medium animate-pulse">Mengambil berita pangan terkini...</p>
         </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">Catatan Khusus</label>
-          <textarea id="f-catatan" rows="2" placeholder="Contoh: tanpa bawang, extra saus, pedas banget, dll"
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 outline-none transition resize-none"></textarea>
-        </div>
-        <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex justify-between items-center">
-          <p class="text-gray-600 font-medium">Total Estimasi</p>
-          <p id="f-total" class="text-3xl font-black text-orange-600">Rp 0</p>
-        </div>
-        <button onclick="submitOrder()"
-          class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-xl transition flex items-center justify-center gap-3">
-          <i class="fab fa-whatsapp text-2xl"></i> PESAN SEKARANG
-        </button>
+
       </div>
     </div>
   </section>
@@ -984,7 +952,76 @@ function showOrderConfirm(orderId) {
       clearTimeout(window._tt);
       window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
     }
+    // ===== GRABBER BERITA BAHAN BAKU KHUSUS =====
+    function loadDynamicNews() {
+      // 1. URL RSS dari Google News yang difilter khusus untuk komoditas Anda
+      const searchQuery = 'harga (tepung OR susu OR saus OR mentega OR "bawang bombay" OR timun OR selada OR tomat OR plastik OR kertas)';
+      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(searchQuery)}&hl=id&gl=ID&ceid=ID:id`;
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
+      // 2. Daftar kata kunci untuk penyaringan ketat di dalam sistem web Anda
+      const kataKunci = ['tepung', 'susu', 'saos', 'saus', 'mentega', 'bombay', 'timun', 'letuce', 'lettuce', 'selada', 'tomat', 'plastik', 'kertas'];
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok' && data.items.length > 0) {
+            
+            // 3. Cari berita yang judulnya BENAR-BENAR mengandung kata kunci di atas
+            let itemTerpilih = data.items.find(item => {
+              const judulBerita = item.title.toLowerCase();
+              return kataKunci.some(kunci => judulBerita.includes(kunci));
+            });
+
+            // Jika kebetulan hari ini tidak ada berita spesifik, ambil berita pertama sebagai cadangan
+            if (!itemTerpilih) {
+              itemTerpilih = data.items[0];
+            }
+            
+            // Format tanggal agar rapi
+            const pubDate = new Date(itemTerpilih.pubDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            // Membersihkan deskripsi dari tag HTML bawaan Google
+            let cleanDesc = itemTerpilih.description.replace(/<[^>]+>/g, '').trim();
+            // Google News kadang deskripsinya kosong, kita beri teks cadangan yang relevan
+            if (cleanDesc.length < 15) {
+                cleanDesc = "Pantau terus pergerakan harga bahan baku harian untuk operasional bisnis yang lebih optimal.";
+            } else {
+                cleanDesc = cleanDesc.substring(0, 110) + '...';
+            }
+
+            // Memasukkan data ke dalam kartu HTML
+            const slot = document.getElementById('dynamic-news-slot');
+            slot.className = "bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
+            slot.innerHTML = `
+              <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Info Komoditas" class="w-full h-48 object-cover">
+              <div class="p-6 flex flex-col flex-1">
+                <div class="flex justify-between items-center mb-3">
+                  <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Info Bahan Baku</span>
+                  <span class="text-xs text-gray-400 font-medium">${pubDate}</span>
+                </div>
+                
+                <h3 class="font-bold text-lg leading-tight mb-2 line-clamp-3">${itemTerpilih.title}</h3>
+                
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${cleanDesc}</p>
+                
+                <a href="${itemTerpilih.link}" target="_blank" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1">
+                  Baca di Sumber <i class="fas fa-external-link-alt text-xs"></i>
+                </a>
+              </div>
+            `;
+          }
+        })
+        .catch(error => {
+          console.error('Gagal mengambil berita:', error);
+          document.getElementById('dynamic-news-slot').innerHTML = `
+            <div class="p-6 text-center text-gray-500">
+              <i class="fas fa-newspaper text-3xl mb-2 text-gray-300"></i>
+              <p class="text-sm">Server berita sedang sibuk.</p>
+            </div>`;
+        });
+  }
+    
     // ===== INIT =====
     window.onload = () => { renderMenu(); renderCarousel(); renderCart(); };
   </script>
