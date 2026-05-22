@@ -775,7 +775,6 @@ function generateOrderId() {
 }
 
 function submitCheckout() {
-function submitCheckout() {
   const nama = document.getElementById('co-nama').value.trim();
   if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
   if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
