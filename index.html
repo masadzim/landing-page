@@ -775,6 +775,7 @@ function generateOrderId() {
 }
 
 function submitCheckout() {
+function submitCheckout() {
   const nama = document.getElementById('co-nama').value.trim();
   if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
   if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
@@ -788,9 +789,7 @@ function submitCheckout() {
   const alamat = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
   const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
 
-  // Kirim ke Google Sheets
-  const payload = new URLSearchParams({
-  data: JSON.stringify({
+  const dataPesanan = JSON.stringify({
     orderId, timestamp, nama,
     pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
     alamat,
@@ -798,43 +797,114 @@ function submitCheckout() {
     pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
     items: itemsText,
     total: 'Rp '+total.toLocaleString('id-ID')
-  })
-});
-
-fetch(APPS_SCRIPT_URL, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(payload)
-})
-
-  // Kirim ke WhatsApp
-  let msg = 'Halo The Kebab Factory!%0A%0A';
-  msg += '*Order ID:* ' + orderId + '%0A';
-  msg += '*Waktu:* ' + timestamp + '%0A';
-  msg += '*Nama:* ' + nama + '%0A';
-  msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
-  if (deliveryMode === 'delivery') {
-    msg += '*Alamat:* ' + alamat + '%0A';
-    if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
-    msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
-  }
-  msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
-  msg += '%0A*Pesanan:*%0A';
-  cart.forEach(i => {
-    msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
-    if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
   });
-  msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
 
-  window.open('https://wa.me/6281357683151?text='+msg, '_blank');
+  const payload = new URLSearchParams();
+  payload.append("data", dataPesanan);
 
-  // Tampilkan Order ID ke customer
-  document.getElementById('modal-checkout').style.display = 'none';
-  showOrderConfirm(orderId);
-  setTimeout(() => { cart = []; renderCart(); }, 800);
+  showToast('Sedang mengirim pesanan...');
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: payload
+  })
+  .then(response => {
+    let msg = 'Halo The Kebab Factory!%0A%0A';
+    msg += '*Order ID:* ' + orderId + '%0A';
+    msg += '*Waktu:* ' + timestamp + '%0A';
+    msg += '*Nama:* ' + nama + '%0A';
+    msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
+    if (deliveryMode === 'delivery') {
+      msg += '*Alamat:* ' + alamat + '%0A';
+      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
+      msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
+    }
+    msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
+    msg += '%0A*Pesanan:*%0A';
+    cart.forEach(i => {
+      msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
+      if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
+    });
+    msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
+
+    window.open('https://wa.me/6281357683151?text='+msg, '_blank');
+
+    document.getElementById('modal-checkout').style.display = 'none';
+    showOrderConfirm(orderId);
+    setTimeout(() => { cart = []; renderCart(); }, 800);
+  })
+  .catch(error => {
+    showToast('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda.');
+    console.error('Error Google Sheet:', error);
+  });
 }
+
+function submitCheckout() {
+  const nama = document.getElementById('co-nama').value.trim();
+  if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
+  if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
+  if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
+  if (!selectedPayment) { showToast('⚠️ Pilih metode pembayaran!'); return; }
+
+  const orderId = generateOrderId();
+  const timestamp = new Date().toLocaleString('id-ID');
+  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
+  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
+  const alamat = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
+  const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
+
+  const dataPesanan = JSON.stringify({
+    orderId, timestamp, nama,
+    pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
+    alamat,
+    ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
+    pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
+    items: itemsText,
+    total: 'Rp '+total.toLocaleString('id-ID')
+  });
+
+  const payload = new URLSearchParams();
+  payload.append("data", dataPesanan);
+
+  showToast('Sedang mengirim pesanan...');
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: payload
+  })
+  .then(response => {
+    let msg = 'Halo The Kebab Factory!%0A%0A';
+    msg += '*Order ID:* ' + orderId + '%0A';
+    msg += '*Waktu:* ' + timestamp + '%0A';
+    msg += '*Nama:* ' + nama + '%0A';
+    msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
+    if (deliveryMode === 'delivery') {
+      msg += '*Alamat:* ' + alamat + '%0A';
+      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
+      msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
+    }
+    msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
+    msg += '%0A*Pesanan:*%0A';
+    cart.forEach(i => {
+      msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
+      if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
+    });
+    msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
+
+    window.open('https://wa.me/6281357683151?text='+msg, '_blank');
+
+    document.getElementById('modal-checkout').style.display = 'none';
+    showOrderConfirm(orderId);
+    setTimeout(() => { cart = []; renderCart(); }, 800);
+  })
+  .catch(error => {
+    showToast('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda.');
+    console.error('Error Google Sheet:', error);
+  });
+  }
+                    
 
 function showOrderConfirm(orderId) {
   const el = document.createElement('div');
