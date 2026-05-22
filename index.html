@@ -45,48 +45,40 @@
 </head>
 <body class="bg-gray-50">
 
-<!-- NAVBAR -->
-<nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
-      <div id="lt" style="display:none">
-        <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
-        <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
+  <!-- NAVBAR -->
+  <nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
+        <div id="lt" style="display:none">
+          <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
+          <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
+        </div>
+      </div>
+      <div class="hidden md:flex gap-8 text-white/80 font-medium text-sm">
+        <a href="#menu" class="hover:text-orange-400 transition">Menu</a>
+        <a href="#galeri" class="hover:text-orange-400 transition">Galeri</a>
+        <a href="#pesan" class="hover:text-orange-400 transition">Pesan</a>
+        <a href="#lokasi" class="hover:text-orange-400 transition">Lokasi</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="toggleCart()" class="relative text-white hover:text-orange-400 transition">
+          <i class="fas fa-shopping-cart text-2xl"></i>
+          <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+        </button>
+        <button onclick="toggleMobileMenu()" class="text-white md:hidden">
+  <i class="fas fa-bars text-2xl"></i>
+        </button>
       </div>
     </div>
-    <div class="hidden md:flex gap-8 text-white/80 font-medium text-sm">
-      <a href="#menu" class="hover:text-orange-400 transition">Menu</a>
-      <a href="#galeri" class="hover:text-orange-400 transition">Galeri</a>
-      <a href="#pesan" class="hover:text-orange-400 transition">Pesan</a>
-      <a href="#lokasi" class="hover:text-orange-400 transition">Lokasi</a>
-      <button onclick="document.getElementById('modal-status').style.display='flex'"
-        class="text-orange-400 hover:text-orange-300 transition text-sm font-bold">
-        🔍 Cek Order
-      </button>
-    </div>
-    <div class="flex items-center gap-4">
-      <button onclick="toggleCart()" class="relative text-white hover:text-orange-400 transition">
-        <i class="fas fa-shopping-cart text-2xl"></i>
-        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
-      </button>
-      <button onclick="toggleMobileMenu()" class="text-white md:hidden">
-        <i class="fas fa-bars text-2xl"></i>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<div id="mobile-menu" class="hidden bg-[#3d2010] text-white px-6 py-4 space-y-3 md:hidden">
+  </nav>
+  <div id="mobile-menu" class="hidden bg-[#3d2010] text-white px-6 py-4 space-y-3 md:hidden">
   <a href="#menu" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Menu</a>
   <a href="#galeri" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Galeri</a>
   <a href="#pesan" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Pesan</a>
-  <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Lokasi</a>
-  <button onclick="toggleMobileMenu();document.getElementById('modal-status').style.display='flex'"
-    class="block py-2 text-orange-400 font-bold w-full text-left">
-    🔍 Cek Status Order
-  </button>
-</div>
+  <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2">Lokasi</a>
+  </div>
+
   <!-- HERO -->
   <section class="hero-bg text-white py-24 md:py-36">
     <div class="max-w-4xl mx-auto px-6 text-center">
@@ -423,35 +415,6 @@
   <div id="toast"></div>
 
   <script>
-    const STATUS_COLOR = {
-  'Pending':   {bg:'#fef9c3',color:'#854d0e'},
-  'Diproses':  {bg:'#dbeafe',color:'#1d4ed8'},
-  'Dikirim':   {bg:'#d1fae5',color:'#065f46'},
-  'Selesai':   {bg:'#dcfce7',color:'#15803d'},
-  'Batal':     {bg:'#fee2e2',color:'#b91c1c'},
-};
-
-function cekStatus() {
-  const orderId = document.getElementById('input-orderid').value.trim();
-  if (!orderId) { showToast('⚠️ Masukkan Order ID dulu!'); return; }
-  showToast('Mengecek status...');
-  fetch(APPS_SCRIPT_URL + '?orderId=' + encodeURIComponent(orderId))
-    .then(r => r.json())
-    .then(data => {
-      if (!data.found) { showToast('❌ Order ID tidak ditemukan'); return; }
-      document.getElementById('res-orderid').textContent = data.orderId;
-      document.getElementById('res-nama').textContent = data.nama;
-      document.getElementById('res-total').textContent = data.total;
-      const s = data.status;
-      const sc = STATUS_COLOR[s] || {bg:'#f3f4f6',color:'#374151'};
-      const el = document.getElementById('res-status');
-      el.textContent = s;
-      el.style.background = sc.bg;
-      el.style.color = sc.color;
-      document.getElementById('status-result').style.display = 'block';
-    })
-    .catch(() => showToast('❌ Gagal cek status. Coba lagi.'));
-}
     function toggleMobileMenu() {
   document.getElementById('mobile-menu').classList.toggle('hidden');
     }
@@ -534,6 +497,7 @@ function cekStatus() {
         const dot = document.getElementById('dot-' + i);
         if (dot) dot.style.background = i === carouselIdx ? 'white' : 'rgba(255,255,255,0.5)';
       });
+    }
 
     // ===== CART =====
     let pendingItemId = null;
@@ -731,17 +695,6 @@ function updateCoTotal() {
   document.getElementById('co-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
 }
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL-9DbFZmqsK3mdN8IRORhqiewbxyrET0ut3Q8cTGY1HHvozFWF4rMvF544QbV6TkHeQ/exec';
-
-function generateOrderId() {
-  const now = new Date();
-  const date = now.getFullYear().toString().slice(-2) +
-    String(now.getMonth()+1).padStart(2,'0') +
-    String(now.getDate()).padStart(2,'0');
-  const rand = Math.floor(Math.random()*9000)+1000;
-  return 'KF-' + date + '-' + rand;
-}
-
 function submitCheckout() {
   const nama = document.getElementById('co-nama').value.trim();
   if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
@@ -749,75 +702,28 @@ function submitCheckout() {
   if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
   if (!selectedPayment) { showToast('⚠️ Pilih metode pembayaran!'); return; }
 
-  const orderId = generateOrderId();
-  const timestamp = new Date().toLocaleString('id-ID');
   const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
   const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
-  const alamat = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-  const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
 
-  // Kirim ke Google Sheets
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      orderId, timestamp, nama,
-      pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-      alamat,
-      ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
-      pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-      items: itemsText,
-      total: 'Rp '+total.toLocaleString('id-ID')
-    })
-  });
-
-  // Kirim ke WhatsApp
   let msg = 'Halo The Kebab Factory!%0A%0A';
-  msg += '*Order ID:* ' + orderId + '%0A';
-  msg += '*Waktu:* ' + timestamp + '%0A';
   msg += '*Nama:* ' + nama + '%0A';
   msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
   if (deliveryMode === 'delivery') {
-    msg += '*Alamat:* ' + alamat + '%0A';
+    msg += '*Alamat:* ' + document.getElementById('co-alamat').value.trim() + '%0A';
     if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
-    msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
+    msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID')) + '%0A';
   }
   msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
   msg += '%0A*Pesanan:*%0A';
   cart.forEach(i => {
-    msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
-    if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
+    msg += '- ' + i.name + ' (' + i.varian + ') x' + i.quantity + ' = Rp ' + (i.price*i.quantity).toLocaleString('id-ID') + '%0A';
+    if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
   });
-  msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
+  msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
 
-  window.open('https://wa.me/6281357683151?text='+msg, '_blank');
-
-  // Tampilkan Order ID ke customer
-  document.getElementById('modal-checkout').style.display = 'none';
-  showOrderConfirm(orderId);
-  setTimeout(() => { cart = []; renderCart(); }, 800);
+  window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
+  setTimeout(() => { cart = []; renderCart(); document.getElementById('modal-checkout').style.display = 'none'; }, 800);
 }
-
-function showOrderConfirm(orderId) {
-  const el = document.createElement('div');
-  el.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-  el.innerHTML = `
-    <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center">
-      <div style="font-size:3rem;margin-bottom:1rem">✅</div>
-      <h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3>
-      <p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p>
-      <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1.5rem">
-        <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p>
-        <p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p>
-      </div>
-      <button onclick="this.parentNode.parentNode.remove()"
-        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
-        OK, Mengerti
-      </button>
-    </div>`;
-  document.body.appendChild(el);
-                               }
     // ===== FORM =====
     function updateFormTotal() {
       const id     = parseInt(document.getElementById('f-menu').value);
