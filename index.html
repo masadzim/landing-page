@@ -666,12 +666,21 @@ function cekStatus() {
       {id:8,  name:"Triple Bid : Telur + Keju + Sosis",                price:25000, desc:"Daging + Telur + Keju + Sosis", badge:"Best Value"},
     
     ];
-
+function initCarousel() {
     const galleryImages = [
   "./kebab1.jpeg",
   "./kebab2.jpeg",
   "./kebab3.jpg",
 ];
+  document.getElementById('swiper-wrapper').innerHTML = images.map(src => `
+        <div class="swiper-slide">
+          <img src="${src}" class="w-full h-[500px] object-cover rounded-3xl">
+        </div>
+      `).join('');
+      
+      new Swiper('.mySwiper', { loop: true, autoplay: { delay: 3000 }, pagination: { el: '.swiper-pagination', clickable: true } });
+    }
+
     let cart = [];
     let carouselIdx = 0;
 
