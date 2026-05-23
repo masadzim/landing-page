@@ -1180,8 +1180,38 @@ function addMessage(text, isUser) {
 function addTyping() {
   const container = document.getElementById('chat-messages');
   const div = document.createElement('div');
+// ===== AI CHATBOT (FRONTEND) =====
+let chatHistory = [];
+let isChatOpen = false;
+
+function toggleAIChat() {
+  isChatOpen = !isChatOpen;
+  const chat = document.getElementById('ai-chat');
+  const ctaLabels = document.getElementById('cta-labels');
+  if(chat) chat.style.display = isChatOpen ? 'flex' : 'none';
+  if(ctaLabels) ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+}
+
+function addMessage(text, isUser) {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start;margin-bottom:0.75rem' + (isUser ? ';flex-direction:row-reverse' : '');
+  div.innerHTML = isUser
+    ? `<div style="background:#ea580c;color:white;border-radius:1rem 0 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;max-width:85%;line-height:1.5">${text}</div>`
+    : `<div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+       <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  const div = document.createElement('div');
   div.id = 'typing-indicator';
-  div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
+  div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start;margin-bottom:0.75rem';
   div.innerHTML = `
     <div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
     <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
@@ -1197,42 +1227,51 @@ function addTyping() {
 
 async function sendChat() {
   const input = document.getElementById('chat-input');
+  if (!input) return;
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
-  document.getElementById('quick-questions').style.display = 'none';
+  
+  const quickQs = document.getElementById('quick-questions');
+  if (quickQs) quickQs.style.display = 'none';
 
   addMessage(text, true);
-  chatHistory.push({ role: 'user', content: text });
   addTyping();
 
+  // Kirim data ke Google Apps Script Backend via x-www-form-urlencoded
+  const payload = new URLSearchParams();
+  payload.append("action", "chat");
+  payload.append("message", text);
+
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: KEBAB_CONTEXT,
-        messages: chatHistory
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: payload
     });
     const data = await res.json();
-    const reply = data.content[0].text;
-
+    
     document.getElementById('typing-indicator')?.remove();
-    addMessage(reply, false);
-    chatHistory.push({ role: 'assistant', content: reply });
-  } catch {
+    
+    if (data.success) {
+      addMessage(data.reply, false);
+    } else {
+      addMessage('Maaf, KebabBot sedang beristirahat. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
+    }
+  } catch (error) {
     document.getElementById('typing-indicator')?.remove();
-    addMessage('Maaf, ada gangguan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
+    addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
   }
 }
 
 function sendQuick(text) {
-  document.getElementById('chat-input').value = text;
-  sendChat();
+  const input = document.getElementById('chat-input');
+  if (input) {
+    input.value = text;
+    sendChat();
   }
+}
+
     // ===== INIT =====
     window.onload = () => { renderMenu(); renderCarousel(); renderCart(); };
   </script>
