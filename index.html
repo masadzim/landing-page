@@ -82,6 +82,59 @@
   background:#333;
   color:white;
       }
+    .ai-chat-button{
+  width:70px;
+  height:70px;
+  border:none;
+  border-radius:50%;
+  overflow:hidden;
+  cursor:pointer;
+  background:none;
+  padding:0;
+
+  box-shadow:
+    0 6px 20px rgba(234,88,12,0.35);
+
+  transition:.3s;
+}
+
+.ai-chat-button:hover{
+  transform:scale(1.08);
+}
+
+.ai-chat-button img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:white;        
+}
+    .mini-ai-icon{
+  width:2.5rem;
+  height:2.5rem;
+  border-radius:50%;
+  overflow:hidden;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:linear-gradient(
+    135deg,
+    #ea580c,
+    #f97316
+  );
+
+  box-shadow:
+    0 4px 10px rgba(234,88,12,.3);
+}
+
+.mini-ai-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:2px;
+  background:white;
+      }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -462,9 +515,12 @@
     <div style="display:flex;align-items:center;gap:0.5rem">
       <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya AI</span>
       <button onclick="toggleAIChat()"
-        style="width:3.5rem;height:3.5rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);color:white;font-size:1.4rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.4);display:flex;align-items:center;justify-content:center">
-        🤖
-      </button>
+class="ai-chat-button">
+
+  <img src="./kebab-bot.png"
+       alt="Kebab Bot">
+
+</button>
     </div>
     <div style="display:flex;align-items:center;gap:0.5rem">
       <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span>
@@ -482,9 +538,14 @@
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
     <div style="display:flex;align-items:center;gap:0.75rem">
-      <div style="width:2.5rem;height:2.5rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🤖</div>
+      <div class="mini-ai-icon">
+
+  <img src="./kebab-bot.png"
+       alt="Mas Aladin">
+
+      </div>
       <div>
-        <p style="color:white;font-weight:900;font-size:0.95rem">KebabBot</p>
+        <p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p>
         <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
       </div>
     </div>
@@ -496,7 +557,7 @@
     <div style="display:flex;gap:0.5rem;align-items:flex-start">
       <div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
       <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
-        Halo! Saya KebabBot 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
+        Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
       </div>
     </div>
   </div>
