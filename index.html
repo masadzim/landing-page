@@ -505,7 +505,7 @@
       <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
     </button>
   </div>
-</div>>
+</div>
 
   <div id="toast"></div>
     
@@ -1240,14 +1240,11 @@ function sendQuick(text) {
   sendChat();
     }
     // ===== INIT =====
-    window.onload = () => { renderMenu(); renderCarousel(); renderCart(); };
+window.addEventListener('load', function(){
 
-    function acceptCookie(){
-  localStorage.setItem('cookieAccepted','yes');
-  document.getElementById('cookieBox').style.display='none';
-}
-
-window.onload = function(){
+  renderMenu();
+  renderCarousel();
+  renderCart();
 
   const accepted =
     localStorage.getItem('cookieAccepted');
@@ -1257,7 +1254,7 @@ window.onload = function(){
       .style.display = 'none';
   }
 
-}
+});
   </script>
 </body>
 </html>
