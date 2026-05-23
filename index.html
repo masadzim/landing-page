@@ -1180,6 +1180,7 @@ function addMessage(text, isUser) {
 function addTyping() {
   const container = document.getElementById('chat-messages');
   const div = document.createElement('div');
+  
 // ===== AI CHATBOT (FRONTEND) =====
 let chatHistory = [];
 let isChatOpen = false;
@@ -1188,8 +1189,19 @@ function toggleAIChat() {
   isChatOpen = !isChatOpen;
   const chat = document.getElementById('ai-chat');
   const ctaLabels = document.getElementById('cta-labels');
-  if(chat) chat.style.display = isChatOpen ? 'flex' : 'none';
-  if(ctaLabels) ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+  
+  if (chat) {
+      if (isChatOpen) {
+          // Tambahkan zIndex secara paksa ke nilai ekstrem untuk menembus segala layer
+          chat.style.cssText = "display: flex; position: fixed; bottom: 1.5rem; right: 1.5rem; width: calc(100% - 3rem); max-width: 380px; background: white; border-radius: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2); z-index: 99999; overflow: hidden; flex-direction: column;";
+      } else {
+          chat.style.display = 'none';
+      }
+  }
+  
+  if (ctaLabels) {
+      ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+  }
 }
 
 function addMessage(text, isUser) {
