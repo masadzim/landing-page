@@ -44,33 +44,44 @@
     @keyframes bounce {
   0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}
 }
-    .cookie-box{
+ .cookie-box{
   position:fixed;
   bottom:20px;
   left:20px;
   right:20px;
   background:#111;
   color:white;
-  padding:15px;
+  padding:14px 16px;
   border-radius:14px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  z-index:9999;
-  pointer-events:auto;
-  isolation:isolate;
+  gap:10px;
+  z-index:999;
   box-shadow:0 5px 20px rgba(0,0,0,0.3);
 }
 
+.cookie-box p{
+  margin:0;
+  font-size:14px;
+}
+
 .cookie-box button{
-  background:#22c55e;
   border:none;
-  color:white;
-  padding:10px 16px;
+  padding:8px 14px;
   border-radius:10px;
   cursor:pointer;
-  pointer-events:auto;
 }
+
+.cookie-box button:first-of-type{
+  background:#22c55e;
+  color:white;
+}
+
+.cookie-box button:last-of-type{
+  background:#333;
+  color:white;
+      }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -514,11 +525,14 @@
     
     <div id="cookieBox" class="cookie-box">
   <p>
-    Kami menggunakan cookie untuk pengalaman terbaik 🍪
+    Kami menggunakan cookie untuk pengalaman terbaik 
   </p>
 
   <button onclick="acceptCookie()">
     Terima
+  </button>
+  <button onclick="closeCookie()">
+    Tolak
   </button>
 </div>
 
@@ -1242,6 +1256,25 @@ function sendQuick(text) {
   document.getElementById('chat-input').value = text;
   sendChat();
     }
+
+ function acceptCookie(){
+
+  localStorage.setItem(
+    'cookieAccepted',
+    'yes'
+  );
+
+  document.getElementById('cookieBox')
+    .style.display = 'none';
+
+}
+
+function closeCookie(){
+
+  document.getElementById('cookieBox')
+    .style.display = 'none';
+
+    }   
     // ===== INIT =====
 window.addEventListener('load', function(){
 
@@ -1253,8 +1286,10 @@ window.addEventListener('load', function(){
     localStorage.getItem('cookieAccepted');
 
   if(accepted === 'yes'){
+
     document.getElementById('cookieBox')
       .style.display = 'none';
+
   }
 
 });
