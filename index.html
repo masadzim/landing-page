@@ -82,7 +82,7 @@
   background:#333;
   color:white;
       }
-    .ai-chat-button{
+  .ai-chat-button{
   width:70px;
   height:70px;
   border:none;
@@ -96,6 +96,7 @@
     0 6px 20px rgba(234,88,12,0.35);
 
   transition:.3s;
+  animation:pulseBot 2s infinite;
 }
 
 .ai-chat-button:hover{
@@ -108,7 +109,25 @@
   object-fit:contain;
   background:white;
 }
-    .mini-ai-icon{
+    @keyframes pulseBot {
+
+  0%{
+    transform:scale(1);
+    box-shadow:0 6px 20px rgba(234,88,12,0.35);
+  }
+
+  50%{
+    transform:scale(1.08);
+    box-shadow:0 10px 28px rgba(234,88,12,0.55);
+  }
+
+  100%{
+    transform:scale(1);
+    box-shadow:0 6px 20px rgba(234,88,12,0.35);
+  }
+
+    }
+  .mini-ai-icon{
   width:2.5rem;
   height:2.5rem;
   border-radius:50%;
