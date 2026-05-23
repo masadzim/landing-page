@@ -440,46 +440,63 @@
 
 <!-- AI CHATBOT -->
 <div id="ai-chat" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;width:calc(100% - 3rem);max-width:380px;background:white;border-radius:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:200;overflow:hidden;flex-direction:column">
+<div id="cta-container" style="position:fixed; bottom:1.5rem; right:1.5rem; z-index:99999; display:flex; flex-direction:column; align-items:flex-end; gap:0.75rem;">
   
-  <!-- Header -->
-  <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
-    <div style="display:flex;align-items:center;gap:0.75rem">
-      <div style="width:2.5rem;height:2.5rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🤖</div>
-      <div>
-        <p style="color:white;font-weight:900;font-size:0.95rem">KebabBot</p>
-        <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
-      </div>
+  <div id="cta-labels" style="display:flex; flex-direction:column; align-items:flex-end; gap:0.75rem;">
+    <div style="display:flex; align-items:center; gap:0.5rem;">
+      <span style="background:white; color:#111; font-size:0.8rem; font-weight:700; padding:0.4rem 0.875rem; border-radius:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya AI</span>
+      <button onclick="toggleAIChat()"
+        style="width:3.5rem; height:3.5rem; border-radius:50%; background:linear-gradient(135deg,#ea580c,#f97316); color:white; font-size:1.4rem; border:none; cursor:pointer; box-shadow:0 4px 16px rgba(234,88,12,0.4); display:flex; align-items:center; justify-content:center">
+        🤖
+      </button>
     </div>
-    <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">&times;</button>
-  </div>
-
-  <!-- Messages -->
-  <div id="chat-messages" style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
-    <div style="display:flex;gap:0.5rem;align-items:flex-start">
-      <div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
-      <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
-        Halo! Saya KebabBot 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
-      </div>
+    <div style="display:flex; align-items:center; gap:0.5rem;">
+      <span style="background:white; color:#111; font-size:0.8rem; font-weight:700; padding:0.4rem 0.875rem; border-radius:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span>
+      <a href="https://wa.me/6281357683151" target="_blank"
+        style="width:3.5rem; height:3.5rem; border-radius:50%; background:#16a34a; color:white; font-size:1.6rem; border:none; cursor:pointer; box-shadow:0 4px 16px rgba(22,163,74,0.4); display:flex; align-items:center; justify-content:center; text-decoration:none">
+        <i class="fab fa-whatsapp"></i>
+      </a>
     </div>
   </div>
 
-  <!-- Quick Questions -->
-  <div id="quick-questions" style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
-    <button onclick="sendQuick('Menu apa saja yang tersedia?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📋 Menu</button>
-    <button onclick="sendQuick('Berapa harga kebab?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">💰 Harga</button>
-    <button onclick="sendQuick('Jam buka berapa?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">🕐 Jam Buka</button>
-    <button onclick="sendQuick('Dimana lokasinya?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📍 Lokasi</button>
-  </div>
+  <div id="ai-chat" style="display:none; width:calc(100vw - 3rem); max-width:380px; background:white; border-radius:1.5rem; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; flex-direction:column;">
+    
+    <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c); padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center">
+      <div style="display:flex; align-items:center; gap:0.75rem">
+        <div style="width:2.5rem; height:2.5rem; border-radius:50%; background:linear-gradient(135deg,#ea580c,#f97316); display:flex; align-items:center; justify-content:center; font-size:1.2rem">🤖</div>
+        <div>
+          <p style="color:white; font-weight:900; font-size:0.95rem">KebabBot</p>
+          <p style="color:rgba(255,255,255,0.6); font-size:0.75rem">AI Assistant The Kebab Factory</p>
+        </div>
+      </div>
+      <button onclick="toggleAIChat()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer; opacity:0.7">&times;</button>
+    </div>
 
-  <!-- Input -->
-  <div style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;background:white">
-    <input id="chat-input" type="text" placeholder="Ketik pertanyaan..."
-      style="flex:1;padding:0.625rem 1rem;border:1.5px solid #e5e7eb;border-radius:2rem;outline:none;font-size:0.875rem"
-      onkeydown="if(event.key==='Enter') sendChat()">
-    <button onclick="sendChat()"
-      style="width:2.5rem;height:2.5rem;border-radius:50%;background:#ea580c;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
-    </button>
+    <div id="chat-messages" style="height:320px; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.75rem; background:#fafafa">
+      <div style="display:flex; gap:0.5rem; align-items:flex-start">
+        <div style="width:2rem; height:2rem; border-radius:50%; background:linear-gradient(135deg,#ea580c,#f97316); display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0">🤖</div>
+        <div style="background:white; border-radius:0 1rem 1rem 1rem; padding:0.75rem 1rem; font-size:0.875rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); max-width:85%; line-height:1.5">
+          Halo! Saya KebabBot 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
+        </div>
+      </div>
+    </div>
+
+    <div id="quick-questions" style="padding:0.75rem 1rem; border-top:1px solid #f3f4f6; display:flex; gap:0.5rem; flex-wrap:wrap; background:white">
+      <button onclick="sendQuick('Menu apa saja yang tersedia?')" style="border:1px solid #e5e7eb; border-radius:2rem; padding:0.35rem 0.875rem; font-size:0.75rem; font-weight:600; cursor:pointer; background:white; color:#374151">📋 Menu</button>
+      <button onclick="sendQuick('Berapa harga kebab?')" style="border:1px solid #e5e7eb; border-radius:2rem; padding:0.35rem 0.875rem; font-size:0.75rem; font-weight:600; cursor:pointer; background:white; color:#374151">💰 Harga</button>
+      <button onclick="sendQuick('Jam buka berapa?')" style="border:1px solid #e5e7eb; border-radius:2rem; padding:0.35rem 0.875rem; font-size:0.75rem; font-weight:600; cursor:pointer; background:white; color:#374151">🕐 Jam Buka</button>
+      <button onclick="sendQuick('Dimana lokasinya?')" style="border:1px solid #e5e7eb; border-radius:2rem; padding:0.35rem 0.875rem; font-size:0.75rem; font-weight:600; cursor:pointer; background:white; color:#374151">📍 Lokasi</button>
+    </div>
+
+    <div style="padding:0.75rem 1rem; border-top:1px solid #f3f4f6; display:flex; gap:0.5rem; background:white">
+      <input id="chat-input" type="text" placeholder="Ketik pertanyaan..."
+        style="flex:1; padding:0.625rem 1rem; border:1.5px solid #e5e7eb; border-radius:2rem; outline:none; font-size:0.875rem"
+        onkeydown="if(event.key==='Enter') sendChat()">
+      <button onclick="sendChat()"
+        style="width:2.5rem; height:2.5rem; border-radius:50%; background:#ea580c; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+        <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1190,14 +1207,10 @@ function toggleAIChat() {
   const chat = document.getElementById('ai-chat');
   const ctaLabels = document.getElementById('cta-labels');
   
-  if (chat) {
-      if (isChatOpen) {
-          // Tambahkan zIndex secara paksa ke nilai ekstrem untuk menembus segala layer
-          chat.style.cssText = "display: flex; position: fixed; bottom: 1.5rem; right: 1.5rem; width: calc(100% - 3rem); max-width: 380px; background: white; border-radius: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2); z-index: 99999; overflow: hidden; flex-direction: column;";
-      } else {
-          chat.style.display = 'none';
-      }
-  }
+  if (chat) chat.style.display = isChatOpen ? 'flex' : 'none';
+  if (ctaLabels) ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+}
+
   
   if (ctaLabels) {
       ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
