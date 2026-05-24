@@ -713,7 +713,7 @@
   <!-- ============================================================
        COOKIE CONSENT BOX
   ============================================================ -->
-  <div id="cookieBox" class="cookie-box">
+  <div id="cookieBox" class="cookie-box" style="display:none">
     <p>Kami menggunakan cookie untuk pengalaman terbaik</p>
     <button onclick="acceptCookie()">Terima</button>
     <button onclick="closeCookie()">Tolak</button>
@@ -1450,16 +1450,15 @@
       renderCart();
       loadDynamicNews(); // ✅ DITAMBAHKAN — sebelumnya tidak dipanggil!
 
-      // Sembunyikan cookie box jika sudah pernah diterima
-      const sudahTerima   = localStorage.getItem('cookieAccepted') === 'yes';
-      const modePWA       = window.matchMedia('(display-mode: standalone)').matches;
-      const modeIOS       = navigator.standalone === true; // Safari iOS homescreen
-
-      if (sudahTerima || modePWA || modeIOS) {
-      document.getElementById('cookieBox').style.display = 'none';
-      }
+        
     });
+  const sudahTerima = localStorage.getItem('cookieAccepted') === 'yes';
+  const modePWA     = window.matchMedia('(display-mode: standalone)').matches;
+  const modeIOS     = navigator.standalone === true;
 
+  if (!sudahTerima && !modePWA && !modeIOS) {
+    document.getElementById('cookieBox').style.display = 'flex';
+  }
     // ============================================================
     // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
     //
