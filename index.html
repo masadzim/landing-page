@@ -1451,8 +1451,12 @@
       loadDynamicNews(); // ✅ DITAMBAHKAN — sebelumnya tidak dipanggil!
 
       // Sembunyikan cookie box jika sudah pernah diterima
-      if (localStorage.getItem('cookieAccepted') === 'yes') {
-        document.getElementById('cookieBox').style.display = 'none';
+      const sudahTerima   = localStorage.getItem('cookieAccepted') === 'yes';
+      const modePWA       = window.matchMedia('(display-mode: standalone)').matches;
+      const modeIOS       = navigator.standalone === true; // Safari iOS homescreen
+
+      if (sudahTerima || modePWA || modeIOS) {
+      document.getElementById('cookieBox').style.display = 'none';
       }
     });
 
