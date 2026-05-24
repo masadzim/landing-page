@@ -55,3 +55,9 @@ self.addEventListener('fetch', event => {
 });self.addEventListener('install', () => {
   console.log('Service Worker Installed');
 });
+// Terima perintah skipWaiting dari halaman
+self.addEventListener('message', event => {
+  if (event.data?.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
