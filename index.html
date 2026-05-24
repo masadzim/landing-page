@@ -1167,6 +1167,7 @@
       const nama = document.getElementById('co-nama').value.trim();
       if (!nama)                                                              { showToast('⚠️ Nama wajib diisi!');             return; }
       if (!deliveryMode)                                                      { showToast('⚠️ Pilih metode pengiriman!');      return; }
+      if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi untuk delivery!'); return; }
       if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
       if (!selectedPayment)                                                   { showToast('⚠️ Pilih metode pembayaran!');     return; }
 
