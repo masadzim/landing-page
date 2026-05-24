@@ -565,10 +565,16 @@
       <div id="section-alamat" style="display:none;margin-bottom:1rem">
         <div style="margin-bottom:0.75rem">
           <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Pin Lokasi *</p>
-          <button onclick="getLocation()"
-            style="width:100%;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer">
-            📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
-          </button>
+          <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+  <button onclick="getLocation()"
+    style="flex:1;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">
+    📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
+  </button>
+  <button onclick="bukaMapPicker()"
+    style="flex:1;border:2px solid #ea580c;color:#ea580c;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">
+    🗺️ Pilih di Peta
+  </button>
+          </div>
           <p id="loc-result" style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;text-align:center"></p>
         </div>
         <div style="margin-bottom:0.75rem">
@@ -743,6 +749,35 @@
     style="background:#ea580c;color:white;border:none;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:700;cursor:pointer;font-size:0.875rem;white-space:nowrap">
     Update Sekarang
   </button>
+</div>
+  <!-- Modal Map Picker -->
+<div id="modal-mappicker"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:white;border-radius:1.5rem;width:100%;max-width:480px;overflow:hidden">
+
+    <div style="padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f3f4f6">
+      <p style="font-weight:900;font-size:1rem">📍 Pilih Lokasi di Peta</p>
+      <button onclick="tutupMapPicker()" style="font-size:1.75rem;color:#9ca3af;border:none;background:none">&times;</button>
+    </div>
+
+    <!-- Peta Leaflet -->
+    <div id="leaflet-map" style="height:320px;width:100%"></div>
+
+    <div style="padding:1rem">
+      <p style="font-size:0.8rem;color:#6b7280;text-align:center;margin-bottom:0.75rem">
+        Geser & zoom peta lalu tap 📍 tepat di lokasi kamu
+      </p>
+      <div id="koordinat-dipilih"
+        style="background:#f9fafb;border-radius:0.75rem;padding:0.75rem;text-align:center;font-size:0.8rem;color:#6b7280;margin-bottom:0.75rem">
+        Belum ada lokasi dipilih
+      </div>
+      <button onclick="konfirmasiMapPicker()"
+        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
+        ✅ Konfirmasi Lokasi Ini
+      </button>
+    </div>
+
+  </div>
 </div>
   <!-- ============================================================
        ⚠️  HAPUS BARIS INI — Swiper library tidak dipakai sama sekali.
@@ -1553,6 +1588,98 @@ function lakukanUpdate() {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     window.location.reload();
   });
+    }
+    // ============================================================
+// MAP PICKER — Leaflet.js + OpenStreetMap
+// ============================================================
+let leafletMap    = null;
+let leafletMarker = null;
+let pickedLat     = null;
+let pickedLng     = null;
+
+function bukaMapPicker() {
+  document.getElementById('modal-mappicker').style.display = 'flex';
+
+  // Inisialisasi peta hanya sekali
+  setTimeout(() => {
+    if (leafletMap) {
+      leafletMap.invalidateSize();
+      return;
+    }
+
+    // Pusat peta = lokasi restoran
+    leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
+
+    // Tile OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(leafletMap);
+
+    // Marker restoran sebagai patokan
+    L.marker([RESTO_LAT, RESTO_LNG])
+      .addTo(leafletMap)
+      .bindPopup('🏪 The Kebab Factory')
+      .openPopup();
+
+    // Marker lokasi user (bisa digeser)
+    leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], {
+      draggable: true,
+      title: 'Lokasi Kamu'
+    }).addTo(leafletMap);
+
+    // Update koordinat setiap marker digeser
+    leafletMarker.on('dragend', function () {
+      const pos = leafletMarker.getLatLng();
+      pickedLat  = pos.lat;
+      pickedLng  = pos.lng;
+      tampilkanKoordinat(pickedLat, pickedLng);
+    });
+
+    // Tap peta untuk pindahkan marker
+    leafletMap.on('click', function (e) {
+      pickedLat  = e.latlng.lat;
+      pickedLng  = e.latlng.lng;
+      leafletMarker.setLatLng([pickedLat, pickedLng]);
+      tampilkanKoordinat(pickedLat, pickedLng);
+    });
+
+  }, 300);
+}
+
+function tampilkanKoordinat(lat, lng) {
+  const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
+  const label = dist < 2 ? 'Gratis' : dist <= 5 ? 'Rp 5.000' : 'Rp 10.000';
+  document.getElementById('koordinat-dipilih').innerHTML =
+    `<span style="color:#111;font-weight:700">Jarak: ${dist.toFixed(1)} km</span>
+     &nbsp;·&nbsp;
+     <span style="color:#ea580c;font-weight:700">Ongkir: ${label}</span>`;
+}
+
+function tutupMapPicker() {
+  document.getElementById('modal-mappicker').style.display = 'none';
+}
+
+function konfirmasiMapPicker() {
+  if (!pickedLat || !pickedLng) {
+    showToast('⚠️ Tap peta dulu untuk pilih lokasi!');
+    return;
+  }
+
+  userLat = pickedLat;
+  userLng = pickedLng;
+
+  const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
+  ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
+  const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
+
+  document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
+  document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
+  document.getElementById('ongkir-info').textContent  = label;
+  document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
+
+  updateCoTotal();
+  tutupMapPicker();
+  showToast('✅ Lokasi berhasil dikonfirmasi!');
     }
     // ============================================================
     // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
