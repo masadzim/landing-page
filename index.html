@@ -730,10 +730,14 @@
     // ============================================================
     // Progresive Web App
     // ============================================================
-    if ('serviceWorker' in navigator) {
+      if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
-    .then(() => console.log('SW Registered'));
-    }
+      .then(reg => {
+        reg.update(); // cek update setiap buka app
+        console.log('SW Registered');
+      })
+      .catch(err => console.log('SW Error:', err));
+      }
     // ============================================================
     // KONFIGURASI: URL Google Apps Script (backend)
     // ============================================================
