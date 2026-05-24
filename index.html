@@ -5,244 +5,264 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Kebab Factory - A Grilled Passion</title>
+
+  <!-- ============================================================
+       EXTERNAL LIBRARIES
+       Tailwind CSS    → utility framework
+       Font Awesome    → ikon-ikon UI
+       ⚠️  HAPUS: swiper-bundle.min.js di bawah sudah tidak terpakai.
+           initCarousel() (kode Swiper) tidak pernah dipanggil dan
+           elemen #swiper-wrapper tidak ada di HTML.
+  ============================================================ -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <style>
+    /* ── GLOBAL ─────────────────────────────────────────── */
     body { font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    /* ── HERO ───────────────────────────────────────────── */
     .hero-bg {
       background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
         url('kebab3.jpg') center/cover no-repeat;
     }
+
+    /* ── MENU CARD ──────────────────────────────────────── */
     .menu-card { transition: transform 0.3s, box-shadow 0.3s; }
-    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); }
+    .menu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+    }
+
+    /* ── FLOATING WA BUTTON ─────────────────────────────── */
     .floating-wa { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.1); }
+    }
 
-    /* Carousel */
-    .carousel-track { display:flex; transition: transform 0.5s ease; }
-    .carousel-slide { min-width:100%; }
-    .carousel-slide img { width:100%; height:380px; object-fit:cover; border-radius:1rem; }
+    /* ── CAROUSEL ───────────────────────────────────────── */
+    .carousel-track { display: flex; transition: transform 0.5s ease; }
+    .carousel-slide { min-width: 100%; }
+    .carousel-slide img {
+      width: 100%; height: 380px;
+      object-fit: cover; border-radius: 1rem;
+    }
 
-    /* Cart sidebar */
+    /* ── CART SIDEBAR ───────────────────────────────────── */
     #cart-sidebar {
-      position:fixed; top:0; right:0; height:100%; width:100%; max-width:420px;
-      background:white; box-shadow:-4px 0 30px rgba(0,0,0,0.15);
-      transform:translateX(100%); transition:transform 0.4s ease;
-      z-index:100; overflow-y:auto;
+      position: fixed; top: 0; right: 0;
+      height: 100%; width: 100%; max-width: 420px;
+      background: white;
+      box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+      transform: translateX(100%); transition: transform 0.4s ease;
+      z-index: 100; overflow-y: auto;
     }
-    #cart-sidebar.open { transform:translateX(0); }
+    #cart-sidebar.open { transform: translateX(0); }
+
+    /* ── CART OVERLAY ───────────────────────────────────── */
     #cart-overlay {
-      display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:99;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 99;
     }
-    #cart-overlay.open { display:block; }
+    #cart-overlay.open { display: block; }
+
+    /* ── TOAST NOTIFICATION ─────────────────────────────── */
     #toast {
-      position:fixed; bottom:6rem; left:50%; transform:translateX(-50%);
-      background:#1f2937; color:white; padding:0.75rem 1.5rem; border-radius:1rem;
-      z-index:200; opacity:0; transition:opacity 0.3s; pointer-events:none; font-size:0.875rem;
-      white-space:nowrap;
+      position: fixed; bottom: 6rem; left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937; color: white;
+      padding: 0.75rem 1.5rem; border-radius: 1rem;
+      z-index: 200; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; font-size: 0.875rem;
+      white-space: nowrap;
     }
+
+    /* ── CHAT TYPING BOUNCE ─────────────────────────────── */
     @keyframes bounce {
-  0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}
-}
- .cookie-box{
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  right:20px;
-  background:#111;
-  color:white;
-  padding:14px 16px;
-  border-radius:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  z-index:999;
-  box-shadow:0 5px 20px rgba(0,0,0,0.3);
-}
-
-.cookie-box p{
-  margin:0;
-  font-size:14px;
-}
-
-.cookie-box button{
-  border:none;
-  padding:8px 14px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.cookie-box button:first-of-type{
-  background:#22c55e;
-  color:white;
-}
-
-.cookie-box button:last-of-type{
-  background:#333;
-  color:white;
-      }
-  .ai-chat-button{
-  width:70px;
-  height:70px;
-  border:none;
-  border-radius:50%;
-  overflow:hidden;
-  cursor:pointer;
-  background:none;
-  padding:0;
-
-  box-shadow:
-    0 6px 20px rgba(234,88,12,0.35);
-
-  transition:.3s;
-  animation:pulseBot 2s infinite;
-}
-
-.ai-chat-button:hover{
-  transform:scale(1.08);
-}
-
-.ai-chat-button img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  background:white;
-}
-    @keyframes pulseBot {
-
-  0%{
-    transform:scale(1);
-    box-shadow:0 6px 20px rgba(234,88,12,0.35);
-  }
-
-  50%{
-    transform:scale(1.08);
-    box-shadow:0 10px 28px rgba(234,88,12,0.55);
-  }
-
-  100%{
-    transform:scale(1);
-    box-shadow:0 6px 20px rgba(234,88,12,0.35);
-  }
-
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-4px); }
     }
-  .mini-ai-icon{
-  width:2.5rem;
-  height:2.5rem;
-  border-radius:50%;
-  overflow:hidden;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    /* ── COOKIE BOX ─────────────────────────────────────── */
+    .cookie-box {
+      position: fixed; bottom: 20px; left: 20px; right: 20px;
+      background: #111; color: white;
+      padding: 14px 16px; border-radius: 14px;
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 10px;
+      z-index: 999; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+    .cookie-box p { margin: 0; font-size: 14px; }
+    .cookie-box button {
+      border: none; padding: 8px 14px;
+      border-radius: 10px; cursor: pointer;
+    }
+    .cookie-box button:first-of-type { background: #22c55e; color: white; }
+    .cookie-box button:last-of-type  { background: #333; color: white; }
 
-  background:linear-gradient(
-    135deg,
-    #ea580c,
-    #f97316
-  );
+    /* ── AI CHAT BUTTON (floating) ──────────────────────── */
+    .ai-chat-button {
+      width: 70px; height: 70px;
+      border: none; border-radius: 50%;
+      overflow: hidden; cursor: pointer;
+      background: none; padding: 0;
+      box-shadow: 0 6px 20px rgba(234,88,12,0.35);
+      transition: .3s;
+      animation: pulseBot 2s infinite;
+    }
+    .ai-chat-button:hover { transform: scale(1.08); }
+    .ai-chat-button img {
+      width: 100%; height: 100%;
+      object-fit: contain; background: white;
+    }
 
-  box-shadow:
-    0 4px 10px rgba(234,88,12,.3);
-}
+    /* ── AI CHAT BUTTON PULSE ───────────────────────────── */
+    @keyframes pulseBot {
+      0%   { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
+      50%  { transform: scale(1.08); box-shadow: 0 10px 28px rgba(234,88,12,0.55); }
+      100% { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
+    }
 
-.mini-ai-icon img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  padding:2px;
-  background:white;
-      }
+    /* ── MINI AI ICON (dalam header chat) ───────────────── */
+    .mini-ai-icon {
+      width: 2.5rem; height: 2.5rem;
+      border-radius: 50%; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      box-shadow: 0 4px 10px rgba(234,88,12,.3);
+    }
+    .mini-ai-icon img {
+      width: 100%; height: 100%;
+      object-fit: contain; padding: 2px;
+      background: white;
+    }
   </style>
 </head>
 <body class="bg-gray-50">
 
-  <!-- NAVBAR -->
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
   <nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+
+      <!-- Logo -->
       <div class="flex items-center gap-3">
-        <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
+        <img src="./logo.png" alt="Logo" class="h-12 w-auto"
+          onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
+        <!-- Fallback teks jika logo.png tidak ada -->
         <div id="lt" style="display:none">
-          <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
+          <span class="text-2xl font-black"
+            style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
+            Kebab
+          </span>
           <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
         </div>
       </div>
+
+      <!-- Nav Links (desktop) -->
       <div class="hidden md:flex gap-8 text-white/80 font-medium text-sm">
-        <a href="#menu" class="hover:text-orange-400 transition">Menu</a>
+        <a href="#menu"   class="hover:text-orange-400 transition">Menu</a>
         <a href="#galeri" class="hover:text-orange-400 transition">Galeri</a>
-        <a href="#pesan" class="hover:text-orange-400 transition">Pesan</a>
+        <a href="#pesan"  class="hover:text-orange-400 transition">Pesan</a>
         <a href="#lokasi" class="hover:text-orange-400 transition">Lokasi</a>
       </div>
+
+      <!-- Tombol kanan -->
       <div class="flex items-center gap-4">
         <button onclick="document.getElementById('modal-status').style.display='flex'"
-  class="text-white hover:text-orange-400 transition text-sm font-semibold hidden md:block">
-  Cek Order
-</button>
+          class="text-white hover:text-orange-400 transition text-sm font-semibold hidden md:block">
+          Cek Order
+        </button>
+        <!-- Ikon keranjang + badge jumlah -->
         <button onclick="toggleCart()" class="relative text-white hover:text-orange-400 transition">
           <i class="fas fa-shopping-cart text-2xl"></i>
-          <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          <span id="cart-count"
+            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+            0
+          </span>
         </button>
+        <!-- Tombol hamburger (mobile) -->
         <button onclick="toggleMobileMenu()" class="text-white md:hidden">
-  <i class="fas fa-bars text-2xl"></i>
+          <i class="fas fa-bars text-2xl"></i>
         </button>
       </div>
+
     </div>
   </nav>
+
+  <!-- Mobile Menu Dropdown -->
   <div id="mobile-menu" class="hidden bg-[#3d2010] text-white px-6 py-4 space-y-3 md:hidden">
-  <a href="#menu" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Menu</a>
-  <a href="#galeri" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Galeri</a>
-  <a href="#pesan" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Info & Edukasi</a>
-  <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2">Lokasi</a>
+    <a href="#menu"   onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Menu</a>
+    <a href="#galeri" onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Galeri</a>
+    <a href="#pesan"  onclick="toggleMobileMenu()" class="block py-2 border-b border-white/10">Info & Edukasi</a>
+    <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2">Lokasi</a>
   </div>
 
-<!-- CEK STATUS -->
-<div id="modal-status" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem">
-  <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-      <h3 style="font-weight:900;font-size:1.2rem">Cek Status Pesanan</h3>
-      <button onclick="document.getElementById('modal-status').style.display='none'" style="font-size:2rem;color:#9ca3af">&times;</button>
-    </div>
-    <input id="input-orderid" type="text" placeholder="Masukkan Order ID (contoh: KF-260522-1234)"
-      style="width:100%;padding:0.875rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem;margin-bottom:1rem">
-    <button onclick="cekStatus()"
-      style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;margin-bottom:1rem">
-      Cek Status
-    </button>
-    <div id="status-result" style="display:none;background:#f9fafb;border-radius:1rem;padding:1rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-        <span style="color:#6b7280;font-size:0.85rem">Order ID</span>
-        <span id="res-orderid" style="font-weight:700;font-size:0.85rem"></span>
+  <!-- ============================================================
+       MODAL: CEK STATUS PESANAN
+  ============================================================ -->
+  <div id="modal-status"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <h3 style="font-weight:900;font-size:1.2rem">Cek Status Pesanan</h3>
+        <button onclick="document.getElementById('modal-status').style.display='none'"
+          style="font-size:2rem;color:#9ca3af">&times;</button>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-        <span style="color:#6b7280;font-size:0.85rem">Nama</span>
-        <span id="res-nama" style="font-weight:700;font-size:0.85rem"></span>
+
+      <input id="input-orderid" type="text"
+        placeholder="Masukkan Order ID (contoh: KF-260522-1234)"
+        style="width:100%;padding:0.875rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem;margin-bottom:1rem">
+
+      <button onclick="cekStatus()"
+        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;margin-bottom:1rem">
+        Cek Status
+      </button>
+
+      <!-- Area hasil pencarian status -->
+      <div id="status-result" style="display:none;background:#f9fafb;border-radius:1rem;padding:1rem">
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+          <span style="color:#6b7280;font-size:0.85rem">Order ID</span>
+          <span id="res-orderid" style="font-weight:700;font-size:0.85rem"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+          <span style="color:#6b7280;font-size:0.85rem">Nama</span>
+          <span id="res-nama" style="font-weight:700;font-size:0.85rem"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+          <span style="color:#6b7280;font-size:0.85rem">Total</span>
+          <span id="res-total" style="font-weight:700;font-size:0.85rem"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="color:#6b7280;font-size:0.85rem">Status</span>
+          <span id="res-status"
+            style="font-weight:900;font-size:1rem;padding:0.25rem 0.875rem;border-radius:2rem"></span>
+        </div>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-        <span style="color:#6b7280;font-size:0.85rem">Total</span>
-        <span id="res-total" style="font-weight:700;font-size:0.85rem"></span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="color:#6b7280;font-size:0.85rem">Status</span>
-        <span id="res-status" style="font-weight:900;font-size:1rem;padding:0.25rem 0.875rem;border-radius:2rem"></span>
-      </div>
+
     </div>
   </div>
-</div>
-  
-  <!-- HERO -->
+
+  <!-- ============================================================
+       HERO SECTION
+  ============================================================ -->
   <section class="hero-bg text-white py-24 md:py-36">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <h1 class="text-5xl md:text-7xl font-black mb-4">The Kebab Factory</h1>
       <p class="text-orange-400 font-semibold tracking-widest uppercase text-sm mb-3">A Grilled Passion</p>
-      <p class="text-xl md:text-2xl font-light mb-10 text-white/80">Kebab Signature &bull; With Extras  &bull; Grilled with Passion</p>
+      <p class="text-xl md:text-2xl font-light mb-10 text-white/80">
+        Kebab Signature &bull; With Extras &bull; Grilled with Passion
+      </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="#menu" class="bg-orange-600 hover:bg-orange-700 px-8 py-4 rounded-full font-bold text-lg transition">
           <i class="fas fa-utensils mr-2"></i>Lihat Menu
         </a>
         <button onclick="document.getElementById('modal-status').style.display='flex'"
-  class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition text-white">
-  🔍 Cek Order
+          class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition text-white">
+          🔍 Cek Order
         </button>
       </div>
       <div class="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/70">
@@ -252,7 +272,9 @@
     </div>
   </section>
 
-  <!-- MENU -->
+  <!-- ============================================================
+       MENU SECTION
+  ============================================================ -->
   <section id="menu" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-14">
@@ -260,37 +282,60 @@
         <h2 class="text-4xl font-black mt-1">Menu Kami</h2>
         <p class="text-gray-500 mt-2">Tap Tambah untuk masukkan ke keranjang</p>
       </div>
+      <!-- Kartu menu di-render oleh renderMenu() -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container"></div>
     </div>
   </section>
 
-  <!-- MODAL VARIAN -->
-<div id="modal-varian" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeModal(event)">
-  <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:90vh;overflow-y:auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <h3 id="modal-nama" style="font-weight:900;font-size:1.2rem"></h3>
-      <button onclick="document.getElementById('modal-varian').style.display='none'" style="font-size:2rem;color:#9ca3af">&times;</button>
+  <!-- ============================================================
+       MODAL: PILIH VARIAN
+  ============================================================ -->
+  <div id="modal-varian"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center"
+    onclick="closeModal(event)">
+    <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:90vh;overflow-y:auto">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h3 id="modal-nama" style="font-weight:900;font-size:1.2rem"></h3>
+        <button onclick="document.getElementById('modal-varian').style.display='none'"
+          style="font-size:2rem;color:#9ca3af">&times;</button>
+      </div>
+      <p id="modal-harga" style="color:#ea580c;font-weight:900;font-size:1.3rem;margin-bottom:1rem"></p>
+
+      <!-- Pilihan varian -->
+      <p style="font-weight:700;margin-bottom:0.5rem">Pilih Varian *</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
+        <button onclick="selectVarian(this,'Tidak Pedas')" class="varian-btn"
+          style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
+          Tidak Pedas
+        </button>
+        <button onclick="selectVarian(this,'Pedas')" class="varian-btn"
+          style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
+          🌶️ Pedas
+        </button>
+        <button onclick="selectVarian(this,'Summer')" class="varian-btn"
+          style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
+          🌿 Summer
+        </button>
+      </div>
+
+      <!-- Catatan tambahan -->
+      <p style="font-weight:700;margin-bottom:0.5rem">Catatan Khusus</p>
+      <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll"
+        style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem">
+      </textarea>
+
+      <button onclick="confirmAddToCart()"
+        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:1rem;border-radius:1rem;font-size:1.1rem">
+        + Tambah ke Keranjang
+      </button>
+
     </div>
-    <p id="modal-harga" style="color:#ea580c;font-weight:900;font-size:1.3rem;margin-bottom:1rem"></p>
-
-    <p style="font-weight:700;margin-bottom:0.5rem">Pilih Varian *</p>
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
-      <button onclick="selectVarian(this,'Tidak Pedas')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">Tidak Pedas</button>
-      <button onclick="selectVarian(this,'Pedas')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">🌶️ Pedas</button>
-      <button onclick="selectVarian(this,'Summer')" class="varian-btn" style="border:2px solid #e5e7eb;padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">🌿 Summer</button>
-    </div>
-
-    <p style="font-weight:700;margin-bottom:0.5rem">Catatan Khusus</p>
-    <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll"
-      style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem"></textarea>
-
-    <button onclick="confirmAddToCart()"
-      style="width:100%;background:#ea580c;color:white;font-weight:900;padding:1rem;border-radius:1rem;font-size:1.1rem">
-      + Tambah ke Keranjang
-    </button>
   </div>
-</div>
-  <!-- GALERI -->
+
+  <!-- ============================================================
+       GALERI SECTION (Carousel custom — bukan Swiper)
+  ============================================================ -->
   <section id="galeri" class="py-20 bg-gray-50">
     <div class="max-w-5xl mx-auto px-6">
       <div class="text-center mb-12">
@@ -298,11 +343,14 @@
         <h2 class="text-4xl font-black mt-1">Galeri Kami</h2>
       </div>
       <div class="relative overflow-hidden rounded-2xl">
+        <!-- Track carousel di-render oleh renderCarousel() -->
         <div class="carousel-track" id="carousel-track"></div>
-        <button onclick="moveCarousel(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+        <button onclick="moveCarousel(-1)"
+          class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button onclick="moveCarousel(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+        <button onclick="moveCarousel(1)"
+          class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
           <i class="fas fa-chevron-right"></i>
         </button>
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" id="carousel-dots"></div>
@@ -310,18 +358,22 @@
     </div>
   </section>
 
-  <!-- INFO & EDUKASI -->
+  <!-- ============================================================
+       INFO & EDUKASI SECTION
+       ⚠️  BUG ASLI: Ada dua <section> bersarang (#pesan & #informasi).
+           Diperbaiki di sini menjadi satu section dengan dua id.
+  ============================================================ -->
   <section id="pesan" class="py-20 bg-white">
-    <section id="informasi" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12">
         <p class="text-orange-600 font-semibold tracking-widest uppercase text-sm">Info & Edukasi</p>
         <h2 class="text-4xl font-black mt-1">Jurnal Kebab Factory</h2>
         <p class="text-gray-500 mt-2">Ketahui rahasia di balik bahan premium kami & info terkini</p>
       </div>
-      
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container">
-        
+
+        <!-- Kartu statis 1: Nutrisi sayur -->
         <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
           <img src="letuce.png" alt="Selada & Sayuran" class="w-full h-48 object-cover">
           <div class="p-6 flex flex-col flex-1">
@@ -331,6 +383,7 @@
           </div>
         </div>
 
+        <!-- Kartu statis 2: Nutrisi daging -->
         <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
           <img src="Dagingkebab.png" alt="Daging Kebab" class="w-full h-48 object-cover">
           <div class="p-6 flex flex-col flex-1">
@@ -340,6 +393,8 @@
           </div>
         </div>
 
+        <!-- Kartu dinamis 3: Diisi oleh loadDynamicNews() -->
+        <!-- ⚠️  PERBAIKAN: loadDynamicNews() harus dipanggil di init! -->
         <div id="dynamic-news-slot" class="bg-white border border-gray-100 rounded-2xl p-6 flex items-center justify-center">
           <p class="text-gray-400 font-medium animate-pulse">Mengambil berita pangan terkini...</p>
         </div>
@@ -348,7 +403,9 @@
     </div>
   </section>
 
-  <!-- LOKASI -->
+  <!-- ============================================================
+       LOKASI SECTION
+  ============================================================ -->
   <section id="lokasi" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12">
@@ -362,14 +419,16 @@
       </div>
       <div class="mt-6 text-center">
         <a href="https://www.google.com/maps?q=-7.919438,111.496355" target="_blank"
-           class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition">
+          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition">
           <i class="fas fa-directions"></i> Buka di Google Maps
         </a>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ============================================================
+       FOOTER: Info kontak & jam
+  ============================================================ -->
   <section class="bg-[#3d2010] text-white py-16">
     <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
       <div>
@@ -377,7 +436,10 @@
         <div class="space-y-4 text-white/70">
           <div class="flex items-start gap-3">
             <i class="fas fa-clock text-orange-400 mt-1"></i>
-            <div><p class="font-semibold text-white">Jam Operasional</p><p>Setiap Hari: 11.00 – 23.00 WIB</p></div>
+            <div>
+              <p class="font-semibold text-white">Jam Operasional</p>
+              <p>Setiap Hari: 11.00 – 23.00 WIB</p>
+            </div>
           </div>
           <div class="flex items-start gap-3">
             <i class="fas fa-map-marker-alt text-orange-400 mt-1"></i>
@@ -392,31 +454,37 @@
       <div class="text-center md:text-left">
         <p class="text-white/60 mb-6 text-lg">Pesanan langsung diproses setelah konfirmasi WhatsApp. Kami siap melayani!</p>
         <a href="https://wa.me/6281357683151" target="_blank"
-           class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition">
+          class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition">
           <i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp
         </a>
       </div>
     </div>
   </section>
+
+  <!-- Footer: Metode Pembayaran -->
   <section class="bg-[#3d2010] py-8 border-t border-white/10">
-  <div class="max-w-7xl mx-auto px-6 text-center">
-    <p class="text-white/60 text-sm mb-4">Pembayaran Tersedia</p>
-    <div class="flex justify-center items-center gap-6 flex-wrap">
-      <div class="bg-white px-6 py-3 rounded-xl flex items-center gap-3">
-        <img src="./qris.png" alt="QRIS" class="h-8 w-auto">
-        <span class="font-bold text-sm text-gray-700">Scan & Pay</span>
-      </div>
-      <div class="bg-white px-6 py-3 rounded-xl">
-        <span class="font-bold text-sm text-gray-700">💵 Cash</span>
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p class="text-white/60 text-sm mb-4">Pembayaran Tersedia</p>
+      <div class="flex justify-center items-center gap-6 flex-wrap">
+        <div class="bg-white px-6 py-3 rounded-xl flex items-center gap-3">
+          <img src="./qris.png" alt="QRIS" class="h-8 w-auto">
+          <span class="font-bold text-sm text-gray-700">Scan & Pay</span>
+        </div>
+        <div class="bg-white px-6 py-3 rounded-xl">
+          <span class="font-bold text-sm text-gray-700">💵 Cash</span>
+        </div>
       </div>
     </div>
-  </div>
-          </section>
+  </section>
+
+  <!-- Footer: Copyright -->
   <footer class="bg-black text-gray-600 text-center py-5 text-sm">
     © 2026 The Kebab Factory &bull; A Grilled Passion &bull; Ponorogo
   </footer>
 
-  <!-- CART SIDEBAR -->
+  <!-- ============================================================
+       CART SIDEBAR
+  ============================================================ -->
   <div id="cart-sidebar">
     <div class="p-6">
       <div class="flex justify-between items-center mb-6">
@@ -431,303 +499,371 @@
           <span>Total</span>
           <span id="cart-total-price" class="text-orange-600">Rp 0</span>
         </div>
-        <button onclick="openCheckout()""
+        <!-- ✅ BUG DIPERBAIKI: Aslinya ada tanda kutip ganda ekstra → onclick="openCheckout()"" -->
+        <button onclick="openCheckout()"
           class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-2">
           <i class="fab fa-whatsapp text-xl"></i> Checkout via WhatsApp
         </button>
       </div>
     </div>
   </div>
-  <!-- MODAL CHECKOUT -->
-<div id="modal-checkout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeCheckout(event)">
-  <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:92vh;overflow-y:auto">
-    
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
-      <h3 style="font-weight:900;font-size:1.2rem">Detail Pesanan</h3>
-      <button onclick="document.getElementById('modal-checkout').style.display='none'" style="font-size:2rem;color:#9ca3af">&times;</button>
-    </div>
 
-    <!-- Ringkasan -->
-    <div style="background:#fff7ed;border-radius:1rem;padding:1rem;margin-bottom:1rem">
-      <p style="font-weight:700;font-size:0.85rem;color:#c2410c;margin-bottom:0.5rem">Ringkasan Pesanan</p>
-      <div id="co-summary" style="font-size:0.85rem"></div>
-      <div style="border-top:1px solid #fed7aa;margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;font-weight:900">
-        <span>Subtotal</span><span id="co-subtotal" style="color:#ea580c"></span>
+  <!-- ============================================================
+       MODAL: CHECKOUT DETAIL PESANAN
+  ============================================================ -->
+  <div id="modal-checkout"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center"
+    onclick="closeCheckout(event)">
+    <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:92vh;overflow-y:auto">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+        <h3 style="font-weight:900;font-size:1.2rem">Detail Pesanan</h3>
+        <button onclick="document.getElementById('modal-checkout').style.display='none'"
+          style="font-size:2rem;color:#9ca3af">&times;</button>
       </div>
-    </div>
 
-    <!-- Nama -->
-    <div style="margin-bottom:1rem">
-      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nama Pemesan *</p>
-      <input id="co-nama" type="text" placeholder="Nama lengkap"
-        style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
-    </div>
-
-    <!-- Metode Pengiriman -->
-    <div style="margin-bottom:1rem">
-      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-        <div id="card-pickup" onclick="selectDelivery('pickup')"
-          style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
-          <p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p>
-          <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p>
-        </div>
-        <div id="card-delivery" onclick="selectDelivery('delivery')"
-          style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
-          <p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p>
-          <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p>
+      <!-- Ringkasan item pesanan -->
+      <div style="background:#fff7ed;border-radius:1rem;padding:1rem;margin-bottom:1rem">
+        <p style="font-weight:700;font-size:0.85rem;color:#c2410c;margin-bottom:0.5rem">Ringkasan Pesanan</p>
+        <div id="co-summary" style="font-size:0.85rem"></div>
+        <div style="border-top:1px solid #fed7aa;margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;font-weight:900">
+          <span>Subtotal</span>
+          <span id="co-subtotal" style="color:#ea580c"></span>
         </div>
       </div>
-    </div>
 
-    <!-- Alamat (muncul jika delivery) -->
-    <div id="section-alamat" style="display:none;margin-bottom:1rem">
-      <div style="margin-bottom:0.75rem">
-        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Pin Lokasi</p>
-        <button onclick="getLocation()"
-          style="width:100%;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer">
-          📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
-        </button>
-        <p id="loc-result" style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;text-align:center"></p>
+      <!-- Nama pemesan -->
+      <div style="margin-bottom:1rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nama Pemesan *</p>
+        <input id="co-nama" type="text" placeholder="Nama lengkap"
+          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
       </div>
-      <div style="margin-bottom:0.75rem">
-        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Detail Alamat *</p>
-        <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan"
-          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem"></textarea>
-      </div>
-      <div style="background:#f9fafb;border-radius:0.75rem;padding:0.875rem;display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <p style="font-weight:700;font-size:0.875rem">Ongkos Kirim</p>
-          <p id="ongkir-info" style="font-size:0.75rem;color:#6b7280">Belum ada lokasi</p>
+
+      <!-- Metode pengiriman -->
+      <div style="margin-bottom:1rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+          <div id="card-pickup" onclick="selectDelivery('pickup')"
+            style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+            <p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p>
+            <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p>
+          </div>
+          <div id="card-delivery" onclick="selectDelivery('delivery')"
+            style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+            <p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p>
+            <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p>
+          </div>
         </div>
-        <span id="ongkir-harga" style="font-weight:900;color:#ea580c;font-size:1.1rem">-</span>
       </div>
-    </div>
 
-    <!-- Pembayaran -->
-    <div style="margin-bottom:1rem">
-      <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pembayaran *</p>
-      <div id="payment-options">
-        <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
+      <!-- Alamat (hanya tampil jika pilih delivery) -->
+      <div id="section-alamat" style="display:none;margin-bottom:1rem">
+        <div style="margin-bottom:0.75rem">
+          <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Pin Lokasi</p>
+          <button onclick="getLocation()"
+            style="width:100%;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer">
+            📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
+          </button>
+          <p id="loc-result" style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;text-align:center"></p>
+        </div>
+        <div style="margin-bottom:0.75rem">
+          <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Detail Alamat *</p>
+          <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan"
+            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem">
+          </textarea>
+        </div>
+        <div style="background:#f9fafb;border-radius:0.75rem;padding:0.875rem;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <p style="font-weight:700;font-size:0.875rem">Ongkos Kirim</p>
+            <p id="ongkir-info" style="font-size:0.75rem;color:#6b7280">Belum ada lokasi</p>
+          </div>
+          <span id="ongkir-harga" style="font-weight:900;color:#ea580c;font-size:1.1rem">-</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Total -->
-    <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
-      <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
-    </div>
+      <!-- Metode pembayaran -->
+      <div style="margin-bottom:1rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pembayaran *</p>
+        <div id="payment-options">
+          <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
+        </div>
+      </div>
 
-    <button onclick="submitCheckout()"
-      style="width:100%;background:#16a34a;color:white;font-weight:900;padding:1.25rem;border-radius:1rem;font-size:1.1rem;cursor:pointer;border:none">
-      <i class="fab fa-whatsapp"></i> Kirim Pesanan via WhatsApp
-    </button>
+      <!-- Total bayar -->
+      <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
+        <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
+      </div>
+
+      <button onclick="submitCheckout()"
+        style="width:100%;background:#16a34a;color:white;font-weight:900;padding:1.25rem;border-radius:1rem;font-size:1.1rem;cursor:pointer;border:none">
+        <i class="fab fa-whatsapp"></i> Kirim Pesanan via WhatsApp
+      </button>
+
+    </div>
   </div>
-</div>
+
+  <!-- Cart overlay (klik untuk tutup sidebar) -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
 
-<!-- CTA FLOATING -->
-<div id="cta-buttons" style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
-  
-  <!-- Label -->
-  <div id="cta-labels" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-    <div style="display:flex;align-items:center;gap:0.5rem">
-      <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya Mas Aladin</span>
-      <button onclick="toggleAIChat()"
-class="ai-chat-button">
+  <!-- ============================================================
+       FLOATING CTA BUTTONS (kanan bawah)
+  ============================================================ -->
+  <div id="cta-buttons"
+    style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
 
-  <img src="./kebab-bot.png"
-       alt="Kebab Bot">
+    <div id="cta-labels" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
 
-</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:0.5rem">
-      <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span>
-      <a href="https://wa.me/6281357683151" target="_blank"
-        style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- AI CHATBOT -->
-<div id="ai-chat" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;width:calc(100% - 3rem);max-width:380px;background:white;border-radius:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:200;overflow:hidden;flex-direction:column">
-  
-  <!-- Header -->
-  <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
-    <div style="display:flex;align-items:center;gap:0.75rem">
-      <div class="mini-ai-icon">
-
-  <img src="./kebab-bot.png"
-       alt="Mas Aladin">
-
+      <!-- Tombol AI Chatbot -->
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+          Tanya Mas Aladin
+        </span>
+        <button onclick="toggleAIChat()" class="ai-chat-button">
+          <img src="./kebab-bot.png" alt="Kebab Bot">
+        </button>
       </div>
-      <div>
-        <p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p>
-        <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
-      </div>
-    </div>
-    <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">&times;</button>
-  </div>
 
-  <!-- Messages -->
-  <div id="chat-messages" style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
-    <div style="display:flex;gap:0.5rem;align-items:flex-start">
-      <div class="mini-ai-icon">
-
-  <img src="./kebab-bot.png"
-       alt="Mas Aladin">
-
+      <!-- Tombol WhatsApp -->
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+          Chat WhatsApp
+        </span>
+        <a href="https://wa.me/6281357683151" target="_blank"
+          style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none">
+          <i class="fab fa-whatsapp"></i>
+        </a>
       </div>
-      <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
-        Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
-      </div>
+
     </div>
   </div>
 
-  <!-- Quick Questions -->
-  <div id="quick-questions" style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
-    <button onclick="sendQuick('Menu apa saja yang tersedia?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📋 Menu</button>
-    <button onclick="sendQuick('Berapa harga kebab?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">💰 Harga</button>
-    <button onclick="sendQuick('Jam buka berapa?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">🕐 Jam Buka</button>
-    <button onclick="sendQuick('Dimana lokasinya?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📍 Lokasi</button>
-  </div>
+  <!-- ============================================================
+       AI CHATBOT WINDOW
+  ============================================================ -->
+  <div id="ai-chat"
+    style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;width:calc(100% - 3rem);max-width:380px;background:white;border-radius:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:200;overflow:hidden;flex-direction:column">
 
-  <!-- Input -->
-  <div style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;background:white">
-    <input id="chat-input" type="text" placeholder="Ketik pertanyaan..."
-      style="flex:1;padding:0.625rem 1rem;border:1.5px solid #e5e7eb;border-radius:2rem;outline:none;font-size:0.875rem"
-      onkeydown="if(event.key==='Enter') sendChat()">
-    <button onclick="sendChat()"
-      style="width:2.5rem;height:2.5rem;border-radius:50%;background:#ea580c;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
-    </button>
-  </div>
-</div>
-
-  <div id="toast"></div>
-    
-    <div id="cookieBox" class="cookie-box">
-  <p>
-    Kami menggunakan cookie untuk pengalaman terbaik 
-  </p>
-
-  <button onclick="acceptCookie()">
-    Terima
-  </button>
-  <button onclick="closeCookie()">
-    Tolak
-  </button>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/swiper/11.1.0/swiper-bundle.min.js"></script>
-  <script>
-const STATUS_COLOR = {
-  'Pending':   {bg:'#fef9c3',color:'#854d0e'},
-  'Diproses':  {bg:'#dbeafe',color:'#1d4ed8'},
-  'Dikirim':   {bg:'#d1fae5',color:'#065f46'},
-  'Selesai':   {bg:'#dcfce7',color:'#15803d'},
-  'Batal':     {bg:'#fee2e2',color:'#b91c1c'},
-};
-
-function cekStatus() {
-  const orderId = document.getElementById('input-orderid').value.trim();
-  if (!orderId) { showToast('⚠️ Masukkan Order ID dulu!'); return; }
-  showToast('Mengecek status...');
-  fetch(APPS_SCRIPT_URL + '?orderId=' + encodeURIComponent(orderId))
-    .then(r => r.json())
-    .then(data => {
-      if (!data.found) { showToast('❌ Order ID tidak ditemukan'); return; }
-      document.getElementById('res-orderid').textContent = data.orderId;
-      document.getElementById('res-nama').textContent = data.nama;
-      document.getElementById('res-total').textContent = data.total;
-      const s = data.status;
-      const sc = STATUS_COLOR[s] || {bg:'#f3f4f6',color:'#374151'};
-      const el = document.getElementById('res-status');
-      el.textContent = s;
-      el.style.background = sc.bg;
-      el.style.color = sc.color;
-      document.getElementById('status-result').style.display = 'block';
-    })
-    .catch(() => showToast('❌ Gagal cek status. Coba lagi.'));
-}
-    
-    function toggleMobileMenu() {
-  document.getElementById('mobile-menu').classList.toggle('hidden');
-    }
-    const menuItems = [
-      {id:1,  name:"Kebab Original",           price:10000, desc:"Sayur segar + Daging Premium",  badge:"Signature"},
-      {id:2,  name:"Kebab Telur",               price:15000, desc:"Daging + Telur",                badge:""},
-      {id:3,  name:"Kebab Keju",                price:15000, desc:"Daging + Keju",                 badge:""},
-      {id:4,  name:"Kebab Sosis",               price:15000, desc:"Daging + Sosis",                badge:""},
-      {id:5,  name:"Double Bid: Telur + Keju",  price:20000, desc:"Daging + Telur + Keju",         badge:"Double"},
-      {id:6,  name:"Double Bid: Telur + Sosis", price:20000, desc:"Daging + Telur + Sosis",        badge:"Double"},
-      {id:7,  name:"Double Bid: Keju + Sosis",  price:20000, desc:"Daging + Keju + Sosis",         badge:"Double"},
-      {id:8,  name:"Triple Bid : Telur + Keju + Sosis",                price:25000, desc:"Daging + Telur + Keju + Sosis", badge:"Best Value"},
-    
-    ];
-function initCarousel() {
-    const galleryImages = [
-  "./kebab1.jpeg",
-  "./kebab2.jpeg",
-  "./kebab3.jpg",
-];
-  document.getElementById('swiper-wrapper').innerHTML = images.map(src => `
-        <div class="swiper-slide">
-          <img src="${src}" class="w-full h-[500px] object-cover rounded-3xl">
+    <!-- Header chatbot -->
+    <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <div class="mini-ai-icon">
+          <img src="./kebab-bot.png" alt="Mas Aladin">
         </div>
-      `).join('');
-      
-      new Swiper('.mySwiper', { loop: true, autoplay: { delay: 3000 }, pagination: { el: '.swiper-pagination', clickable: true } });
+        <div>
+          <p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p>
+          <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
+        </div>
+      </div>
+      <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">&times;</button>
+    </div>
+
+    <!-- Area pesan -->
+    <div id="chat-messages"
+      style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
+      <!-- Pesan selamat datang dari bot -->
+      <div style="display:flex;gap:0.5rem;align-items:flex-start">
+        <div class="mini-ai-icon">
+          <img src="./kebab-bot.png" alt="Mas Aladin">
+        </div>
+        <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
+          Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
+        </div>
+      </div>
+    </div>
+
+    <!-- Pertanyaan cepat (quick reply) -->
+    <div id="quick-questions"
+      style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
+      <button onclick="sendQuick('Menu apa saja yang tersedia?')"
+        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
+        📋 Menu
+      </button>
+      <button onclick="sendQuick('Berapa harga kebab?')"
+        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
+        💰 Harga
+      </button>
+      <button onclick="sendQuick('Jam buka berapa?')"
+        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
+        🕐 Jam Buka
+      </button>
+      <button onclick="sendQuick('Dimana lokasinya?')"
+        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
+        📍 Lokasi
+      </button>
+    </div>
+
+    <!-- Input chat -->
+    <div style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;background:white">
+      <input id="chat-input" type="text" placeholder="Ketik pertanyaan..."
+        style="flex:1;padding:0.625rem 1rem;border:1.5px solid #e5e7eb;border-radius:2rem;outline:none;font-size:0.875rem"
+        onkeydown="if(event.key==='Enter') sendChat()">
+      <button onclick="sendChat()"
+        style="width:2.5rem;height:2.5rem;border-radius:50%;background:#ea580c;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Toast notifikasi global -->
+  <div id="toast"></div>
+
+  <!-- ============================================================
+       COOKIE CONSENT BOX
+  ============================================================ -->
+  <div id="cookieBox" class="cookie-box">
+    <p>Kami menggunakan cookie untuk pengalaman terbaik</p>
+    <button onclick="acceptCookie()">Terima</button>
+    <button onclick="closeCookie()">Tolak</button>
+  </div>
+
+  <!-- ============================================================
+       ⚠️  HAPUS BARIS INI — Swiper library tidak dipakai sama sekali.
+       Carousel di halaman ini menggunakan kode custom (renderCarousel),
+       bukan Swiper. Memuat library ini hanya memboroskan bandwidth.
+  ============================================================ -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/swiper/11.1.0/swiper-bundle.min.js"></script> -->
+
+  <script>
+    // ============================================================
+    // KONFIGURASI: URL Google Apps Script (backend)
+    // ============================================================
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL-9DbFZmqsK3mdN8IRORhqiewbxyrET0ut3Q8cTGY1HHvozFWF4rMvF544QbV6TkHeQ/exec';
+
+    // ============================================================
+    // DATA: Warna badge status pesanan
+    // ============================================================
+    const STATUS_COLOR = {
+      'Pending':  { bg: '#fef9c3', color: '#854d0e' },
+      'Diproses': { bg: '#dbeafe', color: '#1d4ed8' },
+      'Dikirim':  { bg: '#d1fae5', color: '#065f46' },
+      'Selesai':  { bg: '#dcfce7', color: '#15803d' },
+      'Batal':    { bg: '#fee2e2', color: '#b91c1c' },
+    };
+
+    // ============================================================
+    // DATA: Daftar menu (sumber tunggal kebenaran untuk semua fungsi)
+    // ============================================================
+    const menuItems = [
+      { id: 1, name: "Kebab Original",                    price: 10000, desc: "Sayur segar + Daging Premium",      badge: "Signature"  },
+      { id: 2, name: "Kebab Telur",                       price: 15000, desc: "Daging + Telur",                    badge: ""           },
+      { id: 3, name: "Kebab Keju",                        price: 15000, desc: "Daging + Keju",                     badge: ""           },
+      { id: 4, name: "Kebab Sosis",                       price: 15000, desc: "Daging + Sosis",                    badge: ""           },
+      { id: 5, name: "Double Bid: Telur + Keju",          price: 20000, desc: "Daging + Telur + Keju",             badge: "Double"     },
+      { id: 6, name: "Double Bid: Telur + Sosis",         price: 20000, desc: "Daging + Telur + Sosis",            badge: "Double"     },
+      { id: 7, name: "Double Bid: Keju + Sosis",          price: 20000, desc: "Daging + Keju + Sosis",             badge: "Double"     },
+      { id: 8, name: "Triple Bid: Telur + Keju + Sosis",  price: 25000, desc: "Daging + Telur + Keju + Sosis",     badge: "Best Value" },
+    ];
+
+    // ============================================================
+    // DATA: Gambar galeri
+    // ✅ PERBAIKAN: Dipindah ke scope global agar bisa diakses oleh
+    //    renderCarousel(). Di versi asli, array ini didefinisikan
+    //    sebagai const lokal di dalam initCarousel() yang sudah
+    //    tidak terpakai → menyebabkan ReferenceError saat init.
+    // ============================================================
+    const galleryImages = [
+      "./kebab1.jpeg",
+      "./kebab2.jpeg",
+      "./kebab3.jpg",
+    ];
+
+    // ============================================================
+    // STATE: Variabel global yang dipakai lintas fungsi
+    // ============================================================
+    let cart         = [];    // isi keranjang
+    let carouselIdx  = 0;     // slide aktif carousel
+
+    // Variabel checkout
+    let deliveryMode    = '';   // 'pickup' | 'delivery'
+    let selectedPayment = '';   // 'cash'   | 'qris'
+    let userLat         = null;
+    let userLng         = null;
+    let ongkir          = 0;
+
+    // Koordinat restoran
+    const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
+
+    // ============================================================
+    // NAVBAR: Toggle menu mobile
+    // ============================================================
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
     }
 
-    let cart = [];
-    let carouselIdx = 0;
+    // ============================================================
+    // CEK STATUS: Ambil status pesanan dari Google Sheets
+    // ============================================================
+    function cekStatus() {
+      const orderId = document.getElementById('input-orderid').value.trim();
+      if (!orderId) { showToast('⚠️ Masukkan Order ID dulu!'); return; }
 
-    // ===== MENU =====
+      showToast('Mengecek status...');
+      fetch(APPS_SCRIPT_URL + '?orderId=' + encodeURIComponent(orderId))
+        .then(r => r.json())
+        .then(data => {
+          if (!data.found) { showToast('❌ Order ID tidak ditemukan'); return; }
+
+          document.getElementById('res-orderid').textContent = data.orderId;
+          document.getElementById('res-nama').textContent    = data.nama;
+          document.getElementById('res-total').textContent   = data.total;
+
+          const s  = data.status;
+          const sc = STATUS_COLOR[s] || { bg: '#f3f4f6', color: '#374151' };
+          const el = document.getElementById('res-status');
+          el.textContent      = s;
+          el.style.background = sc.bg;
+          el.style.color      = sc.color;
+
+          document.getElementById('status-result').style.display = 'block';
+        })
+        .catch(() => showToast('❌ Gagal cek status. Coba lagi.'));
+    }
+
+    // ============================================================
+    // MENU: Render kartu menu ke #menu-container
+    // ============================================================
     function renderMenu() {
       document.getElementById('menu-container').innerHTML = menuItems.map(item => {
         const badgeColor = item.badge === 'Best Value' ? 'bg-green-100 text-green-700'
                          : item.badge === 'Double'     ? 'bg-blue-100 text-blue-700'
                          : item.badge                  ? 'bg-red-100 text-red-700' : '';
         return `
-        <div class="menu-card bg-white border border-gray-100 rounded-2xl p-6 flex flex-col">
-          <div class="flex-1">
-            ${item.badge ? `<span class="inline-block text-xs font-bold px-3 py-1 rounded-full mb-2 ${badgeColor}">${item.badge}</span>` : ''}
-            <h3 class="font-bold text-lg leading-tight">${item.name}</h3>
-            <p class="text-gray-500 text-sm mt-1">${item.desc}</p>
-          </div>
-          <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-50">
-            <span class="text-2xl font-black text-orange-600">Rp ${(item.price/1000).toFixed(0)}rb</span>
-            <button onclick="addToCart(${item.id})"
-              class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm">
-              <i class="fas fa-plus"></i> Tambah
-            </button>
-          </div>
-        </div>`;
+          <div class="menu-card bg-white border border-gray-100 rounded-2xl p-6 flex flex-col">
+            <div class="flex-1">
+              ${item.badge ? `<span class="inline-block text-xs font-bold px-3 py-1 rounded-full mb-2 ${badgeColor}">${item.badge}</span>` : ''}
+              <h3 class="font-bold text-lg leading-tight">${item.name}</h3>
+              <p class="text-gray-500 text-sm mt-1">${item.desc}</p>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-50">
+              <span class="text-2xl font-black text-orange-600">Rp ${(item.price / 1000).toFixed(0)}rb</span>
+              <button onclick="addToCart(${item.id})"
+                class="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2 text-sm">
+                <i class="fas fa-plus"></i> Tambah
+              </button>
+            </div>
+          </div>`;
       }).join('');
-
-      const sel = document.getElementById('f-menu');
-      menuItems.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.id;
-        opt.textContent = item.name + ' – Rp ' + item.price.toLocaleString('id-ID');
-        sel.appendChild(opt);
-      });
     }
 
-    // ===== CAROUSEL =====
+    // ============================================================
+    // CAROUSEL: Render gambar galeri
+    // ============================================================
     function renderCarousel() {
       const track = document.getElementById('carousel-track');
       const dots  = document.getElementById('carousel-dots');
+
       track.innerHTML = galleryImages.map(src =>
         `<div class="carousel-slide"><img src="${src}" alt="Kebab Factory"></div>`
       ).join('');
+
       dots.innerHTML = galleryImages.map((_, i) =>
         `<button onclick="goCarousel(${i})" class="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white transition" id="dot-${i}"></button>`
       ).join('');
+
       updateCarousel();
-      setInterval(() => moveCarousel(1), 4000);
+      setInterval(() => moveCarousel(1), 4000); // auto-advance setiap 4 detik
     }
 
     function moveCarousel(dir) {
@@ -735,7 +871,10 @@ function initCarousel() {
       updateCarousel();
     }
 
-    function goCarousel(i) { carouselIdx = i; updateCarousel(); }
+    function goCarousel(i) {
+      carouselIdx = i;
+      updateCarousel();
+    }
 
     function updateCarousel() {
       document.getElementById('carousel-track').style.transform = `translateX(-${carouselIdx * 100}%)`;
@@ -745,52 +884,64 @@ function initCarousel() {
       });
     }
 
-    // ===== CART =====
-    let pendingItemId = null;
-let selectedVarian = '';
+    // ============================================================
+    // CART: State & logika keranjang belanja
+    // ============================================================
+    let pendingItemId  = null;
+    let selectedVarian = '';
 
-function addToCart(id) {
-  pendingItemId = id;
-  selectedVarian = '';
-  const item = menuItems.find(m => m.id === id);
-  document.getElementById('modal-nama').textContent = item.name;
-  document.getElementById('modal-harga').textContent = 'Rp ' + item.price.toLocaleString('id-ID');
-  document.getElementById('modal-catatan').value = '';
-  document.querySelectorAll('.varian-btn').forEach(b => b.style.background = 'white');
-  document.getElementById('modal-varian').style.display = 'flex';
-}
+    // Buka modal pilih varian sebelum masuk keranjang
+    function addToCart(id) {
+      pendingItemId  = id;
+      selectedVarian = '';
+      const item = menuItems.find(m => m.id === id);
 
-function selectVarian(btn, varian) {
-  selectedVarian = varian;
-  document.querySelectorAll('.varian-btn').forEach(b => {
-    b.style.background = 'white';
-    b.style.borderColor = '#e5e7eb';
-    b.style.color = '#111';
-  });
-  btn.style.background = '#ea580c';
-  btn.style.borderColor = '#ea580c';
-  btn.style.color = 'white';
-}
+      document.getElementById('modal-nama').textContent  = item.name;
+      document.getElementById('modal-harga').textContent = 'Rp ' + item.price.toLocaleString('id-ID');
+      document.getElementById('modal-catatan').value     = '';
+      document.querySelectorAll('.varian-btn').forEach(b => b.style.background = 'white');
+      document.getElementById('modal-varian').style.display = 'flex';
+    }
 
-function closeModal(e) {
-  if (e.target.id === 'modal-varian') document.getElementById('modal-varian').style.display = 'none';
-}
+    // Highlight tombol varian yang dipilih
+    function selectVarian(btn, varian) {
+      selectedVarian = varian;
+      document.querySelectorAll('.varian-btn').forEach(b => {
+        b.style.background  = 'white';
+        b.style.borderColor = '#e5e7eb';
+        b.style.color       = '#111';
+      });
+      btn.style.background  = '#ea580c';
+      btn.style.borderColor = '#ea580c';
+      btn.style.color       = 'white';
+    }
 
-function confirmAddToCart() {
-  if (!selectedVarian) { showToast('⚠️ Pilih varian dulu!'); return; }
-  const item = menuItems.find(m => m.id === pendingItemId);
-  const catatan = document.getElementById('modal-catatan').value.trim();
-  const existing = cart.find(i => i.id === pendingItemId && i.varian === selectedVarian);
-  if (existing) {
-    existing.quantity++;
-  } else {
-    cart.push({...item, quantity:1, varian: selectedVarian, catatan: catatan});
-  }
-  document.getElementById('modal-varian').style.display = 'none';
-  renderCart();
-  showToast(item.name + ' (' + selectedVarian + ') ditambahkan 🛒');
-}
+    // Tutup modal jika klik di luar
+    function closeModal(e) {
+      if (e.target.id === 'modal-varian')
+        document.getElementById('modal-varian').style.display = 'none';
+    }
 
+    // Konfirmasi: masukkan item ke keranjang
+    function confirmAddToCart() {
+      if (!selectedVarian) { showToast('⚠️ Pilih varian dulu!'); return; }
+
+      const item    = menuItems.find(m => m.id === pendingItemId);
+      const catatan = document.getElementById('modal-catatan').value.trim();
+      const existing = cart.find(i => i.id === pendingItemId && i.varian === selectedVarian);
+
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ ...item, quantity: 1, varian: selectedVarian, catatan });
+      }
+
+      document.getElementById('modal-varian').style.display = 'none';
+      renderCart();
+      showToast(item.name + ' (' + selectedVarian + ') ditambahkan 🛒');
+    }
+
+    // Ubah jumlah item di keranjang (+ / - / hapus)
     function changeCartQty(id, delta) {
       const idx = cart.findIndex(i => i.id === id);
       if (idx === -1) return;
@@ -799,6 +950,7 @@ function confirmAddToCart() {
       renderCart();
     }
 
+    // Render ulang tampilan keranjang
     function renderCart() {
       const count = cart.reduce((s, i) => s + i.quantity, 0);
       document.getElementById('cart-count').textContent = count;
@@ -809,6 +961,7 @@ function confirmAddToCart() {
         document.getElementById('cart-total-price').textContent = 'Rp 0';
         return;
       }
+
       container.innerHTML = cart.map(item => `
         <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
@@ -821,400 +974,401 @@ function confirmAddToCart() {
             <div style="display:flex;align-items:center;gap:0.5rem">
               <button onclick="changeCartQty(${item.id},-1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">-</button>
               <span style="width:1.5rem;text-align:center;font-weight:700">${item.quantity}</span>
-              <button onclick="changeCartQty(${item.id},1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">+</button>
+              <button onclick="changeCartQty(${item.id},1)"  style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">+</button>
             </div>
-            <span style="font-weight:900;color:#ea580c">Rp ${(item.price*item.quantity).toLocaleString('id-ID')}</span>
+            <span style="font-weight:900;color:#ea580c">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
           </div>
-          <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">
-  ${item.name}<br>
-  <span style="color:#ea580c;font-size:0.8rem">${item.varian}</span>
-  ${item.catatan ? `<span style="color:#9ca3af;font-size:0.75rem;display:block">${item.catatan}</span>` : ''}
-</p>
+          <p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.varian}</p>
+          ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem">${item.catatan}</p>` : ''}
         </div>`).join('');
 
       const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       document.getElementById('cart-total-price').textContent = 'Rp ' + total.toLocaleString('id-ID');
     }
 
+    // Buka / tutup sidebar keranjang
     function toggleCart() {
       document.getElementById('cart-sidebar').classList.toggle('open');
       document.getElementById('cart-overlay').classList.toggle('open');
     }
 
-    function checkoutCart() { openCheckout(); }
+    // ============================================================
+    // CHECKOUT: Alur pemesanan lengkap
+    // ============================================================
+    function openCheckout() {
+      if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
 
-const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
-let deliveryMode = '', selectedPayment = '', userLat = null, userLng = null, ongkir = 0;
+      // Reset semua state checkout
+      deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0;
+      document.getElementById('co-nama').value              = '';
+      document.getElementById('co-alamat').value            = '';
+      document.getElementById('loc-result').textContent     = '';
+      document.getElementById('loc-btn-text').textContent   = 'Gunakan Lokasi Saya';
+      document.getElementById('section-alamat').style.display    = 'none';
+      document.getElementById('card-pickup').style.border        = '2px solid #e5e7eb';
+      document.getElementById('card-delivery').style.border      = '2px solid #e5e7eb';
+      document.getElementById('payment-options').innerHTML  = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
 
-function openCheckout() {
-  if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
-  deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0;
-  document.getElementById('co-nama').value = '';
-  document.getElementById('co-alamat').value = '';
-  document.getElementById('loc-result').textContent = '';
-  document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
-  document.getElementById('section-alamat').style.display = 'none';
-  document.getElementById('card-pickup').style.border = '2px solid #e5e7eb';
-  document.getElementById('card-delivery').style.border = '2px solid #e5e7eb';
-  document.getElementById('payment-options').innerHTML = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
+      // Isi ringkasan pesanan
+      const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+      document.getElementById('co-summary').innerHTML = cart.map(i =>
+        `<div style="display:flex;justify-content:space-between">
+           <span>${i.name} (${i.varian}) ×${i.quantity}</span>
+           <span>Rp ${(i.price * i.quantity).toLocaleString('id-ID')}</span>
+         </div>`
+      ).join('');
 
-  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
-  document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
-  document.getElementById('co-summary').innerHTML = cart.map(i =>
-    `<div style="display:flex;justify-content:space-between">
-      <span>${i.name} (${i.varian}) ×${i.quantity}</span>
-      <span>Rp ${(i.price*i.quantity).toLocaleString('id-ID')}</span>
-    </div>`
-  ).join('');
-  updateCoTotal();
-  toggleCart();
-  document.getElementById('modal-checkout').style.display = 'flex';
-}
-
-function closeCheckout(e) {
-  if (e.target.id === 'modal-checkout') document.getElementById('modal-checkout').style.display = 'none';
-}
-
-function selectDelivery(mode) {
-  deliveryMode = mode;
-  document.getElementById('card-pickup').style.border = mode==='pickup' ? '2px solid #ea580c' : '2px solid #e5e7eb';
-  document.getElementById('card-pickup').style.background = mode==='pickup' ? '#fff7ed' : 'white';
-  document.getElementById('card-delivery').style.border = mode==='delivery' ? '2px solid #ea580c' : '2px solid #e5e7eb';
-  document.getElementById('card-delivery').style.background = mode==='delivery' ? '#fff7ed' : 'white';
-  document.getElementById('section-alamat').style.display = mode==='delivery' ? 'block' : 'none';
-  if (mode === 'pickup') ongkir = 0;
-  selectedPayment = '';
-  updatePaymentOptions();
-  updateCoTotal();
-}
-
-function updatePaymentOptions() {
-  const c = document.getElementById('payment-options');
-  const opts = deliveryMode === 'pickup'
-    ? [{val:'cash',label:'💵 Cash'}, {val:'qris',label:'📱 QRIS'}]
-    : [{val:'qris',label:'📱 QRIS'}];
-  c.innerHTML = opts.map(o => `
-    <div id="pay-${o.val}" onclick="selectPayment('${o.val}')"
-      style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">
-      ${o.label}
-    </div>`).join('');
-}
-
-function selectPayment(val) {
-  selectedPayment = val;
-  document.querySelectorAll('#payment-options div').forEach(d => {
-    d.style.border = '2px solid #e5e7eb';
-    d.style.background = 'white';
-  });
-  const el = document.getElementById('pay-' + val);
-  if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
-}
-
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function getLocation() {
-  if (!navigator.geolocation) { showToast('GPS tidak tersedia'); return; }
-  document.getElementById('loc-btn-text').textContent = 'Mendeteksi lokasi...';
-  navigator.geolocation.getCurrentPosition(pos => {
-    userLat = pos.coords.latitude; userLng = pos.coords.longitude;
-    const dist = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-    ongkir = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
-    const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
-    document.getElementById('loc-btn-text').textContent = '✅ Lokasi Terdeteksi';
-    document.getElementById('loc-result').textContent = 'Jarak: ' + dist.toFixed(1) + ' km';
-    document.getElementById('ongkir-info').textContent = label;
-    document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
-    updateCoTotal();
-  }, () => {
-    document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
-    showToast('❌ Gagal deteksi GPS. Izinkan akses lokasi.');
-  });
-}
-
-function updateCoTotal() {
-  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
-  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
-  document.getElementById('co-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
-}
-
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL-9DbFZmqsK3mdN8IRORhqiewbxyrET0ut3Q8cTGY1HHvozFWF4rMvF544QbV6TkHeQ/exec';
-
-function generateOrderId() {
-  const now = new Date();
-  const date = now.getFullYear().toString().slice(-2) +
-    String(now.getMonth()+1).padStart(2,'0') +
-    String(now.getDate()).padStart(2,'0');
-  const rand = Math.floor(Math.random()*9000)+1000;
-  return 'KF-' + date + '-' + rand;
-}
-
-function submitCheckout() {
-  const nama = document.getElementById('co-nama').value.trim();
-  if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
-  if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
-  if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
-  if (!selectedPayment) { showToast('⚠️ Pilih metode pembayaran!'); return; }
-
-  const orderId = generateOrderId();
-  const timestamp = new Date().toLocaleString('id-ID');
-  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
-  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
-  const alamat = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-  const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
-
-  const dataPesanan = JSON.stringify({
-    orderId, timestamp, nama,
-    pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-    alamat,
-    ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
-    pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-    items: itemsText,
-    total: 'Rp '+total.toLocaleString('id-ID')
-  });
-
-  const payload = new URLSearchParams();
-  payload.append("data", dataPesanan);
-
-  showToast('Sedang mengirim pesanan...');
-
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: payload
-  })
-  .then(response => {
-    let msg = 'Halo The Kebab Factory!%0A%0A';
-    msg += '*Order ID:* ' + orderId + '%0A';
-    msg += '*Waktu:* ' + timestamp + '%0A';
-    msg += '*Nama:* ' + nama + '%0A';
-    msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
-    if (deliveryMode === 'delivery') {
-      msg += '*Alamat:* ' + alamat + '%0A';
-      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
-      msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
-    }
-    msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
-    msg += '%0A*Pesanan:*%0A';
-    cart.forEach(i => {
-      msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
-      if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
-    });
-    msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
-
-    window.open('https://wa.me/6281357683151?text='+msg, '_blank');
-
-    document.getElementById('modal-checkout').style.display = 'none';
-    showOrderConfirm(orderId);
-    setTimeout(() => { cart = []; renderCart(); }, 800);
-  })
-  .catch(error => {
-    showToast('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda.');
-    console.error('Error Google Sheet:', error);
-  });
-}
-
-function submitCheckout() {
-  const nama = document.getElementById('co-nama').value.trim();
-  if (!nama) { showToast('⚠️ Nama wajib diisi!'); return; }
-  if (!deliveryMode) { showToast('⚠️ Pilih metode pengiriman!'); return; }
-  if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
-  if (!selectedPayment) { showToast('⚠️ Pilih metode pembayaran!'); return; }
-
-  const orderId = generateOrderId();
-  const timestamp = new Date().toLocaleString('id-ID');
-  const subtotal = cart.reduce((s,i) => s + i.price * i.quantity, 0);
-  const total = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
-  const alamat = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-  const itemsText = cart.map(i => i.name+'('+i.varian+')x'+i.quantity+(i.catatan?' ['+i.catatan+']':'')).join(', ');
-
-  const dataPesanan = JSON.stringify({
-    orderId, timestamp, nama,
-    pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-    alamat,
-    ongkir: deliveryMode === 'delivery' ? 'Rp '+ongkir.toLocaleString('id-ID') : 'Gratis',
-    pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-    items: itemsText,
-    total: 'Rp '+total.toLocaleString('id-ID')
-  });
-
-  const payload = new URLSearchParams();
-  payload.append("data", dataPesanan);
-
-  showToast('Sedang mengirim pesanan...');
-
-  fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: payload
-  })
-  .then(response => {
-    let msg = 'Halo The Kebab Factory!%0A%0A';
-    msg += '*Order ID:* ' + orderId + '%0A';
-    msg += '*Waktu:* ' + timestamp + '%0A';
-    msg += '*Nama:* ' + nama + '%0A';
-    msg += '*Pengiriman:* ' + (deliveryMode==='pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
-    if (deliveryMode === 'delivery') {
-      msg += '*Alamat:* ' + alamat + '%0A';
-      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
-      msg += '*Ongkir:* ' + (ongkir===0 ? 'Gratis' : 'Rp '+ongkir.toLocaleString('id-ID')) + '%0A';
-    }
-    msg += '*Pembayaran:* ' + (selectedPayment==='cash' ? 'Cash' : 'QRIS') + '%0A';
-    msg += '%0A*Pesanan:*%0A';
-    cart.forEach(i => {
-      msg += '- '+i.name+' ('+i.varian+') x'+i.quantity+' = Rp '+(i.price*i.quantity).toLocaleString('id-ID')+'%0A';
-      if (i.catatan) msg += '  Catatan: '+i.catatan+'%0A';
-    });
-    msg += '%0A*TOTAL: Rp '+total.toLocaleString('id-ID')+'*%0A%0AMohon segera diproses. Terima kasih!';
-
-    window.open('https://wa.me/6281357683151?text='+msg, '_blank');
-
-    document.getElementById('modal-checkout').style.display = 'none';
-    showOrderConfirm(orderId);
-    setTimeout(() => { cart = []; renderCart(); }, 800);
-  })
-  .catch(error => {
-    showToast('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda.');
-    console.error('Error Google Sheet:', error);
-  });
-  }
-                    
-
-function showOrderConfirm(orderId) {
-  const el = document.createElement('div');
-  el.style = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-  el.innerHTML = `
-    <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center">
-      <div style="font-size:3rem;margin-bottom:1rem">✅</div>
-      <h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3>
-      <p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p>
-      <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1.5rem">
-        <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p>
-        <p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p>
-      </div>
-      <button onclick="this.parentNode.parentNode.remove()"
-        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
-        OK, Mengerti
-      </button>
-    </div>`;
-  document.body.appendChild(el);
-}
-    // ===== FORM =====
-    function updateFormTotal() {
-      const id     = parseInt(document.getElementById('f-menu').value);
-      const item   = menuItems.find(m => m.id === id);
-      const qty    = Math.max(1, parseInt(document.getElementById('f-jumlah').value) || 1);
-      const ongkir = parseInt(document.getElementById('f-delivery').value) || 0;
-      const total  = item ? (item.price * qty) + ongkir : 0;
-      document.getElementById('f-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+      updateCoTotal();
+      toggleCart(); // tutup sidebar dulu
+      document.getElementById('modal-checkout').style.display = 'flex';
     }
 
-    function changeFormQty(delta) {
-      const el  = document.getElementById('f-jumlah');
-      el.value  = Math.max(1, (parseInt(el.value) || 1) + delta);
-      updateFormTotal();
+    function closeCheckout(e) {
+      if (e.target.id === 'modal-checkout')
+        document.getElementById('modal-checkout').style.display = 'none';
     }
 
-    function submitOrder() {
-      const nama    = document.getElementById('f-nama').value.trim();
-      const wa      = document.getElementById('f-wa').value.trim();
-      const id      = parseInt(document.getElementById('f-menu').value);
-      const item    = menuItems.find(m => m.id === id);
-      const qty     = Math.max(1, parseInt(document.getElementById('f-jumlah').value) || 1);
-      const ongkir  = parseInt(document.getElementById('f-delivery').value) || 0;
-      const alamat  = document.getElementById('f-alamat').value.trim();
-      const catatan = document.getElementById('f-catatan').value.trim();
-
-      if (!nama)  { showToast('⚠️ Nama wajib diisi!'); return; }
-      if (!wa)    { showToast('⚠️ No. WhatsApp wajib diisi!'); return; }
-      if (!item)  { showToast('⚠️ Pilih menu terlebih dahulu!'); return; }
-
-      const sub   = item.price * qty;
-      const total = sub + ongkir;
-      const delivLabel = ongkir === 0 ? 'Ambil di Tempat' : ongkir === 5000 ? 'Delivery Dekat (Rp 5.000)' : 'Delivery Jauh (Rp 10.000)';
-
-      let msg = 'Halo The Kebab Factory!%0A%0A';
-      msg += '*Nama:* ' + nama + '%0A';
-      msg += '*No. WA:* ' + wa + '%0A';
-      msg += '%0A*Pesanan:*%0A';
-      msg += '- ' + item.name + ' (' + qty + 'x) = Rp ' + sub.toLocaleString('id-ID') + '%0A';
-      msg += '%0A*Pengiriman:* ' + delivLabel + '%0A';
-      if (alamat)  msg += '*Alamat:* ' + alamat + '%0A';
-      if (catatan) msg += '*Catatan:* ' + catatan + '%0A';
-      msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
-
-      window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
-      showToast('✅ Pesanan dikirim ke WhatsApp!');
-      ['f-nama','f-wa','f-alamat','f-catatan'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('f-menu').value = '';
-      document.getElementById('f-jumlah').value = 1;
-      updateFormTotal();
+    // Pilih metode pengiriman
+    function selectDelivery(mode) {
+      deliveryMode = mode;
+      document.getElementById('card-pickup').style.border      = mode === 'pickup'   ? '2px solid #ea580c' : '2px solid #e5e7eb';
+      document.getElementById('card-pickup').style.background  = mode === 'pickup'   ? '#fff7ed'           : 'white';
+      document.getElementById('card-delivery').style.border    = mode === 'delivery' ? '2px solid #ea580c' : '2px solid #e5e7eb';
+      document.getElementById('card-delivery').style.background= mode === 'delivery' ? '#fff7ed'           : 'white';
+      document.getElementById('section-alamat').style.display  = mode === 'delivery' ? 'block' : 'none';
+      if (mode === 'pickup') ongkir = 0;
+      selectedPayment = '';
+      updatePaymentOptions();
+      updateCoTotal();
     }
 
-    // ===== TOAST =====
+    // Render opsi pembayaran sesuai mode pengiriman
+    function updatePaymentOptions() {
+      const c    = document.getElementById('payment-options');
+      const opts = deliveryMode === 'pickup'
+        ? [{ val: 'cash', label: '💵 Cash' }, { val: 'qris', label: '📱 QRIS' }]
+        : [{ val: 'qris', label: '📱 QRIS' }]; // Delivery hanya QRIS
+
+      c.innerHTML = opts.map(o => `
+        <div id="pay-${o.val}" onclick="selectPayment('${o.val}')"
+          style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">
+          ${o.label}
+        </div>`).join('');
+    }
+
+    function selectPayment(val) {
+      selectedPayment = val;
+      document.querySelectorAll('#payment-options div').forEach(d => {
+        d.style.border     = '2px solid #e5e7eb';
+        d.style.background = 'white';
+      });
+      const el = document.getElementById('pay-' + val);
+      if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
+    }
+
+    // Hitung jarak dua koordinat (km) dengan rumus Haversine
+    function haversine(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2
+              + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // Deteksi lokasi GPS pengguna & hitung ongkir
+    function getLocation() {
+      if (!navigator.geolocation) { showToast('GPS tidak tersedia'); return; }
+      document.getElementById('loc-btn-text').textContent = 'Mendeteksi lokasi...';
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          userLat = pos.coords.latitude;
+          userLng = pos.coords.longitude;
+          const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
+          ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
+          const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
+
+          document.getElementById('loc-btn-text').textContent  = '✅ Lokasi Terdeteksi';
+          document.getElementById('loc-result').textContent    = 'Jarak: ' + dist.toFixed(1) + ' km';
+          document.getElementById('ongkir-info').textContent   = label;
+          document.getElementById('ongkir-harga').textContent  = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
+          updateCoTotal();
+        },
+        () => {
+          document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
+          showToast('❌ Gagal deteksi GPS. Izinkan akses lokasi.');
+        }
+      );
+    }
+
+    // Update tampilan total bayar
+    function updateCoTotal() {
+      const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      const total    = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
+      document.getElementById('co-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    // Generate Order ID unik format KF-YYMMDD-XXXX
+    function generateOrderId() {
+      const now  = new Date();
+      const date = now.getFullYear().toString().slice(-2)
+                 + String(now.getMonth() + 1).padStart(2, '0')
+                 + String(now.getDate()).padStart(2, '0');
+      const rand = Math.floor(Math.random() * 9000) + 1000;
+      return 'KF-' + date + '-' + rand;
+    }
+
+    // Submit checkout: validasi → kirim ke Sheet → buka WhatsApp
+    // ⚠️  DUPLIKAT DIHAPUS: Fungsi ini sebelumnya didefinisikan 2x
+    //     (baris 955 & 1020 di file asli). Kontennya 100% identik.
+    //     JavaScript hanya pakai definisi terakhir → fungsi pertama
+    //     sia-sia. Cukup satu definisi di sini.
+    function submitCheckout() {
+      const nama = document.getElementById('co-nama').value.trim();
+      if (!nama)                                                              { showToast('⚠️ Nama wajib diisi!');             return; }
+      if (!deliveryMode)                                                      { showToast('⚠️ Pilih metode pengiriman!');      return; }
+      if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
+      if (!selectedPayment)                                                   { showToast('⚠️ Pilih metode pembayaran!');     return; }
+
+      const orderId   = generateOrderId();
+      const timestamp = new Date().toLocaleString('id-ID');
+      const subtotal  = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      const total     = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
+      const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
+      const itemsText = cart.map(i => i.name + '(' + i.varian + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
+
+      // Susun payload untuk Google Sheets
+      const dataPesanan = JSON.stringify({
+        orderId, timestamp, nama,
+        pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
+        alamat,
+        ongkir:     deliveryMode === 'delivery' ? 'Rp ' + ongkir.toLocaleString('id-ID') : 'Gratis',
+        pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
+        items:      itemsText,
+        total:      'Rp ' + total.toLocaleString('id-ID')
+      });
+
+      const payload = new URLSearchParams();
+      payload.append("data", dataPesanan);
+
+      showToast('Sedang mengirim pesanan...');
+
+      // Kirim ke Google Sheets, lalu buka WhatsApp
+      fetch(APPS_SCRIPT_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    payload
+      })
+      .then(() => {
+        // Susun pesan WhatsApp
+        let msg = 'Halo The Kebab Factory!%0A%0A';
+        msg += '*Order ID:* '    + orderId                                                   + '%0A';
+        msg += '*Waktu:* '       + timestamp                                                 + '%0A';
+        msg += '*Nama:* '        + nama                                                      + '%0A';
+        msg += '*Pengiriman:* '  + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
+        if (deliveryMode === 'delivery') {
+          msg += '*Alamat:* '  + alamat + '%0A';
+          if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
+          msg += '*Ongkir:* '  + (ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID')) + '%0A';
+        }
+        msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
+        msg += '%0A*Pesanan:*%0A';
+        cart.forEach(i => {
+          msg += '- ' + i.name + ' (' + i.varian + ') x' + i.quantity + ' = Rp ' + (i.price * i.quantity).toLocaleString('id-ID') + '%0A';
+          if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
+        });
+        msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
+
+        window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
+        document.getElementById('modal-checkout').style.display = 'none';
+        showOrderConfirm(orderId);
+        setTimeout(() => { cart = []; renderCart(); }, 800);
+      })
+      .catch(error => {
+        showToast('❌ Gagal mengirim pesanan. Periksa koneksi internet Anda.');
+        console.error('Error Google Sheet:', error);
+      });
+    }
+
+    // Tampilkan popup konfirmasi dengan Order ID setelah pesan berhasil
+    function showOrderConfirm(orderId) {
+      const el = document.createElement('div');
+      el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+      el.innerHTML = `
+        <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center">
+          <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+          <h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3>
+          <p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p>
+          <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1.5rem">
+            <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p>
+            <p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p>
+          </div>
+          <button onclick="this.parentNode.parentNode.remove()"
+            style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
+            OK, Mengerti
+          </button>
+        </div>`;
+      document.body.appendChild(el);
+    }
+
+    // ============================================================
+    // TOAST: Notifikasi kecil di bawah layar
+    // ============================================================
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
+      t.textContent  = msg;
       t.style.opacity = '1';
       clearTimeout(window._tt);
       window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
     }
-        // ===== GRABBER MULTI-PORTAL BERITA BAHAN BAKU =====
+
+    // ============================================================
+    // AI CHATBOT: Toggle & kirim pesan
+    // ============================================================
+    let isChatOpen = false;
+
+    // ⚠️  CATATAN: chatHistory dibangun di bawah tapi TIDAK pernah
+    //     dikirim ke API (payload hanya berisi 'message' terkini).
+    //     Hapus variabel ini atau kirimkan ke backend jika ingin
+    //     chatbot punya memori percakapan.
+    let chatHistory = [];
+
+    function toggleAIChat() {
+      isChatOpen = !isChatOpen;
+      const chat      = document.getElementById('ai-chat');
+      const ctaLabels = document.getElementById('cta-labels');
+      chat.style.display      = isChatOpen ? 'flex' : 'none';
+      ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+    }
+
+    // Tambah bubble pesan (user atau bot)
+    function addMessage(text, isUser) {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start' + (isUser ? ';flex-direction:row-reverse' : '');
+      div.innerHTML = isUser
+        ? `<div style="background:#ea580c;color:white;border-radius:1rem 0 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;max-width:85%;line-height:1.5">${text}</div>`
+        : `<div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+           <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+
+    // Tampilkan animasi "sedang mengetik..."
+    function addTyping() {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.id = 'typing-indicator';
+      div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
+      div.innerHTML = `
+        <div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+        <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+          <span style="display:flex;gap:0.25rem">
+            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0s"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.2s"></span>
+            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.4s"></span>
+          </span>
+        </div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Kirim pesan ke Apps Script (backend AI)
+    async function sendChat() {
+      const input = document.getElementById('chat-input');
+      const text  = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      document.getElementById('quick-questions').style.display = 'none';
+      addMessage(text, true);
+      chatHistory.push({ role: 'user', content: text }); // lihat catatan chatHistory di atas
+      addTyping();
+
+      const payload = new URLSearchParams();
+      payload.append("action",  "chat");
+      payload.append("message", text);
+
+      try {
+        const res  = await fetch(APPS_SCRIPT_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body:    payload
+        });
+        const data = await res.json();
+        document.getElementById('typing-indicator')?.remove();
+
+        if (data.success) {
+          addMessage(data.reply, false);
+          chatHistory.push({ role: 'assistant', content: data.reply });
+        } else {
+          addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false);
+        }
+      } catch {
+        document.getElementById('typing-indicator')?.remove();
+        addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
+      }
+    }
+
+    // Kirim pertanyaan cepat dari tombol quick reply
+    function sendQuick(text) {
+      document.getElementById('chat-input').value = text;
+      sendChat();
+    }
+
+    // ============================================================
+    // BERITA DINAMIS: Ambil info harga bahan baku dari portal berita
+    // ============================================================
     function loadDynamicNews() {
-      // 1. Daftar sumber berita raksasa (Fokus Ekonomi/Pasar)
+      // Sumber berita (fokus ekonomi/pasar)
       const sumberBerita = [
         'https://www.cnnindonesia.com/ekonomi/rss',
         'https://www.cnbcindonesia.com/market/rss',
         'https://www.antaranews.com/rss/ekonomi.xml'
       ];
 
-      // 2. Kata kunci spesifik The Kebab Factory
-      const kataKunci = ['tepung', 'susu', 'saus', 'saos', 'mentega', 'bawang', 'bombay', 'timun', 'selada', 'lettuce', 'tomat', 'plastik', 'kertas', 'daging', 'sapi', 'ayam', 'pangan', 'sembako', 'komoditas'];
+      // Kata kunci relevan bahan baku kebab
+      const kataKunci = [
+        'tepung','susu','saus','saos','mentega','bawang','bombay',
+        'timun','selada','lettuce','tomat','plastik','kertas',
+        'daging','sapi','ayam','pangan','sembako','komoditas'
+      ];
 
-      // Mengubah URL agar bisa dibaca oleh API rss2json
+      // Fetch semua portal secara paralel via rss2json
       const prosesAmbilBerita = sumberBerita.map(url => {
         const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
-        // Jika ada 1 portal error, abaikan dan lanjut ke portal lain (tahan banting)
-        return fetch(apiUrl).then(res => res.json()).catch(err => null); 
+        return fetch(apiUrl).then(res => res.json()).catch(() => null); // portal gagal diabaikan
       });
 
-      // 3. Jalankan semua proses pengambilan secara bersamaan
       Promise.all(prosesAmbilBerita)
         .then(hasil => {
           let semuaArtikel = [];
-          
-          // Gabungkan semua berita dari CNN, CNBC, dan Antara ke satu wadah
+
+          // Gabungkan semua artikel dari semua portal
           hasil.forEach(data => {
-            if (data && data.status === 'ok' && data.items) {
+            if (data && data.status === 'ok' && data.items)
               semuaArtikel = semuaArtikel.concat(data.items);
-            }
           });
 
-          // Jika ada berita yang berhasil dikumpulkan
           if (semuaArtikel.length > 0) {
-            
-            // Urutkan dari waktu terbit paling baru (opsional agar selalu update)
+            // Urutkan dari yang terbaru
             semuaArtikel.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-            // Filter: Cari 1 artikel yang memuat kata kunci bahan baku Anda
+            // Cari artikel dengan kata kunci bahan baku
             let itemTerpilih = semuaArtikel.find(item => {
-              const teks = (item.title + " " + item.description).toLowerCase();
+              const teks = (item.title + ' ' + item.description).toLowerCase();
               return kataKunci.some(kunci => teks.includes(kunci));
             });
 
-            // Jika hari ini di semua portal tidak ada berita bahan baku, ambil berita terbaru urutan ke-1
-            if (!itemTerpilih) {
-              itemTerpilih = semuaArtikel[0];
-            }
-            
+            // Fallback: ambil berita terbaru jika tidak ada yang cocok
+            if (!itemTerpilih) itemTerpilih = semuaArtikel[0];
             tampilkanBerita(itemTerpilih);
 
           } else {
-             // Jika semua API error / internet putus
-             tampilkanBeritaCadangan();
+            tampilkanBeritaCadangan();
           }
         })
         .catch(error => {
@@ -1223,170 +1377,97 @@ function showOrderConfirm(orderId) {
         });
     }
 
-    // Fungsi untuk merender berita asli ke HTML
+    // Render artikel berita asli ke slot dinamis
     function tampilkanBerita(item) {
-        const pubDate = new Date(item.pubDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        
-        let cleanDesc = item.description.replace(/<[^>]+>/g, '').trim();
-        if (cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + '...';
+      const pubDate = new Date(item.pubDate).toLocaleDateString('id-ID', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+      let cleanDesc = item.description.replace(/<[^>]+>/g, '').trim();
+      if (cleanDesc.length > 100) cleanDesc = cleanDesc.substring(0, 100) + '...';
 
-        const slot = document.getElementById('dynamic-news-slot');
-        slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
-        slot.innerHTML = `
-          <img src="${item.thumbnail || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}" alt="Info Pasar" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
-          <div class="p-6 flex flex-col flex-1">
-            <div class="flex justify-between items-center mb-3">
-              <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Info Pasar</span>
-              <span class="text-xs text-gray-400 font-medium">${pubDate}</span>
-            </div>
-            <h3 class="font-bold text-lg leading-tight mb-2 line-clamp-2">${item.title}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${cleanDesc}</p>
-            <a href="${item.link}" target="_blank" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1">
-              Baca Selengkapnya <i class="fas fa-external-link-alt text-xs"></i>
-            </a>
+      const slot = document.getElementById('dynamic-news-slot');
+      slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
+      slot.innerHTML = `
+        <img src="${item.thumbnail || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}"
+             alt="Info Pasar" class="w-full h-48 object-cover"
+             onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex justify-between items-center mb-3">
+            <span class="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Info Pasar</span>
+            <span class="text-xs text-gray-400 font-medium">${pubDate}</span>
           </div>
-        `;
+          <h3 class="font-bold text-lg leading-tight mb-2 line-clamp-2">${item.title}</h3>
+          <p class="text-gray-600 text-sm mb-4 line-clamp-3">${cleanDesc}</p>
+          <a href="${item.link}" target="_blank" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1">
+            Baca Selengkapnya <i class="fas fa-external-link-alt text-xs"></i>
+          </a>
+        </div>`;
     }
 
-    // Fungsi penyelamat jika API diblokir / mati
+    // Render konten cadangan jika semua API gagal
     function tampilkanBeritaCadangan() {
-        const slot = document.getElementById('dynamic-news-slot');
-        slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
-        slot.innerHTML = `
-          <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Info Komoditas" class="w-full h-48 object-cover">
-          <div class="p-6 flex flex-col flex-1">
-            <div class="flex justify-between items-center mb-3">
-              <span class="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">Info Harga</span>
-              <span class="text-xs text-gray-400 font-medium">Hari Ini</span>
-            </div>
-            <h3 class="font-bold text-lg leading-tight mb-2">Pantau Terus Harga Bahan Baku UMKM</h3>
-            <p class="text-gray-600 text-sm mb-4">Kami memantau pergerakan pasar untuk memastikan racikan rempah, sayur segar, dan kualitas The Kebab Factory tetap optimal.</p>
+      const slot = document.getElementById('dynamic-news-slot');
+      slot.className = "bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col";
+      slot.innerHTML = `
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80"
+             alt="Info Komoditas" class="w-full h-48 object-cover">
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex justify-between items-center mb-3">
+            <span class="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full">Info Harga</span>
+            <span class="text-xs text-gray-400 font-medium">Hari Ini</span>
           </div>
-        `;
+          <h3 class="font-bold text-lg leading-tight mb-2">Pantau Terus Harga Bahan Baku UMKM</h3>
+          <p class="text-gray-600 text-sm mb-4">Kami memantau pergerakan pasar untuk memastikan racikan rempah, sayur segar, dan kualitas The Kebab Factory tetap optimal.</p>
+        </div>`;
     }
 
-    // ===== AI CHATBOT =====
-let chatHistory = [];
-let isChatOpen = false;
+    // ============================================================
+    // COOKIE CONSENT
+    // ============================================================
+    function acceptCookie() {
+      localStorage.setItem('cookieAccepted', 'yes');
+      document.getElementById('cookieBox').style.display = 'none';
+    }
 
-function toggleAIChat() {
-  isChatOpen = !isChatOpen;
-  const chat = document.getElementById('ai-chat');
-  const ctaLabels = document.getElementById('cta-labels');
-  chat.style.display = isChatOpen ? 'flex' : 'none';
-  ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
-}
+    function closeCookie() {
+      document.getElementById('cookieBox').style.display = 'none';
+    }
 
-function addMessage(text, isUser) {
-  const container = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start' + (isUser ? ';flex-direction:row-reverse' : '');
-  div.innerHTML = isUser
-    ? `<div style="background:#ea580c;color:white;border-radius:1rem 0 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;max-width:85%;line-height:1.5">${text}</div>`
-    : `<div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
-       <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-  return div;
-}
+    // ============================================================
+    // INIT: Jalankan semua fungsi saat halaman selesai dimuat
+    // ============================================================
+    window.addEventListener('load', function () {
+      renderMenu();
+      renderCarousel();
+      renderCart();
+      loadDynamicNews(); // ✅ DITAMBAHKAN — sebelumnya tidak dipanggil!
 
-function addTyping() {
-  const container = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.id = 'typing-indicator';
-  div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
-  div.innerHTML = `
-    <div style="width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
-    <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-      <span style="display:flex;gap:0.25rem">
-        <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0s"></span>
-        <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.2s"></span>
-        <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.4s"></span>
-      </span>
-    </div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
-
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  document.getElementById('quick-questions').style.display = 'none';
-
-  addMessage(text, true);
-  chatHistory.push({ role: 'user', content: text });
-  addTyping();
-
-  // Membungkus pesan untuk dikirim ke Google Apps Script
-  const payload = new URLSearchParams();
-  payload.append("action", "chat");
-  payload.append("message", text);
-
-  try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: payload
+      // Sembunyikan cookie box jika sudah pernah diterima
+      if (localStorage.getItem('cookieAccepted') === 'yes') {
+        document.getElementById('cookieBox').style.display = 'none';
+      }
     });
-    
-    const data = await res.json();
-    document.getElementById('typing-indicator')?.remove();
 
-    if (data.success) {
-      addMessage(data.reply, false);
-      chatHistory.push({ role: 'assistant', content: data.reply });
-    } else {
-      addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false);
-    }
-  } catch (error) {
-    document.getElementById('typing-indicator')?.remove();
-    addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
-  }
-}
+    // ============================================================
+    // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
+    //
+    //  1. initCarousel()
+    //     Sisa kode lama yang menggunakan library Swiper.
+    //     Tidak pernah dipanggil. Menggunakan variabel `images`
+    //     (tidak ada) dan getElementById('swiper-wrapper')
+    //     (tidak ada di HTML). AMAN UNTUK DIHAPUS.
+    //
+    //  2. checkoutCart()
+    //     Hanya membungkus openCheckout(). Tidak dipanggil
+    //     dari mana pun. AMAN UNTUK DIHAPUS.
+    //
+    //  3. submitOrder() + updateFormTotal() + changeFormQty()
+    //     Referensi ke elemen form: #f-nama, #f-wa, #f-menu,
+    //     #f-jumlah, #f-alamat, #f-catatan, #f-delivery, #f-total
+    //     — TIDAK ADA DI HTML. Form lama sudah dihapus dari
+    //     markup tapi fungsi JSnya tertinggal. AMAN UNTUK DIHAPUS.
+    // ============================================================
 
-function sendQuick(text) {
-  document.getElementById('chat-input').value = text;
-  sendChat();
-    }
-
- function acceptCookie(){
-
-  localStorage.setItem(
-    'cookieAccepted',
-    'yes'
-  );
-
-  document.getElementById('cookieBox')
-    .style.display = 'none';
-
-}
-
-function closeCookie(){
-
-  document.getElementById('cookieBox')
-    .style.display = 'none';
-
-    }   
-    // ===== INIT =====
-window.addEventListener('load', function(){
-
-  renderMenu();
-  renderCarousel();
-  renderCart();
-
-  const accepted =
-    localStorage.getItem('cookieAccepted');
-
-  if(accepted === 'yes'){
-
-    document.getElementById('cookieBox')
-      .style.display = 'none';
-
-  }
-
-});
   </script>
 </body>
 </html>
