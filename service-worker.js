@@ -1,5 +1,5 @@
 // Ubah versi ini setiap kali ada perubahan di project
-const CACHE_VERSION = 'v1.2';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = 'kebab-factory-' + CACHE_VERSION;
 
 const FILES = [
@@ -8,6 +8,8 @@ const FILES = [
   './manifest.json',
   './logo.png',
   './kebab-bot.png',
+  './icon-192.png', 
+  './icon-512.png',
   './kebab1.jpeg',
   './kebab2.jpeg',
   './kebab3.jpg',
