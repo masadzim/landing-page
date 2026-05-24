@@ -1590,8 +1590,31 @@ function lakukanUpdate() {
     window.location.reload();
   });
     }
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-// ============================================================
+
+    // ============================================================
+    // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
+    //
+    //  1. initCarousel()
+    //     Sisa kode lama yang menggunakan library Swiper.
+    //     Tidak pernah dipanggil. Menggunakan variabel `images`
+    //     (tidak ada) dan getElementById('swiper-wrapper')
+    //     (tidak ada di HTML). AMAN UNTUK DIHAPUS.
+    //
+    //  2. checkoutCart()
+    //     Hanya membungkus openCheckout(). Tidak dipanggil
+    //     dari mana pun. AMAN UNTUK DIHAPUS.
+    //
+    //  3. submitOrder() + updateFormTotal() + changeFormQty()
+    //     Referensi ke elemen form: #f-nama, #f-wa, #f-menu,
+    //     #f-jumlah, #f-alamat, #f-catatan, #f-delivery, #f-total
+    //     — TIDAK ADA DI HTML. Form lama sudah dihapus dari
+    //     markup tapi fungsi JSnya tertinggal. AMAN UNTUK DIHAPUS.
+    // ============================================================
+
+  </script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // ============================================================
 // MAP PICKER — Leaflet.js + OpenStreetMap
 // ============================================================
 let leafletMap    = null;
@@ -1682,27 +1705,6 @@ function konfirmasiMapPicker() {
   updateCoTotal();
   tutupMapPicker();
   showToast('✅ Lokasi berhasil dikonfirmasi!');
-    }
-    // ============================================================
-    // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
-    //
-    //  1. initCarousel()
-    //     Sisa kode lama yang menggunakan library Swiper.
-    //     Tidak pernah dipanggil. Menggunakan variabel `images`
-    //     (tidak ada) dan getElementById('swiper-wrapper')
-    //     (tidak ada di HTML). AMAN UNTUK DIHAPUS.
-    //
-    //  2. checkoutCart()
-    //     Hanya membungkus openCheckout(). Tidak dipanggil
-    //     dari mana pun. AMAN UNTUK DIHAPUS.
-    //
-    //  3. submitOrder() + updateFormTotal() + changeFormQty()
-    //     Referensi ke elemen form: #f-nama, #f-wa, #f-menu,
-    //     #f-jumlah, #f-alamat, #f-catatan, #f-delivery, #f-total
-    //     — TIDAK ADA DI HTML. Form lama sudah dihapus dari
-    //     markup tapi fungsi JSnya tertinggal. AMAN UNTUK DIHAPUS.
-    // ============================================================
-
-  </script>
+  }</script>
 </body>
 </html>
