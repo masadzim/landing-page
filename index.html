@@ -729,6 +729,17 @@
     📲
   </button>
     </div>
+  <!-- Banner notif update -->
+<div id="update-bar"
+  style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:white;padding:1rem 1.5rem;display:none;align-items:center;justify-content:space-between;gap:1rem;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,0.3)">
+  <span style="font-size:0.875rem;font-weight:600">
+    🔄 Versi baru tersedia!
+  </span>
+  <button onclick="lakukanUpdate()"
+    style="background:#ea580c;color:white;border:none;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:700;cursor:pointer;font-size:0.875rem;white-space:nowrap">
+    Update Sekarang
+  </button>
+</div>
   <!-- ============================================================
        ⚠️  HAPUS BARIS INI — Swiper library tidak dipakai sama sekali.
        Carousel di halaman ini menggunakan kode custom (renderCarousel),
@@ -1505,6 +1516,38 @@ window.addEventListener('appinstalled', () => {
   document.getElementById('cta-install').style.display = 'none';
   installPrompt = null;
 });
+// ============================================================
+// PWA AUTO UPDATE NOTIFICATION
+// ============================================================
+let newWorker = null;
+
+navigator.serviceWorker.register('/service-worker.js')
+  .then(reg => {
+    reg.update();
+
+    // Deteksi kalau ada service worker baru menunggu
+    reg.addEventListener('updatefound', () => {
+      newWorker = reg.installing;
+
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // Ada versi baru — tampilkan banner
+          document.getElementById('update-bar').style.display = 'flex';
+        }
+      });
+    });
+  });
+
+function lakukanUpdate() {
+  if (newWorker) {
+    // Perintahkan SW baru untuk langsung aktif
+    newWorker.postMessage({ action: 'skipWaiting' });
+  }
+  // Reload halaman untuk pakai versi baru
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+    }
     // ============================================================
     // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
     //
