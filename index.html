@@ -718,7 +718,17 @@
     <button onclick="acceptCookie()">Terima</button>
     <button onclick="closeCookie()">Tolak</button>
   </div>
-
+  
+<!-- Tombol Install PWA -->
+<div id="cta-install" style="display:none;align-items:center;gap:0.5rem">
+  <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+    Install App
+  </span>
+  <button onclick="installPWA()"
+    style="width:3.5rem;height:3.5rem;border-radius:50%;background:#ea580c;color:white;font-size:1.4rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.4);display:flex;align-items:center;justify-content:center">
+    📲
+  </button>
+    </div>
   <!-- ============================================================
        ⚠️  HAPUS BARIS INI — Swiper library tidak dipakai sama sekali.
        Carousel di halaman ini menggunakan kode custom (renderCarousel),
@@ -1463,6 +1473,38 @@
   if (!sudahTerima && !modePWA && !modeIOS) {
     document.getElementById('cookieBox').style.display = 'flex';
   }
+    // ============================================================
+    // PWA INSTALL PROMPT
+    // ============================================================
+    let installPrompt = null;
+
+    // Tangkap event install dari browser
+    window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    installPrompt = event;
+
+    // Tampilkan tombol install
+  document.getElementById('cta-install').style.display = 'flex';
+});
+
+function installPWA() {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+
+  installPrompt.userChoice.then(result => {
+    if (result.outcome === 'accepted') {
+      // User klik install — sembunyikan tombol
+      document.getElementById('cta-install').style.display = 'none';
+    }
+    installPrompt = null;
+  });
+}
+
+// Sembunyikan tombol jika sudah terinstall
+window.addEventListener('appinstalled', () => {
+  document.getElementById('cta-install').style.display = 'none';
+  installPrompt = null;
+});
     // ============================================================
     // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
     //
