@@ -1,5 +1,5 @@
 // Ubah versi ini setiap kali ada perubahan di project
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v2.1';
 const CACHE_NAME = 'kebab-factory-' + CACHE_VERSION;
 
 const FILES = [
