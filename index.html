@@ -1364,8 +1364,9 @@
       addTyping();
 
       const payload = new URLSearchParams();
-      payload.append("action",  "chat");
-      payload.append("message", text);
+      payload.append("action",    "chat");
+      payload.append("message",   text);
+      payload.append("sessionId", getSessionId()); // ✅ tambah ini
 
       try {
         const res  = await fetch(APPS_SCRIPT_URL, {
@@ -1387,7 +1388,13 @@
         addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
       }
     }
-
+     // Generate session ID unik per kunjungan
+     function getSessionId() {
+    if (!sessionStorage.getItem('chatSessionId')) {
+    sessionStorage.setItem('chatSessionId', 'S-' + Date.now());
+    }
+    return sessionStorage.getItem('chatSessionId');
+    }
     // Kirim pertanyaan cepat dari tombol quick reply
     function sendQuick(text) {
       document.getElementById('chat-input').value = text;
