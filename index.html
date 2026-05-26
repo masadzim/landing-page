@@ -600,6 +600,36 @@
           <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
         </div>
       </div>
+      <!-- QRIS: Muncul otomatis saat pilih QRIS -->
+<div id="section-qris" style="display:none;margin-bottom:1rem">
+
+  <!-- Gambar QRIS -->
+  <div style="text-align:center;margin-bottom:0.75rem">
+    <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem;color:#ea580c">
+      📱 Scan QRIS untuk Bayar
+    </p>
+    <img src="./qris.png" alt="QRIS"
+      style="width:100%;max-width:280px;border-radius:1rem;border:2px solid #f3f4f6;padding:0.5rem">
+    <p style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">
+      Scan lalu bayar sesuai total di atas
+    </p>
+  </div>
+
+  <!-- Upload bukti -->
+  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">
+    Upload Bukti Transfer *
+  </p>
+  <label for="input-bukti"
+    style="display:block;width:100%;padding:0.875rem;border:2px dashed #e5e7eb;border-radius:0.75rem;text-align:center;cursor:pointer;color:#6b7280;font-size:0.875rem;margin-bottom:0.5rem">
+    📎 Tap untuk pilih foto bukti
+  </label>
+  <input type="file" id="input-bukti" accept="image/*"
+    onchange="previewBukti(this)"
+    style="display:none">
+  <img id="preview-bukti" src="" alt="Preview"
+    style="display:none;width:100%;border-radius:0.75rem;max-height:200px;object-fit:cover;margin-bottom:0.5rem">
+
+</div>
 
       <!-- Muncul setelah user pilih QRIS -->
 <div id="section-bukti" style="display:none;margin-top:1rem">
@@ -1120,7 +1150,8 @@
       document.getElementById('card-pickup').style.border        = '2px solid #e5e7eb';
       document.getElementById('card-delivery').style.border      = '2px solid #e5e7eb';
       document.getElementById('payment-options').innerHTML  = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
-
+      document.getElementById('section-qris').style.display = 'none';
+      document.getElementById('preview-bukti').style.display = 'none';
       // Isi ringkasan pesanan
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
@@ -1170,14 +1201,23 @@
     }
 
     function selectPayment(val) {
-      selectedPayment = val;
-      document.querySelectorAll('#payment-options div').forEach(d => {
-        d.style.border     = '2px solid #e5e7eb';
-        d.style.background = 'white';
-      });
-      const el = document.getElementById('pay-' + val);
-      if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
-    }
+  selectedPayment = val;
+  document.querySelectorAll('#payment-options div').forEach(d => {
+    d.style.border     = '2px solid #e5e7eb';
+    d.style.background = 'white';
+  });
+  const el = document.getElementById('pay-' + val);
+  if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
+
+  // ✅ Tampilkan/sembunyikan section QRIS
+  document.getElementById('section-qris').style.display = val === 'qris' ? 'block' : 'none';
+
+  // Reset bukti jika ganti ke cash
+  if (val !== 'qris') {
+    document.getElementById('input-bukti').value = '';
+    document.getElementById('preview-bukti').style.display = 'none';
+  }
+}
 
     // Hitung jarak dua koordinat (km) dengan rumus Haversine
     function haversine(lat1, lng1, lat2, lng2) {
