@@ -1262,7 +1262,62 @@
         items:      itemsText,
         total:      'Rp ' + total.toLocaleString('id-ID')
       });
+      showToast('Mengupload bukti pembayaran...');
 
+// Upload bukti dulu jika QRIS
+let linkBukti = null;
+if (selectedPayment === 'qris') {
+  linkBukti = await uploadBuktiKeSheet(orderId);
+}
+
+// Sisipkan link bukti ke pesan WA
+if (linkBukti) {
+  msg += '%0A*Bukti Transfer:* ' + encodeURIComponent(linkBukti);
+    }
+function previewBukti(input) {
+  const file   = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('preview-bukti');
+    preview.src   = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadBuktiKeSheet(orderId) {
+  const input = document.getElementById('input-bukti');
+  if (!input.files[0]) return null;
+
+  const file   = input.files[0];
+  const reader = new FileReader();
+
+  return new Promise(resolve => {
+    reader.onload = async e => {
+      // Hapus prefix "data:image/jpeg;base64,"
+      const base64 = e.target.result.split(',')[1];
+
+      const payload = new URLSearchParams();
+      payload.append('action',  'uploadBukti');
+      payload.append('orderId', orderId);
+      payload.append('base64',  base64);
+
+      try {
+        const res  = await fetch(APPS_SCRIPT_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body:    payload
+        });
+        const data = await res.json();
+        resolve(data.success ? data.link : null);
+      } catch {
+        resolve(null);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+    }
       const payload = new URLSearchParams();
       payload.append("data", dataPesanan);
 
