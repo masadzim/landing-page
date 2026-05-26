@@ -601,6 +601,17 @@
         </div>
       </div>
 
+      <!-- Muncul setelah user pilih QRIS -->
+<div id="section-bukti" style="display:none;margin-top:1rem">
+  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">
+    Upload Bukti Transfer *
+  </p>
+  <input type="file" id="input-bukti" accept="image/*"
+    onchange="previewBukti(this)"
+    style="width:100%;padding:0.75rem;border:1.5px dashed #e5e7eb;border-radius:0.75rem;font-size:0.85rem">
+  <img id="preview-bukti" src="" alt=""
+    style="display:none;width:100%;border-radius:0.75rem;margin-top:0.5rem;max-height:200px;object-fit:cover">
+</div>
       <!-- Total bayar -->
       <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
