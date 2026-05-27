@@ -1393,7 +1393,7 @@ async function uploadBuktiKeSheet(orderId) {
       const payload = new URLSearchParams();
       payload.append('action',  'uploadBukti');
       payload.append('orderId', orderId);
-      payload.append('base64',  base64);
+      payload.append('base64', encodeURIComponent(base64));
 
       try {
         const res  = await fetch(APPS_SCRIPT_URL, {
