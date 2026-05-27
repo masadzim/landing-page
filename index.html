@@ -1390,10 +1390,12 @@ async function uploadBuktiKeSheet(orderId) {
   return new Promise(resolve => {
     reader.onload = async e => {
       const base64 = e.target.result;
+      
       const payload = new URLSearchParams();
       payload.append('action',  'uploadBukti');
       payload.append('orderId', orderId);
-      payload.append('base64', encodeURIComponent(base64));
+      // PERBAIKAN 1: Jangan pakai encodeURIComponent lagi di sini
+      payload.append('base64', base64); 
 
       try {
         const res  = await fetch(APPS_SCRIPT_URL, {
@@ -1401,15 +1403,27 @@ async function uploadBuktiKeSheet(orderId) {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body:    payload
         });
+        
         const data = await res.json();
-        resolve(data.success ? data.link : null);
-      } catch {
+        
+        // PERBAIKAN 2: Tampilkan pesan error asli dari Google jika gagal
+        if (data.success) {
+          resolve(data.link);
+        } else {
+          alert('Gagal dari Server Google: ' + data.error); 
+          resolve(null);
+        }
+      } catch (error) {
+        // Tangkap error jika internet putus atau link Apps Script salah
+        console.error('Fetch Error:', error);
+        alert('Gagal menghubungi server Google. Cek log console Anda.');
         resolve(null);
       }
     };
     reader.readAsDataURL(file);
   });
 }
+
     // Tampilkan popup konfirmasi dengan Order ID setelah pesan berhasil
     function showOrderConfirm(orderId) {
       const el = document.createElement('div');
