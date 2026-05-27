@@ -1,5 +1,5 @@
 // Ubah versi ini setiap kali ada perubahan di project
-const CACHE_VERSION = 'v2.3';
+const CACHE_VERSION = 'v2.4';
 const CACHE_NAME = 'kebab-factory-' + CACHE_VERSION;
 
 const FILES = [
@@ -16,6 +16,7 @@ const FILES = [
   './qris.png',
   './letuce.png',
   './Dagingkebab.png',
+  './qrisbayar.jpg',
 ];
 
 self.addEventListener('install', event => {
