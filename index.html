@@ -1389,7 +1389,7 @@ async function uploadBuktiKeSheet(orderId) {
 
   return new Promise(resolve => {
     reader.onload = async e => {
-      const base64  = e.target.result.split(',')[1];
+      const base64 = e.target.result;
       const payload = new URLSearchParams();
       payload.append('action',  'uploadBukti');
       payload.append('orderId', orderId);
