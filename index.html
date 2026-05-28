@@ -1290,6 +1290,7 @@
 // CHECKOUT: Submit pesanan + upload bukti QRIS
 // ============================================================
 async function submitCheckout() {
+  showToast('Fungsi dipanggil ✅'); // debug
   const nama = document.getElementById('co-nama').value.trim();
   if (!nama)           { showToast('⚠️ Nama wajib diisi!'); return; }
   if (!wa) { showToast('⚠️ Nomor WA wajib diisi!'); return; }
