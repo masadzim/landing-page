@@ -545,7 +545,14 @@
         <input id="co-nama" type="text" placeholder="Nama lengkap"
           style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
       </div>
-
+      <!--Nomor Whatsapp-->
+<div style="margin-bottom:1rem">
+  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">
+    Nomor WhatsApp *
+  </p>
+  <input id="co-wa" type="tel" placeholder="Contoh: 08123456789"
+    style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
+</div>
       <!-- Metode pengiriman -->
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
@@ -845,7 +852,8 @@
     // KONFIGURASI: URL Google Apps Script (backend)
     // ============================================================
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
-
+    const FONNTE_TOKEN = '1cKQN69n3CT317XAyok7';
+    const ADMIN_WA     = '6281357683151';
     // ============================================================
     // DATA: Warna badge status pesanan
     // ============================================================
@@ -1284,7 +1292,8 @@
 // ============================================================
 async function submitCheckout() {
   const nama = document.getElementById('co-nama').value.trim();
-  if (!nama)           { showToast('⚠️ Nama wajib diisi!');                      return; }
+  if (!nama)           { showToast('⚠️ Nama wajib diisi!'); return; }
+  if (!wa) { showToast('⚠️ Nomor WA wajib diisi!'); return; }
   if (!deliveryMode)   { showToast('⚠️ Pilih metode pengiriman!');               return; }
   if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi!'); return; }
   if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
@@ -1298,6 +1307,7 @@ async function submitCheckout() {
   const subtotal  = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const total     = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
   const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
+  const wa = document.getElementById('co-wa').value.trim();
   const itemsText = cart.map(i => i.name + '(' + i.varian + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
 
   // Upload bukti transfer dulu jika QRIS
@@ -1314,6 +1324,7 @@ async function submitCheckout() {
   // Susun payload untuk Google Sheets
   const dataPesanan = JSON.stringify({
     orderId, timestamp, nama,
+    noWA: document.getElementById('co-wa').value.trim(), // ✅ tambah input WA
     pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
     alamat,
     ongkir:     deliveryMode === 'delivery' ? 'Rp ' + ongkir.toLocaleString('id-ID') : 'Gratis',
