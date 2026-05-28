@@ -1354,7 +1354,7 @@ async function submitCheckout() {
     msg += '*Pengiriman:* ' + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
     if (deliveryMode === 'delivery') {
       msg += '*Alamat:* ' + alamat + '%0A';
-      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + %0A';
+      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
       msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID')) + '%0A';
     }
     msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
