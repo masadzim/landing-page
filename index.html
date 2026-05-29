@@ -341,7 +341,7 @@
         style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem">
       </textarea>
 
-      <button onclick="confirmAddToCart()"
+      <button onclick="confirmAddToCart()"class="btn-3d";
         style="width:100%;background:#ea580c;color:white;font-weight:900;padding:1rem;border-radius:1rem;font-size:1.1rem">
         + Tambah ke Keranjang
       </button>
@@ -998,7 +998,7 @@
             <span style="font-weight:900;font-size:1.3rem;color:#ea580c">
               Rp ${(item.price / 1000).toFixed(0)}rb
             </span>
-            <button onclick="event.stopPropagation(); addToCart(${item.id})"
+            <button onclick="event.stopPropagation(); addToCart(${item.id})"class="btn-3d";
               style="background:#ea580c;color:white;border:none;padding:0.5rem 1rem;border-radius:0.75rem;font-weight:700;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem">
               <i class="fas fa-plus"></i> Tambah
             </button>
