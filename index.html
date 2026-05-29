@@ -139,13 +139,13 @@
       object-fit: contain; padding: 2px;
       background: white;
     }
-    /* ── EFEK 3D SEMUA TOMBOL ───────────────────────────────── */
-button, a[href] {
+    /* ── EFEK 3D ────────────────────────────────────────────── */
+.btn-3d {
   box-shadow: 0 6px 0 rgba(0,0,0,0.25);
   transform: translateY(0);
   transition: transform 0.1s, box-shadow 0.1s;
 }
-button:active, a[href]:active {
+.btn-3d:active {
   box-shadow: 0 2px 0 rgba(0,0,0,0.25);
   transform: translateY(4px);
 }
@@ -666,7 +666,7 @@ button:active, a[href]:active {
         <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
       </div>
 
-      <button onclick="submitCheckout()"
+      <button onclick="submitCheckout()"class="btn-3d";
   style="width:100%;background:linear-gradient(135deg,#7c3a1c,#ea580c);color:white;font-weight:900;padding:1.25rem;border-radius:1rem;font-size:1.4rem;cursor:pointer;border:none;margin-bottom:1rem">
   🛒 Buat Pesanan
 </button>
