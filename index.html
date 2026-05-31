@@ -1350,7 +1350,7 @@ async function submitCheckout() {
   const subtotal  = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const total     = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
   const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-  const itemsText = cart.map(i => i.name + '(' + i.varian + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
+  const itemsText = cart.map(i => i.name + '(' + i.daging + '·' + i.varian + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
 
   // Upload bukti transfer dulu jika QRIS
   let linkBukti = null;
