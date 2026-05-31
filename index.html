@@ -1170,7 +1170,7 @@ function selectDaging(btn, daging) {
             </div>
             <span style="font-weight:900;color:#ea580c">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
           </div>
-          <p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.varian}</p>
+          <p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.daging} · ${item.varian}</p>
           ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem">${item.catatan}</p>` : ''}
         </div>`).join('');
 
@@ -1207,7 +1207,7 @@ function selectDaging(btn, daging) {
       document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
       document.getElementById('co-summary').innerHTML = cart.map(i =>
         `<div style="display:flex;justify-content:space-between">
-           <span>${i.name} (${i.varian}) ×${i.quantity}</span>
+           <span>${i.name} (${i.daging} · ${i.varian}) ×${i.quantity}</span>
            <span>Rp ${(i.price * i.quantity).toLocaleString('id-ID')}</span>
          </div>`
       ).join('');
