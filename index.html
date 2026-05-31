@@ -318,6 +318,18 @@
       </div>
       <p id="modal-harga" style="color:#ea580c;font-weight:900;font-size:1.3rem;margin-bottom:1rem"></p>
 
+      <!-- Pilihan daging -->
+<p style="font-weight:700;margin-bottom:0.5rem">Pilih Daging *</p>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
+  <button onclick="selectDaging(this,'Ayam')" class="daging-btn"
+    style="border:2px solid #e5e7eb;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
+    🐔 Ayam
+  </button>
+  <button onclick="selectDaging(this,'Sapi')" class="daging-btn"
+    style="border:2px solid #e5e7eb;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
+    🐄 Sapi
+  </button>
+</div>
       <!-- Pilihan varian -->
       <p style="font-weight:700;margin-bottom:0.5rem">Pilih Varian *</p>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">
@@ -1051,6 +1063,7 @@
     // ============================================================
     let pendingItemId  = null;
     let selectedVarian = '';
+    let selectedDaging  = '';
 
     // Buka modal pilih varian sebelum masuk keranjang
     function addToCart(id) {
@@ -1077,7 +1090,17 @@
       btn.style.borderColor = '#ea580c';
       btn.style.color       = 'white';
     }
-
+function selectDaging(btn, daging) {
+  selectedDaging = daging;
+  document.querySelectorAll('.daging-btn').forEach(b => {
+    b.style.background  = 'white';
+    b.style.borderColor = '#e5e7eb';
+    b.style.color       = '#111';
+  });
+  btn.style.background  = '#ea580c';
+  btn.style.borderColor = '#ea580c';
+  btn.style.color       = 'white';
+}
     // Tutup modal jika klik di luar
     function closeModal(e) {
       if (e.target.id === 'modal-varian')
