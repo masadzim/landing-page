@@ -6,92 +6,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KF Kitchen — Dapur Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fire:    #ea580c;
-      --ember:   #f97316;
-      --coal:    #1a0f00;
-      --smoke:   #2d1a0a;
-      --ash:     #4a3728;
-      --cream:   #fef3e2;
-      --paper:   #fff8f0;
-      --new:     #ff4500;
-      --process: #f59e0b;
-      --ready:   #22c55e;
-      --done:    #6b7280;
+      --bg:       #0c0c0c;
+      --surface:  #151515;
+      --surface2: #1e1e1e;
+      --border:   #272727;
+      --border2:  #333;
+      --muted:    #444;
+      --sub:      #666;
+      --text:     #e8e8e8;
+      --dim:      #999;
+      --fire:     #ff5500;
+      --ember:    #ff7733;
+      --gold:     #ffaa00;
+      --new:      #ff3333;
+      --process:  #ffaa00;
+      --ready:    #00cc66;
+      --diantar:  #3388ff;
+      --diambil:  #aa55ff;
+      --done:     #444;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--coal);
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
       min-height: 100vh;
-      overflow-x: hidden;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ── NOISE TEXTURE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 0;
-      opacity: 0.6;
-    }
-
-    /* ── LOGIN SCREEN ── */
+    /* ── LOGIN ───────────────────────────────── */
     #login-screen {
       position: fixed; inset: 0;
+      background: var(--bg);
       display: flex; align-items: center; justify-content: center;
-      background: var(--coal);
       z-index: 999;
-      flex-direction: column;
-      gap: 2rem;
       padding: 2rem;
     }
 
     .login-box {
-      background: var(--smoke);
-      border: 1px solid var(--ash);
-      border-radius: 1.5rem;
-      padding: 2.5rem 2rem;
       width: 100%; max-width: 360px;
+      border: 1px solid var(--border2);
+      border-top: 3px solid var(--fire);
+      background: var(--surface);
+      padding: 2.5rem 2rem;
       text-align: center;
     }
 
     .login-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--ember);
-      margin-bottom: 0.25rem;
-      letter-spacing: -0.5px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--fire);
+      letter-spacing: 4px;
+      line-height: 1;
+      margin-bottom: 0.15rem;
     }
 
     .login-sub {
-      font-size: 0.7rem;
-      color: var(--ash);
-      letter-spacing: 3px;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 5px;
       text-transform: uppercase;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .login-input {
       width: 100%;
-      background: var(--coal);
-      border: 1.5px solid var(--ash);
-      border-radius: 0.75rem;
-      padding: 0.875rem 1rem;
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem;
-      letter-spacing: 4px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      padding: 1rem;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.5rem;
+      letter-spacing: 10px;
       text-align: center;
       outline: none;
       margin-bottom: 1rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.15s;
     }
     .login-input:focus { border-color: var(--fire); }
 
@@ -100,1385 +95,823 @@
       background: var(--fire);
       color: white;
       border: none;
-      border-radius: 0.75rem;
       padding: 0.875rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 800;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 4px;
       cursor: pointer;
-      letter-spacing: 1px;
-      transition: background 0.2s;
+      transition: background 0.15s;
     }
     .login-btn:hover { background: var(--ember); }
+    .login-error { color: var(--new); font-size: 0.7rem; margin-top: 0.75rem; display: none; }
 
-    .login-error {
-      color: #ef4444;
-      font-size: 0.75rem;
-      margin-top: 0.5rem;
-      display: none;
-    }
+    /* ── APP ────────────────────────────────── */
+    #app { display: none; }
 
-    /* ── MAIN APP ── */
-    #app { display: none; position: relative; z-index: 1; }
-
-    /* ── HEADER ── */
+    /* ── HEADER ─────────────────────────────── */
     .header {
-      background: var(--smoke);
-      border-bottom: 1px solid var(--ash);
-      padding: 1rem 1.25rem;
-      position: sticky; top: 0; z-index: 10;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      position: sticky; top: 0; z-index: 20;
       display: flex; align-items: center; justify-content: space-between;
     }
 
-    .header-left { display: flex; align-items: center; gap: 0.875rem; }
+    .header-left { display: flex; align-items: center; gap: 1rem; }
 
     .header-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--ember);
-      letter-spacing: -0.5px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      color: var(--text);
     }
+    .header-logo em { color: var(--fire); font-style: normal; }
 
     .header-badge {
       background: var(--fire);
       color: white;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       padding: 0.2rem 0.6rem;
-      border-radius: 2rem;
       letter-spacing: 1px;
     }
 
     .header-right { display: flex; align-items: center; gap: 0.75rem; }
 
-    /* Live indicator */
-    .live-dot {
+    .live-pill {
       display: flex; align-items: center; gap: 0.4rem;
-      font-size: 0.7rem; color: #22c55e;
-      letter-spacing: 1px;
+      font-size: 0.6rem;
+      color: var(--ready);
+      letter-spacing: 2px;
+      border: 1px solid rgba(0,204,102,0.25);
+      padding: 0.25rem 0.6rem;
     }
-    .live-dot::before {
-      content: '';
-      width: 7px; height: 7px;
-      background: #22c55e;
+    .live-dot {
+      width: 5px; height: 5px;
+      background: var(--ready);
       border-radius: 50%;
-      animation: livePulse 1.5s infinite;
+      animation: blink 2s infinite;
     }
-    @keyframes livePulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    #sync-status {
+      font-size: 0.58rem;
+      color: var(--sub);
+      letter-spacing: 0.5px;
+      min-width: 70px;
+      text-align: right;
     }
 
-    /* Sound toggle */
-    .sound-btn {
-      background: var(--ash);
-      border: none; border-radius: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      color: var(--cream);
-      font-size: 0.75rem;
+    .hdr-btn {
+      background: none;
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.7rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--dim);
       cursor: pointer;
-      font-family: 'Space Mono', monospace;
-      transition: background 0.2s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.15s;
     }
-    .sound-btn:hover { background: var(--fire); }
+    .hdr-btn:hover { border-color: var(--fire); color: var(--fire); }
 
-    /* Logout */
-    .logout-btn {
-      background: none; border: 1px solid var(--ash);
-      border-radius: 0.5rem; padding: 0.4rem 0.75rem;
-      color: var(--ash); font-size: 0.7rem;
-      cursor: pointer; font-family: 'Space Mono', monospace;
-      transition: all 0.2s;
-    }
-    .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
-
-    /* ── STATS BAR ── */
+    /* ── STATS ROW ──────────────────────────── */
     .stats-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 0.5rem; padding: 1rem 1.25rem;
-      background: var(--smoke);
-      border-bottom: 1px solid var(--ash);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
     }
 
     .stat-item {
+      padding: 1rem 0;
       text-align: center;
-      padding: 0.625rem 0.5rem;
-      border-radius: 0.75rem;
-      background: var(--coal);
+      border-right: 1px solid var(--border);
+      position: relative;
     }
+    .stat-item:last-child { border-right: none; }
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .stat-new::after   { background: var(--new);     }
+    .stat-proc::after  { background: var(--process);  }
+    .stat-ready::after { background: var(--ready);    }
+    .stat-done::after  { background: var(--done);     }
+    .stat-item:hover::after { opacity: 1; }
 
     .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.75rem;
+      letter-spacing: -1px;
       line-height: 1;
+      transition: color 0.3s;
     }
-
     .stat-label {
-      font-size: 0.6rem;
-      color: var(--ash);
-      letter-spacing: 1px;
+      font-size: 0.55rem;
+      color: var(--sub);
+      letter-spacing: 3px;
       text-transform: uppercase;
       margin-top: 0.2rem;
     }
+    .stat-new  .stat-num { color: var(--new);     }
+    .stat-proc .stat-num { color: var(--process); }
+    .stat-ready .stat-num { color: var(--ready);   }
+    .stat-done .stat-num  { color: var(--done);    }
 
-    .stat-new .stat-num    { color: var(--new); }
-    .stat-proc .stat-num   { color: var(--process); }
-    .stat-ready .stat-num  { color: var(--ready); }
-    .stat-done .stat-num   { color: var(--done); }
-
-    /* ── FILTER TABS ── */
+    /* ── FILTER TABS ────────────────────────── */
     .filter-tabs {
-      display: flex; gap: 0.5rem;
-      padding: 1rem 1.25rem 0;
+      display: flex; gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       overflow-x: auto;
+      scrollbar-width: none;
     }
+    .filter-tabs::-webkit-scrollbar { display: none; }
 
     .tab-btn {
-      background: var(--smoke);
-      border: 1.5px solid var(--ash);
-      border-radius: 2rem;
-      padding: 0.4rem 1rem;
-      font-size: 0.72rem;
-      font-family: 'Space Mono', monospace;
-      color: var(--ash);
+      background: none;
+      border: none;
+      border-right: 1px solid var(--border);
+      padding: 0.75rem 1.125rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--sub);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.15s;
       letter-spacing: 0.5px;
+      position: relative;
     }
-    .tab-btn.active, .tab-btn:hover {
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
       background: var(--fire);
-      border-color: var(--fire);
-      color: white;
+      transform: scaleX(0);
+      transition: transform 0.15s;
     }
+    .tab-btn:hover { color: var(--text); background: var(--surface2); }
+    .tab-btn.active { color: var(--text); }
+    .tab-btn.active::after { transform: scaleX(1); }
 
-    /* ── ORDER GRID ── */
+    /* ── ORDER GRID ─────────────────────────── */
     .order-grid {
-      padding: 1rem 1.25rem 6rem;
+      padding: 1.25rem 1.5rem 5rem;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
+      gap: 1px;
+      background: var(--border);
     }
 
-    /* ── ORDER CARD ── */
+    /* ── ORDER CARD ─────────────────────────── */
     .order-card {
-      background: var(--smoke);
-      border: 1.5px solid var(--ash);
-      border-radius: 1.25rem;
-      overflow: hidden;
-      animation: cardIn 0.3s ease;
-      transition: transform 0.2s;
+      background: var(--surface);
+      position: relative;
+      padding-left: 4px; /* space for accent bar */
+      display: flex;
+      flex-direction: column;
+      transition: background 0.2s;
     }
-    .order-card:hover { transform: translateY(-2px); }
+    .order-card:hover { background: var(--surface2); }
 
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* Left accent bar */
+    .order-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
     }
+    .order-card.s-Baru::before     { background: var(--new); }
+    .order-card.s-Diproses::before { background: var(--process); }
+    .order-card.s-Siap::before     { background: var(--ready); }
+    .order-card.s-Diantar::before  { background: var(--diantar); }
+    .order-card.s-Diambil::before  { background: var(--diambil); }
+    .order-card.s-Selesai::before  { background: var(--done); }
+    .order-card.s-Batal::before    { background: #222; }
 
-    /* Status accent line on top */
-    .card-accent {
-      height: 4px;
+    .card-inner { padding: 1rem 1rem 0 0.875rem; flex: 1; }
+
+    /* Header row */
+    .card-row1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
     }
-    .accent-Baru     { background: var(--new); }
-    .accent-Diproses { background: var(--process); }
-    .accent-Siap     { background: var(--ready); }
-    .accent-Selesai  { background: var(--done); }
-
-    .card-header {
-      padding: 0.875rem 1rem 0.625rem;
-      display: flex; justify-content: space-between; align-items: flex-start;
+    .card-id {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 2px;
+      color: var(--fire);
     }
-
-    .card-orderid {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--ember);
-      letter-spacing: 1px;
-    }
-
     .card-time {
-      font-size: 0.65rem;
-      color: var(--ash);
-      margin-top: 0.15rem;
-    }
-
-    .status-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.25rem 0.625rem;
-      border-radius: 2rem;
-      letter-spacing: 0.5px;
-      flex-shrink: 0;
-    }
-    .badge-Baru     { background: rgba(255,69,0,0.2);   color: #ff6b35; border: 1px solid rgba(255,69,0,0.3); }
-    .badge-Diproses { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-    .badge-Siap     { background: rgba(34,197,94,0.2);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
-    .badge-Selesai  { background: rgba(107,114,128,0.2);color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
-
-    .card-customer {
-      padding: 0 1rem 0.625rem;
-      font-size: 0.85rem;
-      color: var(--cream);
-      font-weight: 700;
-    }
-
-    /* Delivery/Pickup chip */
-    .delivery-chip {
-      display: inline-flex; align-items: center; gap: 0.3rem;
-      font-size: 0.65rem;
-      padding: 0.2rem 0.625rem;
-      border-radius: 2rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .chip-delivery { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
-    .chip-pickup   { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
-
-    .card-divider {
-      height: 1px; background: var(--ash);
-      margin: 0 1rem 0.625rem;
-    }
-
-    /* Items list */
-    .card-items {
-      padding: 0 1rem;
-      display: flex; flex-direction: column; gap: 0.35rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .item-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 0.5rem;
-    }
-
-    .item-name {
-      font-size: 0.78rem;
-      color: var(--cream);
-      line-height: 1.4;
-      flex: 1;
-    }
-
-    .item-qty {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: var(--ember);
-      flex-shrink: 0;
-    }
-
-    .item-tags {
-      display: flex; gap: 0.3rem; flex-wrap: wrap;
-      margin-top: 0.2rem;
-    }
-
-    .item-tag {
       font-size: 0.6rem;
-      padding: 0.1rem 0.4rem;
-      border-radius: 0.3rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+      color: var(--sub);
+      margin-top: 0.1rem;
     }
-    .tag-daging { background: rgba(234,88,12,0.25); color: #fb923c; }
-    .tag-varian { background: rgba(34,197,94,0.15);  color: #4ade80; }
-    .tag-note   { background: rgba(250,204,21,0.15); color: #fde047; }
+
+    /* Status badge - minimal */
+    .sbadge {
+      font-size: 0.55rem;
+      font-weight: 500;
+      padding: 0.2rem 0.5rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .sb-Baru     { color: var(--new);     border: 1px solid rgba(255,51,51,0.3); }
+    .sb-Diproses { color: var(--process); border: 1px solid rgba(255,170,0,0.3); }
+    .sb-Siap     { color: var(--ready);   border: 1px solid rgba(0,204,102,0.3); }
+    .sb-Diantar  { color: var(--diantar); border: 1px solid rgba(51,136,255,0.3); }
+    .sb-Diambil  { color: var(--diambil); border: 1px solid rgba(170,85,255,0.3); }
+    .sb-Selesai  { color: var(--done);    border: 1px solid #333; }
+    .sb-Batal    { color: #444;           border: 1px solid #333; }
+
+    /* Customer */
+    .card-customer {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .wa-link {
+      font-size: 0.6rem;
+      color: var(--ready);
+      text-decoration: none;
+      font-weight: 400;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .wa-link:hover { opacity: 1; }
+
+    /* Chips */
+    .card-chips {
+      display: flex; gap: 0.35rem; flex-wrap: wrap;
+      margin-bottom: 0.625rem;
+    }
+    .chip {
+      font-size: 0.55rem;
+      padding: 0.15rem 0.45rem;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    .ch-delivery { color: var(--diantar); border: 1px solid rgba(51,136,255,0.2); }
+    .ch-pickup   { color: var(--diambil); border: 1px solid rgba(170,85,255,0.2); }
+    .ch-qris     { color: #a78bfa;        border: 1px solid rgba(167,139,250,0.2); }
+    .ch-cash     { color: var(--ready);   border: 1px solid rgba(0,204,102,0.2); }
+    .ch-total    { color: var(--gold);    border: 1px solid rgba(255,170,0,0.25); font-weight: 700; }
+
+    .card-address {
+      font-size: 0.65rem;
+      color: var(--sub);
+      line-height: 1.6;
+      margin-bottom: 0.625rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid var(--border2);
+    }
+
+    .card-divider { height: 1px; background: var(--border); margin: 0 0 0.625rem; }
+
+    /* Items */
+    .card-items {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      margin-bottom: 0.875rem;
+    }
+    .item-row {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;
+    }
+    .item-name { font-size: 0.75rem; line-height: 1.45; flex: 1; color: var(--text); }
+    .item-qty  { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--fire); flex-shrink: 0; letter-spacing: 1px; }
+    .item-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.2rem; }
+    .item-tag  { font-size: 0.55rem; padding: 0.1rem 0.35rem; font-weight: 500; }
+    .t-daging  { color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+    .t-varian  { color: var(--ready); border: 1px solid rgba(0,204,102,0.2); }
+    .t-note    { color: #fde047; border: 1px solid rgba(253,224,71,0.2); }
 
     /* Card footer */
     .card-footer {
-      padding: 0.75rem 1rem;
-      background: rgba(0,0,0,0.2);
-      display: flex; gap: 0.5rem; align-items: center;
+      display: flex; gap: 0;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
     }
 
-    /* Action buttons */
     .action-btn {
       flex: 1;
-      padding: 0.6rem 0.5rem;
-      border: none; border-radius: 0.625rem;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
+      padding: 0.75rem 0.5rem;
+      border: none;
+      border-right: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.3px;
+      transition: all 0.15s;
+      letter-spacing: 0.5px;
+      text-align: center;
+      background: none;
+      color: var(--dim);
     }
+    .action-btn:last-child { border-right: none; }
 
-    .btn-next {
-      background: var(--fire);
-      color: white;
+    .btn-primary {
+      background: rgba(255,85,0,0.08);
+      color: var(--fire);
     }
-    .btn-next:hover { background: var(--ember); transform: scale(1.02); }
+    .btn-primary:hover { background: var(--fire); color: white; }
 
     .btn-maps {
-      background: rgba(59,130,246,0.2);
-      color: #60a5fa;
-      border: 1px solid rgba(59,130,246,0.3) !important;
+      background: rgba(51,136,255,0.06);
+      color: var(--diantar);
+      text-decoration: none;
+      display: flex; align-items: center; justify-content: center;
       flex: 0 0 auto;
-      padding: 0.6rem 0.75rem;
+      padding: 0.75rem 0.875rem;
     }
-    .btn-maps:hover { background: rgba(59,130,246,0.35); }
+    .btn-maps:hover { background: rgba(51,136,255,0.15); }
 
-    .btn-done {
-      background: rgba(107,114,128,0.2);
-      color: #9ca3af;
+    .done-label {
+      padding: 0.75rem 1rem;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
-    .btn-done:hover { background: rgba(107,114,128,0.35); }
 
-    /* ── EMPTY STATE ── */
+    /* ── EMPTY STATE ────────────────────────── */
     .empty-state {
-      grid-column: 1 / -1;
+      grid-column: 1/-1;
+      background: var(--surface);
       text-align: center;
-      padding: 4rem 2rem;
-      color: var(--ash);
+      padding: 5rem 2rem;
     }
-    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
-    .empty-text { font-family: 'Syne', sans-serif; font-size: 1rem; }
-    .empty-sub  { font-size: 0.7rem; margin-top: 0.5rem; letter-spacing: 1px; }
+    .empty-icon { font-size: 2.5rem; opacity: 0.3; margin-bottom: 1rem; }
+    .empty-text { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 3px; color: var(--sub); }
+    .empty-sub  { font-size: 0.6rem; color: var(--muted); margin-top: 0.5rem; letter-spacing: 2px; }
 
-    /* ── NEW ORDER ALERT BANNER ── */
+    /* ── NEW ORDER BANNER ───────────────────── */
     #new-order-banner {
       position: fixed; top: 0; left: 0; right: 0;
       background: var(--new);
       color: white;
       text-align: center;
       padding: 0.875rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      z-index: 50;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.125rem;
+      letter-spacing: 5px;
+      z-index: 100;
       transform: translateY(-100%);
-      transition: transform 0.4s ease;
+      transition: transform 0.25s ease;
     }
     #new-order-banner.show { transform: translateY(0); }
 
-    /* ── REFRESH INDICATOR ── */
-    .refresh-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--smoke);
-      border-top: 1px solid var(--ash);
-      padding: 0.75rem 1.25rem;
-      display: flex; align-items: center; justify-content: space-between;
+    /* ── MANUAL REFRESH BUTTON ──────────────── */
+    #refresh-fab {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      width: 2.75rem; height: 2.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--sub);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
       z-index: 10;
     }
+    #refresh-fab:hover { border-color: var(--fire); color: var(--fire); }
+    #refresh-fab.spinning { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .refresh-countdown {
-      font-size: 0.7rem; color: var(--ash);
-      letter-spacing: 1px;
-    }
-
-    .refresh-progress {
-      width: 100px; height: 3px;
-      background: var(--ash);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .refresh-fill {
-      height: 100%;
-      background: var(--fire);
-      border-radius: 2px;
-      transition: width 1s linear;
-    }
-
-    .manual-refresh {
-      background: none; border: 1px solid var(--ash);
-      color: var(--ash); border-radius: 0.5rem;
-      padding: 0.3rem 0.75rem; font-size: 0.7rem;
-      cursor: pointer; font-family: 'Space Mono', monospace;
-      transition: all 0.2s;
-    }
-    .manual-refresh:hover { border-color: var(--fire); color: var(--fire); }
-
-    /* Payment badge */
-    .payment-badge {
-      font-size: 0.6rem; font-weight: 700;
-      padding: 0.15rem 0.5rem; border-radius: 0.3rem;
-    }
-    .pay-cash { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .pay-qris { background: rgba(139,92,246,0.2); color: #a78bfa; }
-
-    /* Total chip */
-    .total-chip {<style>
-    :root {
-      --fire:      #f97316;
-      --ember:     #fb923c;
-      --coal:      #140c03;
-      --smoke:     #2a1a0f;
-      --ash:       #5c4635;
-      --cream:     #fff4e6;
-      --paper:     #fff8f0;
-      --new:       #ff4500;
-      --process:   #f59e0b;
-      --ready:     #22c55e;
-      --done:      #6b7280;
-      --accent-soft: #fed7aa;
-    }
-
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-    }
-
-    body {
-      background: var(--coal);
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Noise Texture - lebih halus & elegan */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-      pointer-events: none; 
-      z-index: 0;
-      opacity: 0.75;
-    }
-
-    /* ── LOGIN SCREEN ── */
-    #login-screen {
-      position: fixed; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--coal);
-      z-index: 999;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    .login-box {
-      background: linear-gradient(145deg, var(--smoke), #1f1308);
-      border: 1px solid rgba(251, 146, 60, 0.25);
-      border-radius: 1.75rem;
-      padding: 2.75rem 2.25rem;
-      width: 100%; max-width: 380px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 70%);
-    }
-
-    .login-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.85rem;
-      font-weight: 800;
-      color: var(--ember);
-      letter-spacing: -1.2px;
-      text-shadow: 0 3px 6px rgba(0,0,0,0.6);
-    }
-
-    .login-sub {
-      font-size: 0.72rem;
-      color: var(--ash);
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 2.25rem;
-    }
-
-    .login-input {
-      width: 100%;
-      background: var(--coal);
-      border: 1.5px solid var(--ash);
-      border-radius: 1rem;
-      padding: 1rem 1.25rem;
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
-      font-size: 1.15rem;
-      letter-spacing: 6px;
-      text-align: center;
-      outline: none;
-      margin-bottom: 1.25rem;
-      transition: all 0.3s;
-    }
-    .login-input:focus { 
-      border-color: var(--fire); 
-      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
-    }
-
-    .login-btn {
-      width: 100%;
-      background: var(--fire);
-      color: white;
-      border: none;
-      border-radius: 1rem;
-      padding: 1rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 1.5px;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
-    }
-    .login-btn:hover { 
-      background: var(--ember); 
-      transform: translateY(-2px);
-    }
-
-    /* ── MAIN APP ── */
-    .header {
-      background: var(--smoke);
-      border-bottom: 1px solid rgba(92, 70, 53, 0.6);
-      padding: 1.1rem 1.5rem;
-      position: sticky; top: 0; z-index: 10;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-
-    .header-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--ember);
-      letter-spacing: -1px;
-    }
-
-    .header-badge {
-      background: var(--fire);
-      color: white;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0.25rem 0.75rem;
-      border-radius: 2rem;
-      letter-spacing: 1px;
-      box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
-    }
-
-    /* Stats Bar */
-    .stats-bar {
-      display: grid; 
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.75rem; 
-      padding: 1.25rem 1.5rem;
-      background: var(--smoke);
-      border-bottom: 1px solid rgba(92, 70, 53, 0.5);
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 0.85rem 0.5rem;
-      border-radius: 1.25rem;
-      background: var(--coal);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-    }
-
-    .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.85rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 0.62rem;
-      color: var(--ash);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-top: 0.3rem;
-    }
-
-    /* Order Cards - Premium Look */
-    .order-grid {
-      padding: 1.5rem 1.5rem 7rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .order-card {
-      background: var(--smoke);
-      border: 1px solid rgba(92, 70, 53, 0.7);
-      border-radius: 1.5rem;
-      overflow: hidden;
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .order-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.6),
-                  0 0 0 1px var(--ember);
-      border-color: var(--ember);
-    }
-
-    .card-accent {
-      height: 5px;
-    }
-
-    .card-header {
-      padding: 1.15rem 1.35rem 0.75rem;
-      background: rgba(20, 12, 3, 0.85);
-      backdrop-filter: blur(8px);
-    }
-
-    .card-orderid {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--ember);
-      letter-spacing: 1px;
-    }
-
-    .status-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 2rem;
-      letter-spacing: 0.5px;
-      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
-    }
-
-    .card-customer {
-      padding: 0 1.35rem 0.75rem;
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
-
-    .card-items {
-      padding: 0 1.35rem;
-      display: flex; 
-      flex-direction: column; 
-      gap: 0.55rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .item-name {
-      font-size: 0.82rem;
-      line-height: 1.45;
-    }
-
-    .action-btn {
-      border-radius: 1rem;
-      padding: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      transition: all 0.3s;
-    }
-
-    .btn-next {
-      background: var(--fire);
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
-    }
-    .btn-next:hover {
-      background: var(--ember);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(251, 146, 60, 0.5);
-    }
-
-    /* Filter Tabs */
-<style>
-    :root {
-      --fire:        #f97316;     /* orange utama */
-      --ember:       #fb923c;
-      --gold:        #fbbf24;     /* kuning emas baru */
-      --soft-yellow: #fcd34d;
-      --coal:        #140c03;
-      --smoke:       #2a1a0f;
-      --ash:         #5c4635;
-      --cream:       #fff4e6;
-      --paper:       #fff8f0;
-      --new:         #ff4500;
-      --process:     #f59e0b;
-      --ready:       #22c55e;
-      --done:        #6b7280;
-    }
-
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-    }
-
-    body {
-      background: var(--coal);
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-      font-feature-settings: "tnum";
-    }
-
-    /* Noise Texture lebih halus */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none; 
-      z-index: 0;
-      opacity: 0.7;
-    }
-
-    /* ── LOGIN SCREEN ── */
-    #login-screen {
-      position: fixed; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--coal);
-      z-index: 999;
-      padding: 2rem;
-    }
-
-    .login-box {
-      background: linear-gradient(145deg, #2a1a0f, #1f1308);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-      border-radius: 1.75rem;
-      padding: 2.75rem 2.25rem;
-      width: 100%; max-width: 380px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 70%);
-    }
-
-    .login-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.9rem;
-      font-weight: 800;
-      color: var(--gold);
-      letter-spacing: -1px;
-      text-shadow: 0 3px 6px rgba(0,0,0,0.6);
-    }
-
-    .login-input {
-      width: 100%;
-      background: var(--coal);
-      border: 1.5px solid var(--ash);
-      border-radius: 1rem;
-      padding: 1rem 1.25rem;
-      color: var(--cream);
-      font-family: 'Space Mono', monospace;
-      font-size: 1.22rem;
-      letter-spacing: 3px;
-      text-align: center;
-      outline: none;
-      margin-bottom: 1.25rem;
-      transition: all 0.3s;
-    }
-    .login-input:focus { 
-      border-color: var(--gold); 
-      box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.2);
-    }
-
-    .login-btn {
-      width: 100%;
-      background: var(--fire);
-      color: white;
-      border: none;
-      border-radius: 1rem;
-      padding: 1rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-    }
-    .login-btn:hover { 
-      background: var(--gold); 
-      color: #140c03;
-      transform: translateY(-2px);
-    }
-
-    /* ── HEADER ── */
-    .header {
-      background: var(--smoke);
-      border-bottom: 1px solid rgba(92, 70, 53, 0.6);
-      padding: 1.1rem 1.5rem;
-      position: sticky; top: 0; z-index: 10;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-
-    .header-logo {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--gold);
-      letter-spacing: -0.8px;
-    }
-
-    /* ── STATS BAR ── */
-    .stats-bar {
-      display: grid; 
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.8rem; 
-      padding: 1.25rem 1.5rem;
-      background: var(--smoke);
-      border-bottom: 1px solid rgba(92, 70, 53, 0.5);
-    }
-
-    .stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.95rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .stat-new .stat-num    { color: var(--new); }
-    .stat-proc .stat-num   { color: var(--process); }
-    .stat-ready .stat-num  { color: var(--ready); }
-    .stat-done .stat-num   { color: var(--done); }
-
-    /* ── ORDER CARD ── */
-    .order-grid {
-      padding: 1.5rem 1.5rem 7rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .order-card {
-      background: var(--smoke);
-      border: 1px solid rgba(92, 70, 53, 0.7);
-      border-radius: 1.5rem;
-      overflow: hidden;
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .order-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.6),
-                  0 0 0 1px var(--gold);
-      border-color: var(--gold);
-    }
-
-    .btn-next {
-      background: var(--fire);
-      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-    }
-    .btn-next:hover {
-      background: var(--gold);
-      color: #140c03;
-      transform: translateY(-2px);
-    }
-
-    /* Filter Tabs */
-    .tab-btn.active, .tab-btn:hover {
-      background: var(--gold);
-      color: #140c03;
-      font-weight: 700;
-    }
-
-    /* New Order Banner */
-    #new-order-banner {
-      background: linear-gradient(90deg, var(--new), var(--gold));
-      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.5);
-    }
-
-    /* Typography Fix */
-    .login-input,
-    .card-orderid,
-    .status-badge,
-    .tab-btn,
-    .refresh-countdown {
-      letter-spacing: 0.5px;
-    }
-
-    .card-orderid {
-      letter-spacing: 1px;
-    }
-
-    .stat-label,
-    .item-name {
-      letter-spacing: 0.3px;
-    }
-
-    /* Responsive */
+    /* ── RESPONSIVE ─────────────────────────── */
     @media (max-width: 480px) {
-      .order-grid { 
-        grid-template-columns: 1fr; 
-        padding: 1rem 1rem 6rem; 
-        gap: 1rem;
-      }
-      .stat-num { font-size: 1.65rem; }
-      .order-card { border-radius: 1.25rem; }
-      .login-input { font-size: 1.3rem; letter-spacing: 4px; }
+      .order-grid { grid-template-columns: 1fr; padding: 0 0 5rem; }
+      .stat-num   { font-size: 2.25rem; }
+      .stats-bar  { gap: 0; }
+      .header     { padding: 0 1rem; }
     }
-
-    @media (min-width: 768px) {
-      .order-grid {
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      }
+    @media (min-width: 1200px) {
+      .order-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
     }
-</style>
+  </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       LOGIN SCREEN
-  ============================================================ -->
-  <div id="login-screen">
-    <div class="login-box">
-      <div class="login-logo">🔥 KF Kitchen</div>
-      <div class="login-sub">Dapur Dashboard</div>
+<!-- ── LOGIN ──────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">KF Kitchen</div>
+    <div class="login-sub">Dapur · Dashboard</div>
+    <input type="password" id="pin-input" class="login-input"
+      placeholder="••••" maxlength="12"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">MASUK</button>
+    <p class="login-error" id="login-error">PIN salah. Coba lagi.</p>
+  </div>
+</div>
 
-      <input type="password" id="pin-input" class="login-input"
-        placeholder="••••••"
-        onkeydown="if(event.key==='Enter') doLogin()"
-        maxlength="12">
+<!-- ── APP ──────────────────────────────────────── -->
+<div id="app">
 
-      <button class="login-btn" onclick="doLogin()">MASUK</button>
-      <p class="login-error" id="login-error">❌ PIN salah. Coba lagi.</p>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">🔥 <em>KF</em> Kitchen</div>
+      <span class="header-badge" id="active-count">0 aktif</span>
     </div>
-    <p style="font-size:0.65rem;color:#4a3728;letter-spacing:1px">THE KEBAB FACTORY © 2026</p>
+    <div class="header-right">
+      <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+      <span id="sync-status">—</span>
+      <button class="hdr-btn" onclick="toggleSound()" id="sound-btn">🔔 ON</button>
+      <button class="hdr-btn" onclick="doLogout()">KELUAR</button>
+    </div>
   </div>
 
-  <!-- ============================================================
-       MAIN APP
-  ============================================================ -->
-  <div id="app">
-
-    <!-- Header -->
-    <div class="header">
-      <div class="header-left">
-        <div>
-          <div class="header-logo">🔥 KF Kitchen</div>
-        </div>
-        <span class="header-badge" id="active-count">0 aktif</span>
-      </div>
-      <div class="header-right">
-        <div class="live-dot">LIVE</div>
-        <button class="sound-btn" onclick="toggleSound()" id="sound-btn">🔔 ON</button>
-        <button class="logout-btn" onclick="doLogout()">KELUAR</button>
-      </div>
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-item stat-new">
+      <div class="stat-num" id="stat-baru">0</div>
+      <div class="stat-label">Baru</div>
     </div>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-      <div class="stat-item stat-new">
-        <div class="stat-num" id="stat-baru">0</div>
-        <div class="stat-label">Baru</div>
-      </div>
-      <div class="stat-item stat-proc">
-        <div class="stat-num" id="stat-diproses">0</div>
-        <div class="stat-label">Diproses</div>
-      </div>
-      <div class="stat-item stat-ready">
-        <div class="stat-num" id="stat-siap">0</div>
-        <div class="stat-label">Siap</div>
-      </div>
-      <div class="stat-item stat-done">
-        <div class="stat-num" id="stat-selesai">0</div>
-        <div class="stat-label">Selesai</div>
-      </div>
+    <div class="stat-item stat-proc">
+      <div class="stat-num" id="stat-diproses">0</div>
+      <div class="stat-label">Diproses</div>
     </div>
-
-    <!-- Filter Tabs -->
-    <div class="filter-tabs">
-      <button class="tab-btn active" onclick="setFilter('Semua', this)">🍽 Semua</button>
-      <button class="tab-btn" onclick="setFilter('Baru', this)">🆕 Baru</button>
-      <button class="tab-btn" onclick="setFilter('Diproses', this)">🔥 Diproses</button>
-      <button class="tab-btn" onclick="setFilter('Siap', this)">✅ Siap</button>
-      <button class="tab-btn" onclick="setFilter('Selesai', this)">📦 Selesai</button>
-      <button class="tab-btn" onclick="setFilter('Delivery', this)">🛵 Delivery</button>
-      <button class="tab-btn" onclick="setFilter('Pickup', this)">🏪 Pickup</button>
+    <div class="stat-item stat-ready">
+      <div class="stat-num" id="stat-siap">0</div>
+      <div class="stat-label">Siap</div>
     </div>
-
-    <!-- Order Grid -->
-    <div class="order-grid" id="order-grid">
-      <div class="empty-state">
-        <div class="empty-icon">⏳</div>
-        <div class="empty-text">Memuat pesanan...</div>
-        <div class="empty-sub">Menghubungi server</div>
-      </div>
+    <div class="stat-item stat-done">
+      <div class="stat-num" id="stat-selesai">0</div>
+      <div class="stat-label">Selesai</div>
     </div>
-
-    <!-- New Order Banner -->
-    <div id="new-order-banner">🔔 ADA PESANAN BARU MASUK!</div>
-
-    <!-- Refresh Bar -->
-    <div class="refresh-bar">
-      <span class="refresh-countdown" id="countdown-text">Refresh dalam 20s</span>
-      <div class="refresh-progress">
-        <div class="refresh-fill" id="refresh-fill" style="width:100%"></div>
-      </div>
-      <button class="manual-refresh" onclick="fetchOrders()">↺ Refresh</button>
-    </div>
-
   </div>
 
-  <script>
-    // ============================================================
-    // KONFIGURASI
-    // ============================================================
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
-    const DAPUR_PIN       = 'kf2026';        // ← Ganti PIN di sini
-    const REFRESH_INTERVAL = 20;             // detik
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button class="tab-btn active" onclick="setFilter('Semua',this)">Semua</button>
+    <button class="tab-btn" onclick="setFilter('Baru',this)">Baru</button>
+    <button class="tab-btn" onclick="setFilter('Diproses',this)">Diproses</button>
+    <button class="tab-btn" onclick="setFilter('Siap',this)">Siap</button>
+    <button class="tab-btn" onclick="setFilter('Diantar',this)">Diantar</button>
+    <button class="tab-btn" onclick="setFilter('Diambil',this)">Diambil</button>
+    <button class="tab-btn" onclick="setFilter('Selesai',this)">Selesai</button>
+    <button class="tab-btn" onclick="setFilter('Delivery',this)">Delivery</button>
+    <button class="tab-btn" onclick="setFilter('Pickup',this)">Pickup</button>
+  </div>
 
-    // ============================================================
-    // STATE
-    // ============================================================
-    let allOrders       = [];
-    let activeFilter    = 'Semua';
-    let soundEnabled    = true;
-    let refreshTimer    = null;
-    let countdownVal    = REFRESH_INTERVAL;
-    let knownOrderIds   = new Set();
-    let isFirstLoad     = true;
+  <!-- Order Grid -->
+  <div class="order-grid" id="order-grid">
+    <div class="empty-state">
+      <div class="empty-icon">⏳</div>
+      <div class="empty-text">Memuat pesanan</div>
+      <div class="empty-sub">Menghubungi server</div>
+    </div>
+  </div>
 
-    // ============================================================
-    // LOGIN
-    // ============================================================
-    function doLogin() {
-      const pin = document.getElementById('pin-input').value.trim();
-      if (pin === DAPUR_PIN) {
-        localStorage.setItem('kf_dapur_auth', btoa(pin + '_' + Date.now()));
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        startApp();
-      } else {
-        document.getElementById('login-error').style.display = 'block';
-        document.getElementById('pin-input').value = '';
-        document.getElementById('pin-input').focus();
-        setTimeout(() => {
-          document.getElementById('login-error').style.display = 'none';
-        }, 3000);
-      }
+  <!-- New order banner -->
+  <div id="new-order-banner">🔔 PESANAN BARU MASUK</div>
+
+  <!-- Refresh FAB -->
+  <button id="refresh-fab" onclick="manualRefresh()" title="Refresh">↺</button>
+
+</div>
+
+<script>
+  const APPS_SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
+  const DAPUR_PIN        = 'kf2026';
+  const REFRESH_INTERVAL = 20; // detik
+
+  let allOrders     = [];
+  let activeFilter  = 'Semua';
+  let soundEnabled  = true;
+  let fetchTimer    = null;
+  let knownOrderIds = new Set();
+  let isFirstLoad   = true;
+  let lastSyncTime  = null;
+
+  // ── LOGIN ──────────────────────────────────
+  function doLogin() {
+    const pin = document.getElementById('pin-input').value.trim();
+    if (pin === DAPUR_PIN) {
+      localStorage.setItem('kf_dapur_auth', btoa(pin + '_' + Date.now()));
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      startApp();
+    } else {
+      const err = document.getElementById('login-error');
+      err.style.display = 'block';
+      document.getElementById('pin-input').value = '';
+      document.getElementById('pin-input').focus();
+      setTimeout(() => err.style.display = 'none', 3000);
     }
+  }
 
-    function doLogout() {
-      localStorage.removeItem('kf_dapur_auth');
-      location.reload();
-    }
+  function doLogout() {
+    localStorage.removeItem('kf_dapur_auth');
+    location.reload();
+  }
 
-    // Auto-login jika sudah ada sesi (max 12 jam)
-    function checkAutoLogin() {
-      const stored = localStorage.getItem('kf_dapur_auth');
-      if (stored) {
-        try {
-          const decoded  = atob(stored);
-          const parts    = decoded.split('_');
-          const ts       = parseInt(parts[parts.length - 1]);
-          if (Date.now() - ts < 12 * 60 * 60 * 1000) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-            startApp();
-            return;
-          }
-        } catch(e) {}
-        localStorage.removeItem('kf_dapur_auth');
-      }
-    }
-
-    // ============================================================
-    // APP START
-    // ============================================================
-    function startApp() {
-      startCountdown(); // mulai countdown dulu
-      fetchOrders();    // fetch langsung (fetchOrders restart countdown setelah selesai)
-    }
-
-    // ============================================================
-    // FETCH ORDERS dari Google Apps Script
-    // ============================================================
-    async function fetchOrders() {
+  function checkAutoLogin() {
+    const stored = localStorage.getItem('kf_dapur_auth');
+    if (stored) {
       try {
-        const res  = await fetch(APPS_SCRIPT_URL + '?action=getAllOrders&t=' + Date.now());
-        const text = await res.text();
-
-        let data;
-        try { data = JSON.parse(text); }
-        catch(e) { throw new Error('Server tidak merespons JSON. Cek Apps Script.'); }
-
-        if (data.orders) {
-          const prevIds   = new Set(knownOrderIds);
-          const newOrders = [];
-          data.orders.forEach(o => {
-            if (!prevIds.has(o.orderId) && !isFirstLoad) newOrders.push(o.orderId);
-            knownOrderIds.add(o.orderId);
-          });
-          if (newOrders.length > 0) {
-            showNewOrderAlert(newOrders.length);
-            if (soundEnabled) playBeep();
-          }
-          allOrders   = data.orders;
-          isFirstLoad = false;
-          renderOrders();
-          updateStats();
-        } else if (data.error) {
-          throw new Error('Apps Script: ' + data.error);
+        const decoded = atob(stored);
+        const parts   = decoded.split('_');
+        const ts      = parseInt(parts[parts.length - 1]);
+        if (Date.now() - ts < 12 * 60 * 60 * 1000) {
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('app').style.display = 'block';
+          startApp();
+          return;
         }
-
-      } catch (err) {
-        console.error('fetchOrders gagal:', err.message);
-        if (allOrders.length === 0) {
-          document.getElementById('order-grid').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">⚠️</div>
-              <div class="empty-text">Gagal terhubung ke server</div>
-              <div class="empty-sub" style="font-size:0.65rem;max-width:260px;text-align:center;line-height:1.8">
-                ${err.message}<br>
-                Cek: koneksi internet · Apps Script aktif · akses "Anyone"
-              </div>
-            </div>`;
-        }
-      }
-
-      startCountdown();
-    }
-
-    // ============================================================
-    // UPDATE STATUS ORDER ke Google Sheet
-    // ============================================================
-    async function updateStatus(orderId, newStatus) {
-      // Update UI dulu (optimistic update)
-      const order = allOrders.find(o => o.orderId === orderId);
-      if (order) order.status = newStatus;
-      renderOrders();
-      updateStats();
-
-      try {
-        const payload = new URLSearchParams();
-        payload.append('action',  'updateStatus');
-        payload.append('orderId', orderId);
-        payload.append('status',  newStatus);
-
-        await fetch(APPS_SCRIPT_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body:    payload
-        });
-      } catch (err) {
-        console.warn('Status update failed:', err);
-      }
-    }
-
-    // ============================================================
-    // RENDER
-    // ============================================================
-    function renderOrders() {
-      const grid = document.getElementById('order-grid');
-      let filtered = [...allOrders];
-
-      // Filter aktif
-      if (activeFilter === 'Delivery') {
-        filtered = filtered.filter(o => o.pengiriman && o.pengiriman.toLowerCase().includes('delivery'));
-      } else if (activeFilter === 'Pickup') {
-        filtered = filtered.filter(o => o.pengiriman && (o.pengiriman.toLowerCase().includes('ambil') || o.pengiriman.toLowerCase().includes('pickup')));
-      } else if (activeFilter !== 'Semua') {
-        filtered = filtered.filter(o => o.status === activeFilter);
-      }
-
-      // Urut: Baru dulu, lalu Diproses, lalu Siap, lalu Selesai
-      const statusOrder = { 'Baru': 0, 'Diproses': 1, 'Siap': 2, 'Selesai': 3, 'Batal': 4 };
-      filtered.sort((a, b) => (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9));
-
-      // Update active count badge
-      const activeCount = allOrders.filter(o => o.status !== 'Selesai' && o.status !== 'Batal').length;
-      document.getElementById('active-count').textContent = activeCount + ' aktif';
-
-      if (!filtered.length) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">🫙</div>
-            <div class="empty-text">Tidak ada pesanan</div>
-            <div class="empty-sub">${activeFilter === 'Semua' ? 'Belum ada order masuk' : 'Filter: ' + activeFilter}</div>
-          </div>`;
-        return;
-      }
-
-      try {
-        grid.innerHTML = filtered.map(order => buildCard(order)).join('');
-      } catch(e) {
-        console.error('buildCard error:', e);
-        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🐛</div><div class="empty-text">Error render kartu</div><div class="empty-sub" style="max-width:280px;text-align:center;line-height:1.8">' + e.message + '</div></div>';
-      }
-    }
-
-    function buildCard(order) {
-      const isDelivery  = order.pengiriman && String(order.pengiriman).toLowerCase().includes('delivery');
-      const chipClass   = isDelivery ? 'chip-delivery' : 'chip-pickup';
-      const chipLabel   = isDelivery ? '🛵 Delivery' : '🏪 Pickup';
-      const payClass    = order.pembayaran && String(order.pembayaran).toLowerCase().includes('qris') ? 'pay-qris' : 'pay-cash';
-      const payLabel    = order.pembayaran || 'Cash';
-
-      // Parse items string → array
-      // Format: "Kebab Original(Ayam·Pedas)x2, Kebab Telur(Sapi·Tidak Pedas)x1"
-      const itemsHtml   = parseItems(order.items || '');
-
-      // Tombol aksi berdasarkan status
-      const nextLabel   = { 'Baru': '🔥 Proses Sekarang', 'Diproses': '✅ Tandai Siap', 'Siap': '📦 Selesai', 'Selesai': '' }[order.status] || '';
-      const nextStatus  = { 'Baru': 'Diproses', 'Diproses': 'Siap', 'Siap': 'Selesai' }[order.status] || '';
-
-      // Tombol GPS hanya jika delivery + ada koordinat
-      const hasGps      = isDelivery && order.userLat && order.userLng;
-      const mapsUrl     = hasGps ? `https://maps.google.com?q=${order.userLat},${order.userLng}` : null;
-
-      return `
-        <div class="order-card" id="card-${order.orderId}">
-          <div class="card-accent accent-${order.status}"></div>
-
-          <div class="card-header">
-            <div>
-              <div class="card-orderid">${order.orderId}</div>
-              <div class="card-time">${order.timestamp || ''}</div>
-            </div>
-            <span class="status-badge badge-${order.status}">${order.status || 'Baru'}</span>
-          </div>
-
-          <div class="card-customer">
-            👤 ${order.nama || '-'}
-            ${order.noWA ? `<a href="https://wa.me/${String(order.noWA).replace(/\D/g,'')}" target="_blank"
-              style="color:#4ade80;font-size:0.7rem;margin-left:0.5rem;text-decoration:none">💬 WA</a>` : ''}
-          </div>
-
-          <div style="padding:0 1rem 0.625rem;display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center">
-            <span class="delivery-chip ${chipClass}">${chipLabel}</span>
-            <span class="payment-badge ${payClass}">${payLabel}</span>
-            <span class="total-chip">${order.total || ''}</span>
-          </div>
-
-          ${isDelivery && order.alamat && order.alamat !== '-' ? `
-          <div style="padding:0 1rem 0.625rem;font-size:0.72rem;color:#9ca3af;line-height:1.5">
-            📍 ${order.alamat}
-          </div>` : ''}
-
-          <div class="card-divider"></div>
-
-          <div class="card-items">${itemsHtml}</div>
-
-          ${order.status !== 'Selesai' && order.status !== 'Batal' ? `
-          <div class="card-footer">
-            ${nextLabel ? `<button class="action-btn btn-next" onclick="updateStatus('${order.orderId}','${nextStatus}')">${nextLabel}</button>` : ''}
-            ${order.status === 'Selesai' ? `<button class="action-btn btn-done" disabled>✓ Selesai</button>` : ''}
-            ${hasGps ? `<a href="${mapsUrl}" target="_blank" class="action-btn btn-maps" style="text-align:center;text-decoration:none">🗺️</a>` : ''}
-          </div>` : `
-          <div class="card-footer">
-            <span style="font-size:0.7rem;color:#6b7280;letter-spacing:1px">✓ ORDER SELESAI</span>
-          </div>`}
-        </div>`;
-    }
-
-    // Parse string items jadi HTML
-    function parseItems(itemsStr) {
-      if (!itemsStr) return '<div style="color:#6b7280;font-size:0.75rem">—</div>';
-
-      return itemsStr.split(',').map(item => {
-        item = item.trim();
-        // Format: "Kebab Original(Ayam·Pedas)x2 [catatan]"
-        const qtyMatch   = item.match(/x(\d+)/i);
-        const nameMatch  = item.match(/^(.+?)\(/);
-        const tagsMatch  = item.match(/\(([^)]+)\)/);
-        const noteMatch  = item.match(/\[([^\]]+)\]/);
-
-        const qty   = qtyMatch  ? qtyMatch[1]  : '1';
-        const name  = nameMatch ? nameMatch[1].trim() : item;
-        const tags  = tagsMatch ? tagsMatch[1].split(/[·\·\·]/).map(t => t.trim()) : [];
-        const note  = noteMatch ? noteMatch[1] : null;
-
-        const tagsHtml = tags.map((t, i) =>
-          `<span class="item-tag ${i === 0 ? 'tag-daging' : 'tag-varian'}">${t}</span>`
-        ).join('');
-
-        return `
-          <div class="item-row">
-            <div class="item-name">
-              ${name}
-              <div class="item-tags">
-                ${tagsHtml}
-                ${note ? `<span class="item-tag tag-note">📝 ${note}</span>` : ''}
-              </div>
-            </div>
-            <div class="item-qty">×${qty}</div>
-          </div>`;
-      }).join('');
-    }
-
-    // ============================================================
-    // STATS
-    // ============================================================
-    function updateStats() {
-      const counts = { Baru: 0, Diproses: 0, Siap: 0, Selesai: 0 };
-      allOrders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
-      document.getElementById('stat-baru').textContent     = counts.Baru;
-      document.getElementById('stat-diproses').textContent = counts.Diproses;
-      document.getElementById('stat-siap').textContent     = counts.Siap;
-      document.getElementById('stat-selesai').textContent  = counts.Selesai;
-    }
-
-    // ============================================================
-    // FILTER
-    // ============================================================
-    function setFilter(filter, btn) {
-      activeFilter = filter;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderOrders();
-    }
-
-    // ============================================================
-    // NEW ORDER ALERT
-    // ============================================================
-    function showNewOrderAlert(count) {
-      const banner = document.getElementById('new-order-banner');
-      banner.textContent = `🔔 ${count} PESANAN BARU MASUK!`;
-      banner.classList.add('show');
-      setTimeout(() => banner.classList.remove('show'), 4000);
-    }
-
-    // ============================================================
-    // SOUND (Web Audio API — no file needed)
-    // ============================================================
-    function playBeep() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        [600, 800, 1000].forEach((freq, i) => {
-          const osc  = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.frequency.value = freq;
-          osc.type = 'sine';
-          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.2);
-          osc.start(ctx.currentTime + i * 0.15);
-          osc.stop(ctx.currentTime + i * 0.15 + 0.25);
-        });
       } catch(e) {}
+      localStorage.removeItem('kf_dapur_auth');
     }
+  }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('sound-btn').textContent = soundEnabled ? '🔔 ON' : '🔕 OFF';
-    }
+  // ── APP START ──────────────────────────────
+  function startApp() {
+    fetchOrders();
+    scheduleFetch();
+  }
 
-    // ============================================================
-    // COUNTDOWN & AUTO REFRESH
-    // ============================================================
-    function startCountdown() {
-      if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
-      countdownVal = REFRESH_INTERVAL;
-      document.getElementById('refresh-fill').style.width = '100%';
-      document.getElementById('countdown-text').textContent = `Refresh dalam ${REFRESH_INTERVAL}s`;
+  function scheduleFetch() {
+    if (fetchTimer) clearTimeout(fetchTimer);
+    fetchTimer = setTimeout(() => { fetchOrders(); scheduleFetch(); }, REFRESH_INTERVAL * 1000);
+  }
 
-      refreshTimer = setInterval(() => {
-        countdownVal--;
-        const pct = Math.max(0, (countdownVal / REFRESH_INTERVAL) * 100);
-        document.getElementById('refresh-fill').style.width = pct + '%';
-        document.getElementById('countdown-text').textContent = `Refresh dalam ${Math.max(0, countdownVal)}s`;
+  // ── SYNC STATUS LABEL ──────────────────────
+  function setSyncing() {
+    document.getElementById('sync-status').textContent = '⟳ sync';
+    const fab = document.getElementById('refresh-fab');
+    if (fab) fab.classList.add('spinning');
+  }
 
-        if (countdownVal <= 0) {
-          clearInterval(refreshTimer); // stop dulu sebelum fetch
-          refreshTimer = null;
-          fetchOrders();              // fetchOrders() akan panggil startCountdown() lagi
+  function setSynced() {
+    lastSyncTime = Date.now();
+    document.getElementById('sync-status').textContent = '✓ baru saja';
+    const fab = document.getElementById('refresh-fab');
+    if (fab) fab.classList.remove('spinning');
+    setTimeout(() => {
+      if (lastSyncTime) {
+        const s = Math.round((Date.now() - lastSyncTime) / 1000);
+        document.getElementById('sync-status').textContent = s < 60 ? s + 'd lalu' : Math.round(s/60) + 'm lalu';
+      }
+    }, 8000);
+  }
+
+  function setSyncError() {
+    document.getElementById('sync-status').textContent = '⚠ gagal';
+    const fab = document.getElementById('refresh-fab');
+    if (fab) fab.classList.remove('spinning');
+  }
+
+  // ── FETCH ORDERS ───────────────────────────
+  async function fetchOrders() {
+    setSyncing();
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getAllOrders&t=' + Date.now());
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); }
+      catch(e) { throw new Error('Server tidak merespons JSON.'); }
+
+      if (data.orders) {
+        const prevIds   = new Set(knownOrderIds);
+        const newOrders = [];
+        data.orders.forEach(o => {
+          if (!prevIds.has(o.orderId) && !isFirstLoad) newOrders.push(o.orderId);
+          knownOrderIds.add(o.orderId);
+        });
+        if (newOrders.length > 0) {
+          showNewOrderAlert(newOrders.length);
+          if (soundEnabled) playBeep();
         }
-      }, 1000);
+        allOrders   = data.orders;
+        isFirstLoad = false;
+        renderOrders();
+        updateStats();
+        setSynced();
+      } else if (data.error) {
+        throw new Error('Apps Script: ' + data.error);
+      }
+    } catch (err) {
+      console.error('fetchOrders:', err.message);
+      setSyncError();
+      if (allOrders.length === 0) {
+        document.getElementById('order-grid').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-text">Gagal terhubung</div>
+            <div class="empty-sub" style="max-width:260px;margin:.5rem auto 0;line-height:2">${err.message}</div>
+          </div>`;
+      }
+    }
+  }
+
+  function manualRefresh() {
+    if (fetchTimer) clearTimeout(fetchTimer);
+    fetchOrders();
+    scheduleFetch();
+  }
+
+  // ── UPDATE STATUS ──────────────────────────
+  async function updateStatus(orderId, newStatus) {
+    const order = allOrders.find(o => o.orderId === orderId);
+    if (order) order.status = newStatus;
+    renderOrders();
+    updateStats();
+    try {
+      const payload = new URLSearchParams();
+      payload.append('action',  'updateStatus');
+      payload.append('orderId', orderId);
+      payload.append('status',  newStatus);
+      await fetch(APPS_SCRIPT_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    payload
+      });
+    } catch (err) { console.warn('Status update failed:', err); }
+  }
+
+  // ── RENDER ─────────────────────────────────
+  function renderOrders() {
+    const grid = document.getElementById('order-grid');
+    let filtered = [...allOrders];
+
+    if (activeFilter === 'Delivery') {
+      filtered = filtered.filter(o => String(o.pengiriman||'').toLowerCase().includes('delivery'));
+    } else if (activeFilter === 'Pickup') {
+      filtered = filtered.filter(o => {
+        const p = String(o.pengiriman||'').toLowerCase();
+        return p.includes('ambil') || p.includes('pickup');
+      });
+    } else if (activeFilter !== 'Semua') {
+      filtered = filtered.filter(o => o.status === activeFilter);
     }
 
-    function resetCountdown() {
-      startCountdown(); // delegasi ke startCountdown yang sudah benar
+    const ord = { 'Baru':0,'Diproses':1,'Siap':2,'Diantar':3,'Diambil':3,'Selesai':4,'Batal':5 };
+    filtered.sort((a, b) => (ord[a.status]??9) - (ord[b.status]??9));
+
+    const activeCount = allOrders.filter(o => !['Selesai','Batal'].includes(o.status)).length;
+    document.getElementById('active-count').textContent = activeCount + ' aktif';
+
+    if (!filtered.length) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🫙</div>
+          <div class="empty-text">Tidak ada pesanan</div>
+          <div class="empty-sub">${activeFilter === 'Semua' ? 'Belum ada order masuk' : 'Filter: ' + activeFilter}</div>
+        </div>`;
+      return;
     }
 
-    // ============================================================
-    // INIT
-    // ============================================================
-    checkAutoLogin();
-  </script>
+    try {
+      grid.innerHTML = filtered.map(order => buildCard(order)).join('');
+    } catch(e) {
+      console.error('buildCard error:', e);
+      grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🐛</div><div class="empty-text">Error render</div><div class="empty-sub">' + e.message + '</div></div>';
+    }
+  }
+
+  function buildCard(order) {
+    const isDelivery = String(order.pengiriman||'').toLowerCase().includes('delivery');
+    const payIsQris  = String(order.pembayaran||'').toLowerCase().includes('qris');
+    const itemsHtml  = parseItems(order.items || '');
+
+    // Smart status flow: Siap → Diantar (delivery) atau Diambil (pickup)
+    let nextLabel = '', nextStatus = '';
+    if      (order.status === 'Baru')     { nextLabel = '▶ PROSES';    nextStatus = 'Diproses'; }
+    else if (order.status === 'Diproses') { nextLabel = '✓ SIAP';      nextStatus = 'Siap'; }
+    else if (order.status === 'Siap') {
+      if (isDelivery) { nextLabel = '🛵 KIRIM';  nextStatus = 'Diantar'; }
+      else            { nextLabel = '🛍 DIAMBIL'; nextStatus = 'Diambil'; }
+    }
+    else if (order.status === 'Diantar' || order.status === 'Diambil') {
+                        nextLabel = '■ SELESAI'; nextStatus = 'Selesai'; }
+
+    const hasGps  = isDelivery && order.userLat && order.userLng;
+    const mapsUrl = hasGps ? `https://maps.google.com?q=${order.userLat},${order.userLng}` : null;
+    const isDone  = order.status === 'Selesai' || order.status === 'Batal';
+
+    return `<div class="order-card s-${order.status}" id="card-${order.orderId}">
+      <div class="card-inner">
+        <div class="card-row1">
+          <div>
+            <div class="card-id">${order.orderId}</div>
+            <div class="card-time">${order.timestamp || ''}</div>
+          </div>
+          <span class="sbadge sb-${order.status}">${order.status||'Baru'}</span>
+        </div>
+
+        <div class="card-customer">
+          ${order.nama || '-'}
+          ${order.noWA ? `<a href="https://wa.me/${String(order.noWA).replace(/\D/g,'')}" target="_blank" class="wa-link">WA ↗</a>` : ''}
+        </div>
+
+        <div class="card-chips">
+          <span class="chip ${isDelivery ? 'ch-delivery' : 'ch-pickup'}">${isDelivery ? '🛵 Delivery' : '🏪 Pickup'}</span>
+          <span class="chip ${payIsQris ? 'ch-qris' : 'ch-cash'}">${order.pembayaran||'Cash'}</span>
+          <span class="chip ch-total">${order.total||''}</span>
+        </div>
+
+        ${isDelivery && order.alamat && order.alamat !== '-' ? `<div class="card-address">📍 ${order.alamat}</div>` : ''}
+
+        <div class="card-divider"></div>
+        <div class="card-items">${itemsHtml}</div>
+      </div>
+
+      <div class="card-footer">
+        ${isDone
+          ? `<span class="done-label">✓ Order Selesai</span>`
+          : `${nextLabel ? `<button class="action-btn btn-primary" onclick="updateStatus('${order.orderId}','${nextStatus}')">${nextLabel}</button>` : ''}
+             ${hasGps ? `<a href="${mapsUrl}" target="_blank" class="action-btn btn-maps">🗺</a>` : ''}`
+        }
+      </div>
+    </div>`;
+  }
+
+  function parseItems(itemsStr) {
+    if (!itemsStr) return '<div style="color:#444;font-size:.7rem">—</div>';
+    return itemsStr.split(',').map(item => {
+      item = item.trim();
+      const qtyMatch  = item.match(/x(\d+)/i);
+      const nameMatch = item.match(/^(.+?)\(/);
+      const tagsMatch = item.match(/\(([^)]+)\)/);
+      const noteMatch = item.match(/\[([^\]]+)\]/);
+      const qty  = qtyMatch  ? qtyMatch[1]  : '1';
+      const name = nameMatch ? nameMatch[1].trim() : item.replace(/x\d+/i,'').trim();
+      const tags = tagsMatch ? tagsMatch[1].split(/[·]/).map(t=>t.trim()).filter(Boolean) : [];
+      const note = noteMatch ? noteMatch[1] : null;
+      const tagsHtml = tags.map((t,i) =>
+        `<span class="item-tag ${i===0 ? 't-daging' : 't-varian'}">${t}</span>`
+      ).join('');
+      return `<div class="item-row">
+        <div class="item-name">
+          ${name}
+          ${(tagsHtml||note) ? `<div class="item-tags">${tagsHtml}${note ? `<span class="item-tag t-note">📝 ${note}</span>` : ''}</div>` : ''}
+        </div>
+        <div class="item-qty">×${qty}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── STATS ──────────────────────────────────
+  function updateStats() {
+    const c = { Baru:0, Diproses:0, Siap:0, Selesai:0 };
+    allOrders.forEach(o => { if (c[o.status]!==undefined) c[o.status]++; });
+    document.getElementById('stat-baru').textContent     = c.Baru;
+    document.getElementById('stat-diproses').textContent = c.Diproses;
+    document.getElementById('stat-siap').textContent     = c.Siap;
+    document.getElementById('stat-selesai').textContent  = c.Selesai;
+  }
+
+  // ── FILTER ─────────────────────────────────
+  function setFilter(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrders();
+  }
+
+  // ── ALERTS ─────────────────────────────────
+  function showNewOrderAlert(count) {
+    const b = document.getElementById('new-order-banner');
+    b.textContent = '🔔 ' + count + ' PESANAN BARU MASUK';
+    b.classList.add('show');
+    setTimeout(() => b.classList.remove('show'), 4000);
+  }
+
+  // ── SOUND ──────────────────────────────────
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [500, 700, 900].forEach((freq, i) => {
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.18);
+        osc.start(ctx.currentTime + i * 0.12);
+        osc.stop(ctx.currentTime + i * 0.12 + 0.2);
+      });
+    } catch(e) {}
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('sound-btn').textContent = soundEnabled ? '🔔 ON' : '🔕 OFF';
+  }
+
+  // ── INIT ───────────────────────────────────
+  checkAutoLogin();
+</script>
 </body>
 </html>
