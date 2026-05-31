@@ -1125,12 +1125,12 @@ function selectDaging(btn, daging) {
       if (existing) {
         existing.quantity++;
       } else {
-        cart.push({ ...item, quantity: 1, varian: selectedVarian, catatan });
+        cart.push({ ...item, quantity: 1, varian: selectedVarian, daging: selectedDaging, catatan });
       }
 
       document.getElementById('modal-varian').style.display = 'none';
       renderCart();
-      showToast(item.name + ' (' + selectedVarian + ') ditambahkan 🛒');
+      showToast(item.name + ' (' + selectedDaging + ' · ' + selectedVarian + ') ditambahkan 🛒');
     }
 
     // Ubah jumlah item di keranjang (+ / - / hapus)
