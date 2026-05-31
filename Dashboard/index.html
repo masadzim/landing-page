@@ -501,20 +501,326 @@
     .pay-qris { background: rgba(139,92,246,0.2); color: #a78bfa; }
 
     /* Total chip */
-    .total-chip {
-      font-family: 'Syne', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--ember);
+    .total-chip {<style>
+    :root {
+      --fire:      #f97316;
+      --ember:     #fb923c;
+      --coal:      #140c03;
+      --smoke:     #2a1a0f;
+      --ash:       #5c4635;
+      --cream:     #fff4e6;
+      --paper:     #fff8f0;
+      --new:       #ff4500;
+      --process:   #f59e0b;
+      --ready:     #22c55e;
+      --done:      #6b7280;
+      --accent-soft: #fed7aa;
     }
 
-    /* ── MOBILE TWEAKS ── */
-    @media (max-width: 480px) {
-      .stats-bar { grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
-      .stat-num  { font-size: 1.25rem; }
-      .order-grid { grid-template-columns: 1fr; padding: 0.875rem 0.875rem 5rem; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
     }
-  </style>
+
+    body {
+      background: var(--coal);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise Texture - lebih halus & elegan */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; 
+      z-index: 0;
+      opacity: 0.75;
+    }
+
+    /* ── LOGIN SCREEN ── */
+    #login-screen {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--coal);
+      z-index: 999;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .login-box {
+      background: linear-gradient(145deg, var(--smoke), #1f1308);
+      border: 1px solid rgba(251, 146, 60, 0.25);
+      border-radius: 1.75rem;
+      padding: 2.75rem 2.25rem;
+      width: 100%; max-width: 380px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 70%);
+    }
+
+    .login-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--ember);
+      letter-spacing: -1.2px;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+    }
+
+    .login-sub {
+      font-size: 0.72rem;
+      color: var(--ash);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 2.25rem;
+    }
+
+    .login-input {
+      width: 100%;
+      background: var(--coal);
+      border: 1.5px solid var(--ash);
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: 1.15rem;
+      letter-spacing: 6px;
+      text-align: center;
+      outline: none;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s;
+    }
+    .login-input:focus { 
+      border-color: var(--fire); 
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: var(--fire);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      padding: 1rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    }
+    .login-btn:hover { 
+      background: var(--ember); 
+      transform: translateY(-2px);
+    }
+
+    /* ── MAIN APP ── */
+    .header {
+      background: var(--smoke);
+      border-bottom: 1px solid rgba(92, 70, 53, 0.6);
+      padding: 1.1rem 1.5rem;
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .header-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--ember);
+      letter-spacing: -1px;
+    }
+
+    .header-badge {
+      background: var(--fire);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem; 
+      padding: 1.25rem 1.5rem;
+      background: var(--smoke);
+      border-bottom: 1px solid rgba(92, 70, 53, 0.5);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 0.85rem 0.5rem;
+      border-radius: 1.25rem;
+      background: var(--coal);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      color: var(--ash);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* Order Cards - Premium Look */
+    .order-grid {
+      padding: 1.5rem 1.5rem 7rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .order-card {
+      background: var(--smoke);
+      border: 1px solid rgba(92, 70, 53, 0.7);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .order-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.6),
+                  0 0 0 1px var(--ember);
+      border-color: var(--ember);
+    }
+
+    .card-accent {
+      height: 5px;
+    }
+
+    .card-header {
+      padding: 1.15rem 1.35rem 0.75rem;
+      background: rgba(20, 12, 3, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    .card-orderid {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--ember);
+      letter-spacing: 1px;
+    }
+
+    .status-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+    }
+
+    .card-customer {
+      padding: 0 1.35rem 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .card-items {
+      padding: 0 1.35rem;
+      display: flex; 
+      flex-direction: column; 
+      gap: 0.55rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .item-name {
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .action-btn {
+      border-radius: 1rem;
+      padding: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      transition: all 0.3s;
+    }
+
+    .btn-next {
+      background: var(--fire);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
+    }
+    .btn-next:hover {
+      background: var(--ember);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(251, 146, 60, 0.5);
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      padding: 1rem 1.5rem 0.5rem;
+      gap: 0.6rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      border-radius: 2rem;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.73rem;
+      transition: all 0.3s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--fire);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    /* New Order Banner */
+    #new-order-banner {
+      background: linear-gradient(90deg, var(--new), #ff6b00);
+      box-shadow: 0 4px 15px rgba(255, 69, 0, 0.4);
+    }
+
+    /* Refresh Bar */
+    .refresh-bar {
+      background: var(--smoke);
+      border-top: 1px solid var(--ash);
+      padding: 0.9rem 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 5rem 2rem;
+    }
+    .empty-icon {
+      font-size: 3.5rem;
+      opacity: 0.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .order-grid { 
+        grid-template-columns: 1fr; 
+        padding: 1rem 1rem 6rem; 
+      }
+      .stat-num { font-size: 1.55rem; }
+      .order-card { border-radius: 1.25rem; }
+    }
+</style>
 </head>
 <body>
 
