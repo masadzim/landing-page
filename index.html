@@ -1069,6 +1069,12 @@
     function addToCart(id) {
       pendingItemId  = id;
       selectedVarian = '';
+      selectedDaging = '';
+document.querySelectorAll('.daging-btn').forEach(b => {
+  b.style.background = 'white';
+  b.style.borderColor = '#e5e7eb';
+  b.style.color = '#111';
+});
       const item = menuItems.find(m => m.id === id);
 
       document.getElementById('modal-nama').textContent  = item.name;
@@ -1110,7 +1116,8 @@ function selectDaging(btn, daging) {
     // Konfirmasi: masukkan item ke keranjang
     function confirmAddToCart() {
       if (!selectedVarian) { showToast('⚠️ Pilih varian dulu!'); return; }
-
+      if (!selectedDaging) { showToast('⚠️ Pilih jenis daging dulu!'); return; }
+      
       const item    = menuItems.find(m => m.id === pendingItemId);
       const catatan = document.getElementById('modal-catatan').value.trim();
       const existing = cart.find(i => i.id === pendingItemId && i.varian === selectedVarian);
