@@ -876,6 +876,11 @@
     // ============================================================
     // KONFIGURASI: URL Google Apps Script (backend)
     // ============================================================
+    // ── FORMAT RUPIAH (pengganti toLocaleString yang tidak konsisten) ──
+    function rupiah(n) {
+      return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
     // ============================================================
     // DATA: Warna badge status pesanan
@@ -1078,7 +1083,7 @@ document.querySelectorAll('.daging-btn').forEach(b => {
       const item = menuItems.find(m => m.id === id);
 
       document.getElementById('modal-nama').textContent  = item.name;
-      document.getElementById('modal-harga').textContent = 'Rp ' + item.price.toLocaleString('id-ID');
+      document.getElementById('modal-harga').textContent = 'Rp ' + rupiah(item.price);
       document.getElementById('modal-catatan').value     = '';
       document.querySelectorAll('.varian-btn').forEach(b => b.style.background = 'white');
       document.getElementById('modal-varian').style.display = 'flex';
@@ -1168,14 +1173,14 @@ function selectDaging(btn, daging) {
               <span style="width:1.5rem;text-align:center;font-weight:700">${item.quantity}</span>
               <button onclick="changeCartQty(${item.id},1)"  style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">+</button>
             </div>
-            <span style="font-weight:900;color:#ea580c">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+            <span style="font-weight:900;color:#ea580c">Rp ${rupiah(item.price * item.quantity)}</span>
           </div>
           <p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.daging} · ${item.varian}</p>
           ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem">${item.catatan}</p>` : ''}
         </div>`).join('');
 
       const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      document.getElementById('cart-total-price').textContent = 'Rp ' + total.toLocaleString('id-ID');
+      document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
     }
 
     // Buka / tutup sidebar keranjang
@@ -1204,11 +1209,11 @@ function selectDaging(btn, daging) {
       document.getElementById('preview-bukti').style.display = 'none';
       // Isi ringkasan pesanan
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      document.getElementById('co-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+      document.getElementById('co-subtotal').textContent = 'Rp ' + subrupiah(total);
       document.getElementById('co-summary').innerHTML = cart.map(i =>
         `<div style="display:flex;justify-content:space-between">
            <span>${i.name} (${i.daging} · ${i.varian}) ×${i.quantity}</span>
-           <span>Rp ${(i.price * i.quantity).toLocaleString('id-ID')}</span>
+           <span>Rp ${rupiah(i.price * i.quantity)}</span>
          </div>`
       ).join('');
 
@@ -1295,7 +1300,7 @@ function selectDaging(btn, daging) {
           document.getElementById('loc-btn-text').textContent  = '✅ Lokasi Terdeteksi';
           document.getElementById('loc-result').textContent    = 'Jarak: ' + dist.toFixed(1) + ' km';
           document.getElementById('ongkir-info').textContent   = label;
-          document.getElementById('ongkir-harga').textContent  = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
+          document.getElementById('ongkir-harga').textContent  = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
           updateCoTotal();
         },
         () => {
@@ -1309,7 +1314,7 @@ function selectDaging(btn, daging) {
     function updateCoTotal() {
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       const total    = subtotal + (deliveryMode === 'delivery' ? ongkir : 0);
-      document.getElementById('co-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+      document.getElementById('co-total').textContent = 'Rp ' + rupiah(total);
     }
 
     // Generate Order ID unik format KF-YYMMDD-XXXX
@@ -1371,10 +1376,10 @@ async function submitCheckout() {
     userLng: userLng || null,  // ✅ tambah
     pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
     alamat,
-    ongkir:     deliveryMode === 'delivery' ? 'Rp ' + ongkir.toLocaleString('id-ID') : 'Gratis',
+    ongkir:     deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
     pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
     items:      itemsText,
-    total:      'Rp ' + total.toLocaleString('id-ID'),
+    total:      'Rp ' + rupiah(total),
     linkBukti:  linkBukti || '-'
   });
 
@@ -1398,16 +1403,16 @@ async function submitCheckout() {
     if (deliveryMode === 'delivery') {
       msg += '*Alamat:* ' + alamat + '%0A';
       if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
-      msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID')) + '%0A';
+      msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir)) + '%0A';
     }
     msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
     if (linkBukti) msg += '*Bukti Transfer:* ' + encodeURIComponent(linkBukti) + '%0A';
     msg += '%0A*Pesanan:*%0A';
     cart.forEach(i => {
-      msg += '- ' + i.name + ' (' + i.varian + ') x' + i.quantity + ' = Rp ' + (i.price * i.quantity).toLocaleString('id-ID') + '%0A';
+      msg += '- ' + i.name + ' (' + i.varian + ') x' + i.quantity + ' = Rp ' + rupiah(i.price * i.quantity) + '%0A';
       if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
     });
-    msg += '%0A*TOTAL: Rp ' + total.toLocaleString('id-ID') + '*%0A%0AMohon segera diproses. Terima kasih!';
+    msg += '%0A*TOTAL: Rp ' + rupiah(total) + '*%0A%0AMohon segera diproses. Terima kasih!';
 
     window.open('https://wa.me/6281357683151?text=' + msg, '_blank');
     document.getElementById('modal-checkout').style.display = 'none';
@@ -1890,13 +1895,52 @@ function bukaMapPicker() {
   }, 300);
 }
 
-function tampilkanKoordinat(lat, lng) {
+// Cache geocode agar tidak spam API saat marker digeser cepat
+let _geocodeTimer = null;
+
+async function tampilkanKoordinat(lat, lng) {
   const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
-  const label = dist < 2 ? 'Gratis' : dist <= 5 ? 'Rp 5.000' : 'Rp 10.000';
-  document.getElementById('koordinat-dipilih').innerHTML =
-    `<span style="color:#111;font-weight:700">Jarak: ${dist.toFixed(1)} km</span>
-     &nbsp;·&nbsp;
-     <span style="color:#ea580c;font-weight:700">Ongkir: ${label}</span>`;
+  const ongkirLabel = dist < 2 ? 'Gratis' : dist <= 5 ? 'Rp 5.000' : 'Rp 10.000';
+  const box   = document.getElementById('koordinat-dipilih');
+
+  // Tampilkan jarak dulu sambil tunggu geocode
+  box.innerHTML =
+    `<div style="font-weight:700;color:#111;margin-bottom:0.35rem">
+       <span id="geo-nama" style="font-size:0.8rem;color:#374151">⏳ Mencari nama jalan...</span>
+     </div>
+     <div style="display:flex;justify-content:center;gap:1rem;font-size:0.78rem">
+       <span style="font-weight:700;color:#111">📏 ${dist.toFixed(1)} km</span>
+       <span style="color:#ea580c;font-weight:700">🛵 ${ongkirLabel}</span>
+     </div>`;
+
+  // Debounce: tunggu 600ms setelah berhenti geser baru panggil API
+  clearTimeout(_geocodeTimer);
+  _geocodeTimer = setTimeout(async () => {
+    try {
+      const res  = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+        { headers: { 'Accept-Language': 'id' } }
+      );
+      const data = await res.json();
+      const a    = data.address || {};
+
+      // Ambil komponen alamat dari kasar ke halus
+      const jalan   = a.road || a.pedestrian || a.footway || '';
+      const kampung = a.village || a.suburb || a.neighbourhood || a.hamlet || '';
+      const kota    = a.city || a.town || a.county || '';
+
+      // Susun label: "Jl. Mlarak - Jabung, Gandu, Ponorogo"
+      const parts = [jalan, kampung, kota].filter(Boolean);
+      const namaLokasi = parts.length ? parts.join(', ') : data.display_name || 'Lokasi dipilih';
+
+      const el = document.getElementById('geo-nama');
+      if (el) el.textContent = '📍 ' + namaLokasi;
+
+    } catch(e) {
+      const el = document.getElementById('geo-nama');
+      if (el) el.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    }
+  }, 600);
 }
 
 function tutupMapPicker() {
@@ -1919,7 +1963,7 @@ function konfirmasiMapPicker() {
   document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
   document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
   document.getElementById('ongkir-info').textContent  = label;
-  document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + ongkir.toLocaleString('id-ID');
+  document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
 
   updateCoTotal();
   tutupMapPicker();
