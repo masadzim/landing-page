@@ -1209,7 +1209,7 @@ function selectDaging(btn, daging) {
       document.getElementById('preview-bukti').style.display = 'none';
       // Isi ringkasan pesanan
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      document.getElementById('co-subtotal').textContent = 'Rp ' + subrupiah(total);
+      document.getElementById('co-subtotal').textContent = 'Rp ' + rupiah(subtotal);
       document.getElementById('co-summary').innerHTML = cart.map(i =>
         `<div style="display:flex;justify-content:space-between">
            <span>${i.name} (${i.daging} · ${i.varian}) ×${i.quantity}</span>
