@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Kebab Factory POS | Premium Kasir System</title>
+  <title>Kebab Factory POS </title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -443,7 +443,7 @@
       box-shadow: none;
     }
 
-    /* ========== MODALS MODERNISED ========== */
+    /* ========== MODALS ========== */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -525,13 +525,6 @@
       font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .qty-selector button:hover {
-      background: #1F2937;
-      color: white;
     }
     .modal-confirm {
       background: #111827;
@@ -543,19 +536,6 @@
       font-weight: 700;
       cursor: pointer;
       font-size: 1rem;
-    }
-    .modal-confirm:hover {
-      background: #1F2937;
-    }
-
-    /* ========== REAL-TIME DASHBOARD COMPONENT ========== */
-    .history-item, .report-card {
-      background: #FFFFFF;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-      border: 1px solid #E2E8F0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.01);
     }
     .reprint-btn {
       background: #F1F5F9;
@@ -570,10 +550,6 @@
       align-items: center;
       gap: 6px;
     }
-    .reprint-btn:hover {
-      background: #E2E8F0;
-    }
-
     .toast-message {
       position: fixed;
       bottom: 32px;
@@ -589,14 +565,12 @@
       opacity: 0;
       transition: opacity 0.2s ease;
       pointer-events: none;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
     }
 
-    /* ========== RESPONSIVE MOBILE PANELS ========== */
+    /* ========== MOBILE RESPONSIVE ========== */
     .menu-toggle { display: none; }
     .fab-mobile { display: none; }
     .mobile-cart-drawer { display: none; }
-
     @media (max-width: 992px) {
       .sidebar {
         position: fixed;
@@ -659,7 +633,7 @@
       .mobile-overlay.open { display: block; }
     }
 
-    /* ========== PRINT OPTIMIZATION (STRICT 58mm / 80mm) ========== */
+    /* ========== THERMAL PRINT STYLE (Logo Mascot & Brand) ========== */
     @media print {
       body * { visibility: hidden; }
       #printArea, #printArea * { visibility: visible; }
@@ -667,16 +641,17 @@
         position: absolute;
         left: 0;
         top: 0;
-        width: 58mm; /* Mendukung printer thermal standar terkecil */
+        width: 58mm;
         font-family: 'Courier New', Courier, monospace;
         font-size: 11px;
         color: #000;
-        line-height: 1.2;
-        padding: 0 2mm;
+        padding: 2mm;
+        background: white;
       }
+      .print-mascot { font-size: 18px; letter-spacing: 2px; }
       .text-center { text-align: center; }
-      .text-right { text-align: right; }
       .line-break { border-top: 1px dashed #000; margin: 5px 0; }
+      .print-customer-info { font-size: 10px; margin: 4px 0; border-top: 0.5px dotted #aaa; padding-top: 4px;}
     }
   </style>
 </head>
@@ -688,178 +663,71 @@
   <aside class="sidebar" id="sidebar">
     <div class="logo-area">
       <div class="logo">
-        <div class="logo-image">
-          <span class="logo-icon-custom">🔥</span>
-        </div>
+        <div class="logo-image">🧆</div>
         <div class="logo-text">Kebab <span>Factory</span></div>
       </div>
-      <div class="store-badge"><i class="fas fa-store"></i> Ponorogo · Outlet 1</div>
+      <div class="store-badge"><i class="fas fa-store"></i> Ponorogo · Outlet Premium</div>
     </div>
     <div class="nav-menu">
       <div class="nav-item active" data-nav="pos"><i class="fas fa-utensils"></i> Point of Sale</div>
       <div class="nav-item" data-nav="history"><i class="fas fa-history"></i> Riwayat</div>
-      <div class="nav-item" data-nav="reports"><i class="fas fa-chart-bar"></i> Laporan Real-time</div>
+      <div class="nav-item" data-nav="reports"><i class="fas fa-chart-bar"></i> Laporan</div>
     </div>
     <div class="sidebar-bottom">
       <div style="display:flex; align-items:center; gap:12px;">
-        <div style="width:36px; height:36px; background:#E2E8F0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#475569">K</div>
-        <div>
-          <div style="font-weight:700; font-size:0.85rem;">Kasir Utama</div>
-          <div style="font-size:0.7rem; color:#64748B;">Sistem Aktif</div>
-        </div>
+        <div style="width:36px;height:36px;background:#E2E8F0;border-radius:50%;display:flex;align-items:center;justify-content:center;">👨‍🍳</div>
+        <div><div style="font-weight:700;">Kasir Pro</div><div style="font-size:0.7rem; color:#64748B;">Sistem Real-time</div></div>
       </div>
     </div>
   </aside>
-
   <div class="mobile-overlay" id="mobileOverlay" onclick="window.closeMobileSidebar()"></div>
-
-  <main class="main-content" id="mainContent">
+  <main class="main-content">
     <div class="top-bar">
       <div style="display: flex; align-items: center; gap: 12px;">
         <button class="menu-toggle" onclick="window.toggleMobileSidebar()"><i class="fas fa-bars"></i></button>
-        <div class="page-title">
-          <h1 id="pageTitle">Ambil Pesanan</h1>
-          <p id="pageSubtitle">Pilih menu, tambahkan varian, selesaikan transaksi</p>
-        </div>
+        <div class="page-title"><h1 id="pageTitle">Ambil Pesanan</h1><p id="pageSubtitle">Pilih menu + varian</p></div>
       </div>
-      <div class="sync-status" id="syncBtn">
-        <span class="online-dot" id="onlineDot"></span>
-        <span id="syncText">Online</span>
-      </div>
+      <div class="sync-status" id="syncBtn"><span class="online-dot" id="onlineDot"></span><span id="syncText">Online</span></div>
     </div>
-
-    <div id="posView" class="products-section">
-      <div class="category-tabs" id="categoryTabs">
-        <div class="cat-chip active" data-cat="all">Semua Menu</div>
-        <div class="cat-chip" data-cat="signature">Signature</div>
-        <div class="cat-chip" data-cat="double">Double</div>
-      </div>
-      <div class="product-grid" id="productGrid"></div>
-    </div>
-
-    <div id="historyView" class="products-section" style="display:none;">
-      <div style="background:white; border-radius:24px; padding:24px; border:1px solid #E2E8F0;">
-        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing: -0.5px;">Log Riwayat Transaksi</h2>
-        <div id="historyList"></div>
-      </div>
-    </div>
-
-    <div id="reportsView" class="products-section" style="display:none;">
-      <div style="background:white; border-radius:24px; padding:24px; border:1px solid #E2E8F0;">
-        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing: -0.5px;">Ringkasan Performa Hari Ini</h2>
-        <div id="reportsContent"></div>
-      </div>
-    </div>
+    <div id="posView" class="products-section"><div class="category-tabs" id="categoryTabs"></div><div class="product-grid" id="productGrid"></div></div>
+    <div id="historyView" class="products-section" style="display:none;"><div style="background:white;border-radius:24px;padding:24px;"><h2 style="font-weight:800;">Riwayat Transaksi</h2><div id="historyList"></div></div></div>
+    <div id="reportsView" class="products-section" style="display:none;"><div style="background:white;border-radius:24px;padding:24px;"><h2 style="font-weight:800;">Ringkasan Hari Ini</h2><div id="reportsContent"></div></div></div>
   </main>
-
-  <aside class="order-panel" id="orderPanelDesktop">
-    <div class="order-header">
-      <h3>Pesanan Saat Ini <button class="clear-cart" id="clearCartBtn"><i class="fas fa-trash"></i> Reset</button></h3>
-    </div>
-    <div class="cart-items-list" id="cartListDesktop"></div>
-    <div class="order-footer">
-      <div class="total-row">
-        <span class="total-label">Total Item</span>
-        <span class="total-amount" id="totalAmountDesktop">Rp 0</span>
-      </div>
-      <button class="checkout-btn" id="checkoutBtnDesktop" disabled><i class="fas fa-cash-register"></i> Ambil Pembayaran</button>
-    </div>
-  </aside>
+  <aside class="order-panel" id="orderPanelDesktop"><div class="order-header"><h3>Pesanan Saat Ini <button class="clear-cart" id="clearCartBtn"><i class="fas fa-trash"></i> Reset</button></h3></div><div class="cart-items-list" id="cartListDesktop"></div><div class="order-footer"><div class="total-row"><span class="total-label">Total</span><span class="total-amount" id="totalAmountDesktop">Rp 0</span></div><button class="checkout-btn" id="checkoutBtnDesktop" disabled><i class="fas fa-cash-register"></i> Bayar</button></div></aside>
 </div>
+<button class="fab-mobile" id="mobileFab"><i class="fas fa-shopping-bag"></i><span id="fabBadge" style="position:absolute; top:2px; right:2px; background:#EF4444; border-radius:50%; font-size:10px; width:20px; height:20px; display:flex; align-items:center; justify-content:center;">0</span></button>
+<div class="mobile-cart-drawer" id="mobileCartDrawer"><div style="padding:20px; display:flex; justify-content:space-between;"><strong>Keranjang</strong><button id="closeDrawerBtn">✕</button></div><div class="cart-items-list" id="cartListMobile"></div><div style="padding:20px;"><div class="total-row"><span>Total</span><span id="totalAmountMobile">Rp 0</span></div><button class="checkout-btn" id="checkoutBtnMobile">Bayar</button></div></div>
 
-<button class="fab-mobile" id="mobileFab"><i class="fas fa-shopping-bag"></i><span id="fabBadge" style="position:absolute; top:2px; right:2px; background:#EF4444; border-radius:50%; font-size:10px; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-weight: bold;">0</span></button>
-<div class="mobile-cart-drawer" id="mobileCartDrawer">
-  <div style="padding:20px; border-bottom:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center;">
-    <strong style="font-size:1.1rem;">Detail Keranjang</strong>
-    <button id="closeDrawerBtn" style="border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
-  </div>
-  <div class="cart-items-list" id="cartListMobile" style="flex:1;"></div>
-  <div style="padding:20px; border-top:1px solid #E2E8F0; background: #FAFAFA;">
-    <div class="total-row"><span class="total-label">Total</span><span class="total-amount" id="totalAmountMobile">Rp 0</span></div>
-    <button class="checkout-btn" id="checkoutBtnMobile" disabled>Bayar Pesanan</button>
-  </div>
-</div>
+<!-- Modal Varian & Modal Customer Info Opsional + Payment -->
+<div class="modal-overlay" id="variantModal"><div class="modal-container"><div class="modal-header"><span id="modalProductName">Menu</span><button id="closeModalBtn">&times;</button></div><div><div><label>Varian Daging</label><div class="chip-group" id="dagingGroup"></div></div><div><label>Level Pedas</label><div class="chip-group" id="pedasGroup"></div></div><div><label>Catatan Koki</label><input type="text" id="itemNote" placeholder="Opsional..." style="width:100%;padding:12px;border-radius:12px;border:1px solid #CBD5E1;"></div><div class="qty-selector"><button id="decrQty">-</button><span id="selectedQty">1</span><button id="incrQty">+</button></div></div><button class="modal-confirm" id="confirmAddBtn">Konfirmasi</button></div></div>
 
-<div class="modal-overlay" id="variantModal">
-  <div class="modal-container">
-    <div class="modal-header">
-      <span id="modalProductName">Pilihan Menu</span>
-      <button id="closeModalBtn" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-    </div>
-    <div>
-      <div style="margin-bottom:14px;"><label style="font-weight:700; font-size:0.9rem; color:#475569;">Varian Daging</label><div class="chip-group" id="dagingGroup"></div></div>
-      <div style="margin-bottom:14px;"><label style="font-weight:700; font-size:0.9rem; color:#475569;">Level Pedas</label><div class="chip-group" id="pedasGroup"></div></div>
-      <div style="margin-bottom:14px;">
-        <label style="font-weight:700; font-size:0.9rem; color:#475569;">Catatan Koki</label>
-        <input type="text" id="itemNote" placeholder="Contoh: Tanpa sayur, saus pisah..." style="width:100%; padding:14px; border-radius:12px; border:1px solid #CBD5E1; margin-top:6px; font-family: inherit;">
-      </div>
-      <div class="qty-selector">
-        <button id="decrQty">-</button>
-        <span id="selectedQty" style="font-weight:800; min-width:40px; text-align:center; font-size:1.2rem;">1</span>
-        <button id="incrQty">+</button>
-      </div>
-    </div>
-    <button class="modal-confirm" id="confirmAddBtn">Konfirmasi Varian</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="paymentModal">
-  <div class="modal-container">
-    <div class="modal-header">
-      <span>Metode Pembayaran</span>
-      <button id="closePayModal" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-    </div>
-    <div style="display:flex; gap:12px; margin-bottom:20px;">
-      <button id="cashMethod" style="flex:1; padding:14px; border-radius:12px; border:2px solid #FF6B00; background:#FFF4ED; font-weight:700; color:#FF6B00; cursor:pointer;">💵 Tunai / Cash</button>
-      <button id="qrisMethod" style="flex:1; padding:14px; border-radius:12px; border:1px solid #E2E8F0; background:white; font-weight:700; color:#475569; cursor:pointer;">📱 QRIS</button>
-    </div>
-    <div id="cashInputArea">
-      <div style="margin-bottom:16px;">
-        <label style="font-weight:700; font-size:0.9rem; color:#475569;">Jumlah Uang Diterima</label>
-        <input type="number" id="cashAmount" placeholder="Masukkan nominal tunai..." style="width:100%; padding:14px; border-radius:12px; border:1px solid #CBD5E1; font-size:1.1rem; font-weight:700; margin-top:6px;">
-      </div>
-      <div style="background:#F8FAFC; padding:16px; border-radius:12px; border:1px solid #E2E8F0; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <span style="font-weight:600; color:#64748B;">Kembalian:</span>
-        <strong id="changeAmount" style="font-size:1.3rem; color:#10B981;">Rp 0</strong>
-      </div>
-    </div>
-    <div id="qrisArea" style="display:none; text-align:center; padding:12px 0;">
-      <div style="background:#111827; width:160px; height:160px; margin:0 auto 12px; border-radius:16px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; letter-spacing:1px;">QRIS GATEWAY</div>
-      <p style="font-size:0.75rem; color:#64748B;">Tunjukkan kode QR kepada pelanggan untuk scan otomatis</p>
-    </div>
-    <button class="modal-confirm" id="confirmPayBtn" style="background:#10B981; font-size:1.1rem; padding:16px; box-shadow:0 4px 12px rgba(16,185,129,0.2);">Proses Transaksi & Cetak</button>
-  </div>
-</div>
-
+<!-- Payment Modal + Nama & WA Opsional -->
+<div class="modal-overlay" id="paymentModal"><div class="modal-container"><div class="modal-header"><span>Pembayaran & Data Pelanggan</span><button id="closePayModal">&times;</button></div>
+  <div><input type="text" id="customerName" placeholder="Nama Pelanggan (opsional)" style="width:100%;padding:12px;margin-bottom:12px;border-radius:12px;border:1px solid #CBD5E1;"><input type="tel" id="customerWA" placeholder="Nomor WhatsApp (opsional)" style="width:100%;padding:12px;margin-bottom:16px;border-radius:12px;border:1px solid #CBD5E1;"></div>
+  <div style="display:flex; gap:12px; margin-bottom:16px;"><button id="cashMethod" style="flex:1;padding:12px;border-radius:12px;border:2px solid #FF6B00;background:#FFF4ED;font-weight:700;">💵 Tunai</button><button id="qrisMethod" style="flex:1;padding:12px;border-radius:12px;border:1px solid #E2E8F0;background:white;">📱 QRIS</button></div>
+  <div id="cashInputArea"><input type="number" id="cashAmount" placeholder="Jumlah Tunai" style="width:100%;padding:12px;border-radius:12px;margin-bottom:8px;"><div style="background:#F8FAFC;padding:12px;border-radius:12px;display:flex;justify-content:space-between;"><span>Kembalian:</span><strong id="changeAmount">Rp 0</strong></div></div>
+  <div id="qrisArea" style="display:none; text-align:center; padding:16px;"><div style="background:#111827;width:120px;height:120px;margin:0 auto;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;">QRIS SIM</div><p class="text-muted">Scan QRIS oleh pelanggan</p></div>
+  <button class="modal-confirm" id="confirmPayBtn" style="background:#10B981;">Proses & Cetak Struk</button>
+</div></div>
 <div id="toastMsg" class="toast-message"></div>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
   const menuCatalog = [
     { id:1, name:'Kebab Original', price:10000, badge:'Signature', category:'signature' },
-    { id:2, name:'Kebab Telur', price:15000, category:'all' },
-    { id:3, name:'Kebab Keju', price:15000, category:'all' },
-    { id:4, name:'Kebab Sosis', price:15000, category:'all' },
-    { id:5, name:'Double: Telur + Keju', price:20000, badge:'Double', category:'double' },
-    { id:6, name:'Double: Keju + Sosis', price:20000, badge:'Double', category:'double' },
-    { id:7, name:'Triple Special', price:25000, badge:'Best Value', category:'signature' }
+    { id:2, name:'Kebab Telur', price:15000, category:'all' }, { id:3, name:'Kebab Keju', price:15000, category:'all' },
+    { id:4, name:'Kebab Sosis', price:15000, category:'all' }, { id:5, name:'Double Telur+Keju', price:20000, badge:'Double', category:'double' },
+    { id:6, name:'Double Keju+Sosis', price:20000, badge:'Double', category:'double' }, { id:7, name:'Triple Special', price:25000, badge:'Best Value', category:'signature' }
   ];
-
   let cart = [], selectedProduct = null, tempDaging = 'Ayam', tempPedas = 'Tidak Pedas', tempQty = 1;
   let transactions = JSON.parse(localStorage.getItem('kf_transactions') || '[]');
   let syncQueue = JSON.parse(localStorage.getItem('kf_sync_queue') || '[]');
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
 
-  function showToast(text) { const t=document.getElementById('toastMsg'); t.textContent=text; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2000); }
+  function showToast(txt) { let t=document.getElementById('toastMsg'); t.textContent=txt; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2000); }
   function formatRupiah(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
   function generateOrderId(){ const d=new Date(); return 'KF-'+d.getFullYear().toString().slice(-2)+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'-'+Math.floor(Math.random()*9000+1000); }
   function formatDate(){ const d=new Date(); return d.toLocaleDateString('id-ID'); }
   function formatTime(){ const d=new Date(); return d.toLocaleTimeString('id-ID'); }
-
-  // Refreshes data real-time across components instantly
-  function refreshDashboardData() {
-    showHistory();
-    updateReports();
-  }
 
   function updateCartUI() {
     const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
@@ -867,269 +735,86 @@
     document.getElementById('totalAmountMobile').innerHTML = formatRupiah(total);
     const itemCount = cart.reduce((s,i)=>s+i.qty,0);
     document.getElementById('fabBadge').innerText = itemCount;
-    
     const renderFn = (container) => {
-      if(!cart.length) { container.innerHTML = '<div class="cart-empty-state"><i class="fas fa-shopping-bag"></i><p>Keranjang belanja kosong</p></div>'; return; }
-      container.innerHTML = cart.map((item,idx)=>`<div class="cart-item"><div class="cart-item-row"><span class="item-name">${item.name}</span><span class="item-price">${formatRupiah(item.price*item.qty)}</span></div><div class="item-variants"><span>${item.daging}</span> • <span>${item.pedas}</span> ${item.note ? `• 📝 ${item.note}` : ''}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div class="qty-controls"><button class="qty-btn" data-idx="${idx}" data-delta="-1">-</button><span style="min-width:28px; text-align:center; font-weight:700;">${item.qty}</span><button class="qty-btn" data-idx="${idx}" data-delta="1">+</button></div><button class="qty-btn" data-idx="${idx}" data-delta="remove" style="background:#FEE2E2; border:none; color:#EF4444; padding:6px 10px; border-radius:8px; font-size:0.75rem; font-weight:700;">Hapus</button></div></div>`).join('');
-      container.querySelectorAll('.qty-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const idx=parseInt(btn.dataset.idx); const delta=btn.dataset.delta; if(delta==='remove') cart.splice(idx,1); else { let nq=cart[idx].qty+parseInt(delta); if(nq>=1) cart[idx].qty=nq; else cart.splice(idx,1); } updateCartUI(); }); });
+      if(!cart.length) { container.innerHTML = '<div class="cart-empty-state"><i class="fas fa-shopping-bag"></i><p>Keranjang kosong</p></div>'; return; }
+      container.innerHTML = cart.map((item,idx)=>`<div class="cart-item"><div class="cart-item-row"><span class="item-name">${item.name}</span><span class="item-price">${formatRupiah(item.price*item.qty)}</span></div><div class="item-variants">${item.daging} • ${item.pedas} ${item.note ? `📝 ${item.note}` : ''}</div><div style="display:flex;justify-content:space-between;"><div class="qty-controls"><button class="qty-btn" data-idx="${idx}" data-delta="-1">-</button><span>${item.qty}</span><button class="qty-btn" data-idx="${idx}" data-delta="1">+</button></div><button class="qty-btn" data-idx="${idx}" data-delta="remove" style="background:#FEE2E2;">Hapus</button></div></div>`).join('');
+      container.querySelectorAll('.qty-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const idx=parseInt(btn.dataset.idx), delta=btn.dataset.delta; if(delta==='remove') cart.splice(idx,1); else { let nq=cart[idx].qty+parseInt(delta); if(nq>=1) cart[idx].qty=nq; else cart.splice(idx,1); } updateCartUI(); }); });
     };
-    renderFn(document.getElementById('cartListDesktop'));
-    renderFn(document.getElementById('cartListMobile'));
-    
-    const hasItems = cart.length === 0;
-    document.getElementById('checkoutBtnDesktop').disabled = hasItems;
-    document.getElementById('checkoutBtnMobile').disabled = hasItems;
+    renderFn(document.getElementById('cartListDesktop')); renderFn(document.getElementById('cartListMobile'));
+    const disabled = cart.length===0;
+    document.getElementById('checkoutBtnDesktop').disabled = disabled;
+    document.getElementById('checkoutBtnMobile').disabled = disabled;
   }
-
   function renderProducts(filter='all') {
     const filtered = filter==='all'?menuCatalog:menuCatalog.filter(m=>m.category===filter);
-    document.getElementById('productGrid').innerHTML = filtered.map(p=>`<div class="product-card" data-id="${p.id}">${p.badge?`<div class="product-badge">${p.badge}</div>`:'<div style="height:20px;"></div>'}<div class="product-name">${p.name}</div><div class="product-price">${formatRupiah(p.price)}</div><button class="add-button" data-id="${p.id}"><i class="fas fa-plus"></i> Order Menu</button></div>`).join('');
+    document.getElementById('productGrid').innerHTML = filtered.map(p=>`<div class="product-card" data-id="${p.id}">${p.badge?`<div class="product-badge">${p.badge}</div>`:'<div style="height:20px;"></div>'}<div class="product-name">${p.name}</div><div class="product-price">${formatRupiah(p.price)}</div><button class="add-button" data-id="${p.id}"><i class="fas fa-plus"></i> Order</button></div>`).join('');
     document.querySelectorAll('.add-button').forEach(btn=>{ btn.addEventListener('click',(e)=>{ e.stopPropagation(); selectedProduct=menuCatalog.find(m=>m.id===parseInt(btn.dataset.id)); openVariantModal(); }); });
     document.querySelectorAll('.product-card').forEach(card=>{ card.addEventListener('click',()=>{ selectedProduct=menuCatalog.find(m=>m.id===parseInt(card.dataset.id)); openVariantModal(); }); });
   }
-
-  function openVariantModal() {
-    tempDaging='Ayam'; tempPedas='Tidak Pedas'; tempQty=1;
-    document.getElementById('itemNote').value = '';
+  function openVariantModal() { tempDaging='Ayam'; tempPedas='Tidak Pedas'; tempQty=1; document.getElementById('itemNote').value='';
     document.getElementById('modalProductName').innerText=selectedProduct.name;
     document.getElementById('dagingGroup').innerHTML = ['Ayam','Sapi'].map(d=>`<div class="chip-select ${d==='Ayam'?'selected':''}" data-daging="${d}">${d}</div>`).join('');
     document.getElementById('pedasGroup').innerHTML = ['Tidak Pedas','Pedas','Extra Pedas'].map(p=>`<div class="chip-select ${p==='Tidak Pedas'?'selected':''}" data-pedas="${p}">${p}</div>`).join('');
     document.querySelectorAll('[data-daging]').forEach(el=>el.addEventListener('click',function(){ document.querySelectorAll('[data-daging]').forEach(c=>c.classList.remove('selected')); this.classList.add('selected'); tempDaging=this.dataset.daging; }));
     document.querySelectorAll('[data-pedas]').forEach(el=>el.addEventListener('click',function(){ document.querySelectorAll('[data-pedas]').forEach(c=>c.classList.remove('selected')); this.classList.add('selected'); tempPedas=this.dataset.pedas; }));
-    document.getElementById('selectedQty').innerText=tempQty;
-    document.getElementById('incrQty').onclick=()=>{ tempQty++; document.getElementById('selectedQty').innerText=tempQty; };
+    document.getElementById('selectedQty').innerText=tempQty; document.getElementById('incrQty').onclick=()=>{ tempQty++; document.getElementById('selectedQty').innerText=tempQty; };
     document.getElementById('decrQty').onclick=()=>{ if(tempQty>1) tempQty--; document.getElementById('selectedQty').innerText=tempQty; };
     document.getElementById('variantModal').classList.add('active');
   }
-
-  document.getElementById('confirmAddBtn').onclick = () => {
-    const note = document.getElementById('itemNote').value;
-    const existing = cart.find(i=>i.id===selectedProduct.id && i.daging===tempDaging && i.pedas===tempPedas && i.note===note);
-    if(existing) existing.qty += tempQty;
-    else cart.push({ ...selectedProduct, daging:tempDaging, pedas:tempPedas, qty:tempQty, note });
-    updateCartUI();
-    document.getElementById('variantModal').classList.remove('active');
-    showToast(`✓ Berhasil menambahkan ${selectedProduct.name}`);
-  };
-
-  async function sendToSheet(tx) {
-    try {
-      const itemsText = tx.items.map(i=>`${i.name}(${i.daging}·${i.pedas})x${i.qty}${i.note?`[${i.note}]`:''}`).join(', ');
-      const payload = new URLSearchParams();
-      payload.append('data', JSON.stringify({ orderId: tx.orderId, timestamp: tx.timestamp, nama: 'Kasir Utama', items: itemsText, total: formatRupiah(tx.total), pembayaran: tx.payMethod==='cash'?'Tunai':'QRIS' }));
-      const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: payload });
-      return res.ok;
-    } catch(e) { return false; }
-  }
-
-  // 58mm & 80mm High Precision Struk Template Fitment Logic
-  window.executeThermalReceiptPrint = (tx) => {
-    const pContainer = document.getElementById('printArea');
-    let itemsBody = tx.items.map(i => {
-      let variantLine = `  (${i.daging}, ${i.pedas})`;
-      let noteLine = i.note ? `  *Catatan: ${i.note}` : '';
-      return `${i.name.padEnd(18).substring(0, 18)} x${i.qty}\n${variantLine}\n${formatRupiah(i.price*i.qty).padStart(24)}\n${noteLine ? noteLine + '\n' : ''}`;
-    }).join('');
-
-    pContainer.innerHTML = `
-      <div class="text-center">
-        <strong style="font-size:14px;">KEBAB FACTORY</strong><br>
-        Ponorogo · Outlet 1<br>
-        Telp: 0812-XXXX-XXXX
-      </div>
-      <div class="line-break"></div>
-      ID: ${tx.orderId}<br>
-      Tgl: ${tx.date} ${tx.time}<br>
-      Kasir: Kasir Utama<br>
-      Metode: ${tx.payMethod === 'cash' ? 'TUNAI' : 'QRIS'}<br>
-      <div class="line-break"></div>
-      ${itemsBody}
-      <div class="line-break"></div>
-      <strong>TOTAL: ${formatRupiah(tx.total).padStart(17)}</strong>\n
-      <div class="line-break"></div>
-      <div class="text-center">
-        Terima kasih atas kunjungan Anda!<br>
-        Powered by Premium POS v2.0
-      </div>
+  document.getElementById('confirmAddBtn').onclick = () => { const note = document.getElementById('itemNote').value; const existing = cart.find(i=>i.id===selectedProduct.id && i.daging===tempDaging && i.pedas===tempPedas && i.note===note); if(existing) existing.qty += tempQty; else cart.push({ ...selectedProduct, daging:tempDaging, pedas:tempPedas, qty:tempQty, note }); updateCartUI(); document.getElementById('variantModal').classList.remove('active'); showToast(`✓ ${selectedProduct.name} ditambahkan`); };
+  async function sendToSheet(tx) { try { const itemsText = tx.items.map(i=>`${i.name}(${i.daging})x${i.qty}`).join(', '); const payload = new URLSearchParams(); payload.append('data', JSON.stringify({ orderId: tx.orderId, timestamp: tx.timestamp, items: itemsText, total: formatRupiah(tx.total), pembayaran: tx.payMethod })); await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: payload }); return true; } catch(e) { return false; } }
+  function printThermalReceipt(tx, customerName, customerWA) {
+    const printDiv = document.getElementById('printArea');
+    const itemsHtml = tx.items.map(i => `<div>${i.name} (${i.daging}, ${i.pedas}) x${i.qty} = ${formatRupiah(i.price*i.qty)}</div>`).join('');
+    printDiv.innerHTML = `
+      <div class="text-center"><div class="print-mascot">🧆🥙 KEBAB FACTORY 🧆🥙</div><div>🔥 Premium Turkish Delight 🔥</div><div>Ponorogo - Outlet 1</div><div>Telp: 0812-3456-7890</div></div><div class="line-break"></div>
+      <div>ID: ${tx.orderId}</div><div>${tx.date} ${tx.time}</div><div>Kasir: Kebab Pro</div>${customerName ? `<div>Pelanggan: ${customerName}</div>` : ''}${customerWA ? `<div>WA: ${customerWA}</div>` : ''}<div>Metode: ${tx.payMethod === 'cash' ? 'TUNAI' : 'QRIS'}</div><div class="line-break"></div>
+      ${itemsHtml}<div class="line-break"></div><strong>TOTAL: ${formatRupiah(tx.total)}</strong><div class="line-break"></div>
+      <div class="text-center">🍢 Terima kasih sudah order! 🍢<br>✨ Masakan Halal & Lezat ✨<br>#KebabFactoryPonorogo</div>
     `;
     window.print();
-  };
-
-  function confirmPayment() {
-    if(!cart.length) return;
+  }
+  function confirmPayment() { if(!cart.length) return;
     const method = document.getElementById('cashInputArea').style.display==='block'?'cash':'qris';
-    if(method==='cash') {
-      const cashVal = parseInt(document.getElementById('cashAmount').value) || 0;
-      const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-      if(cashVal < total) { showToast('⚠️ Kesalahan: Nominal uang tidak cukup!'); return; }
-    }
+    if(method==='cash') { const cashVal = parseInt(document.getElementById('cashAmount').value) || 0; const total = cart.reduce((s,i)=>s+i.price*i.qty,0); if(cashVal < total) { showToast('Uang kurang!'); return; } }
+    const custName = document.getElementById('customerName').value.trim();
+    const custWA = document.getElementById('customerWA').value.trim();
     const newTx = { orderId: generateOrderId(), date: formatDate(), time: formatTime(), timestamp: new Date().toISOString(), items: cart.map(i=>({...i})), total: cart.reduce((s,i)=>s+i.price*i.qty,0), payMethod: method, synced: false };
-    
-    transactions.unshift(newTx);
-    if(transactions.length>200) transactions = transactions.slice(0,200);
-    localStorage.setItem('kf_transactions', JSON.stringify(transactions));
-    syncQueue.push(newTx);
-    localStorage.setItem('kf_sync_queue', JSON.stringify(syncQueue));
-    
-    // Clear and reset screens
-    cart = [];
-    updateCartUI();
-    refreshDashboardData();
-    document.getElementById('paymentModal').classList.remove('active');
-    
-    // Success Dialog & AUTO PRINT TRIGGER
-    showToast(`✅ Transaksi ${newTx.orderId} Sukses!`);
-    window.executeThermalReceiptPrint(newTx);
-    
+    transactions.unshift(newTx); if(transactions.length>200) transactions.pop(); localStorage.setItem('kf_transactions', JSON.stringify(transactions));
+    syncQueue.push(newTx); localStorage.setItem('kf_sync_queue', JSON.stringify(syncQueue));
+    cart = []; updateCartUI(); refreshDashboardData(); document.getElementById('paymentModal').classList.remove('active');
+    showToast(`✅ Transaksi ${newTx.orderId} sukses!`);
+    printThermalReceipt(newTx, custName, custWA);
     if(navigator.onLine) processSyncQueue();
   }
+  function openPayment() { if(!cart.length) return; const total = cart.reduce((s,i)=>s+i.price*i.qty,0); document.getElementById('cashAmount').value = ''; document.getElementById('changeAmount').innerHTML = 'Rp 0'; document.getElementById('cashInputArea').style.display = 'block'; document.getElementById('qrisArea').style.display = 'none'; document.getElementById('paymentModal').classList.add('active'); document.getElementById('cashAmount').oninput = () => { const val = parseInt(document.getElementById('cashAmount').value)||0; const kembalian = val - total; document.getElementById('changeAmount').innerHTML = formatRupiah(kembalian>=0?kembalian:0)+(kembalian<0?' Kurang':''); }; }
+  async function processSyncQueue() { if(!navigator.onLine || syncQueue.length===0) return; const remaining = []; for(const tx of syncQueue) { const ok = await sendToSheet(tx); if(ok) { const histTx = transactions.find(t=>t.orderId===tx.orderId); if(histTx) histTx.synced=true; } else remaining.push(tx); } syncQueue = remaining; localStorage.setItem('kf_sync_queue', JSON.stringify(syncQueue)); localStorage.setItem('kf_transactions', JSON.stringify(transactions)); refreshDashboardData(); }
+  function showHistory() { const container = document.getElementById('historyList'); if(transactions.length===0) { container.innerHTML='<div style="padding:40px;text-align:center;">Belum ada transaksi</div>'; return; } container.innerHTML = transactions.map((tx,idx)=>`<div class="history-item"><div style="display:flex;justify-content:space-between;"><strong>${tx.orderId}</strong><strong>${formatRupiah(tx.total)}</strong></div><div>${tx.date} ${tx.time} • ${tx.payMethod}</div><div><small>${tx.items.map(i=>i.name).join(', ')}</small></div><button class="reprint-btn" onclick="window.printReceiptByIdx(${idx})"><i class="fas fa-print"></i> Cetak Ulang</button></div>`).join(''); }
+  window.printReceiptByIdx = (idx) => { const tx = transactions[idx]; if(tx) printThermalReceipt(tx, '', ''); };
+  function updateReports() { const totalSales = transactions.reduce((s,t)=>s+t.total,0); const count = transactions.length; const cashCount = transactions.filter(t=>t.payMethod==='cash').length; const qrisCount = transactions.filter(t=>t.payMethod==='qris').length; document.getElementById('reportsContent').innerHTML = `<div style="display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));"><div class="report-card" style="border-left:4px solid #10B981;"><div>OMSET</div><div style="font-size:1.8rem;font-weight:800;">${formatRupiah(totalSales)}</div></div><div class="report-card" style="border-left:4px solid #FF6B00;"><div>TOTAL NOTA</div><div style="font-size:1.8rem;font-weight:800;">${count} x</div></div><div class="report-card" style="border-left:4px solid #3B82F6;"><div>TUNAI ${cashCount} / QRIS ${qrisCount}</div></div></div>`; }
+  function refreshDashboardData() { showHistory(); updateReports(); }
 
-  function openPayment() {
-    if(!cart.length) return;
-    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-    document.getElementById('cashAmount').value = '';
-    document.getElementById('changeAmount').innerHTML = 'Rp 0';
-    document.getElementById('cashInputArea').style.display = 'block';
-    document.getElementById('qrisArea').style.display = 'none';
-    document.getElementById('paymentModal').classList.add('active');
-    
-    document.getElementById('cashAmount').oninput = () => { 
-      const val = parseInt(document.getElementById('cashAmount').value) || 0; 
-      const kembalian = val - total; 
-      document.getElementById('changeAmount').innerHTML = formatRupiah(kembalian>=0?kembalian:0) + (kembalian<0?' (Kurang)':''); 
-      document.getElementById('changeAmount').style.color = kembalian >= 0 ? '#10B981' : '#EF4444';
-    };
-  }
-
-  async function processSyncQueue() {
-    if(!navigator.onLine || syncQueue.length===0) return;
-    const remaining = [];
-    for(const tx of syncQueue) { 
-      const ok = await sendToSheet(tx); 
-      if(ok) { 
-        const histTx = transactions.find(t=>t.orderId===tx.orderId); 
-        if(histTx) histTx.synced=true; 
-      } else remaining.push(tx); 
-    }
-    syncQueue = remaining;
-    localStorage.setItem('kf_sync_queue', JSON.stringify(syncQueue));
-    localStorage.setItem('kf_transactions', JSON.stringify(transactions));
-    refreshDashboardData();
-  }
-
-  function showHistory() {
-    const container = document.getElementById('historyList');
-    if(transactions.length===0) { container.innerHTML = '<div style="text-align:center;padding:40px;color:#94A3B8;">Belum ada data transaksi masuk.</div>'; return; }
-    container.innerHTML = transactions.map((tx,idx)=>`
-      <div class="history-item">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-          <span style="font-weight:800; color:#FF6B00; font-size:1.05rem;">${tx.orderId}</span>
-          <span style="font-weight:800; font-size:1.05rem; color:#111827;">${formatRupiah(tx.total)}</span>
-        </div>
-        <div style="font-size:0.8rem; color:#64748B; margin-bottom:8px; display:flex; justify-content:space-between;">
-          <span>${tx.date} ${tx.time} • ${tx.payMethod==='cash'?'💵 Tunai':'📱 QRIS'}</span>
-          <span style="font-weight:600; color:${tx.synced?'#10B981':'#F59E0B'}">${tx.synced?'● Synced Cloud':'○ Pending Sync'}</span>
-        </div>
-        <div style="font-size:0.8rem; color: #475569; background:#F8FAFC; padding:8px; border-radius:8px; margin-bottom:10px;">
-          ${tx.items.map(i => `${i.name} (${i.qty}x)`).join(', ')}
-        </div>
-        <button class="reprint-btn" onclick="window.printReceiptIndexRef(${idx})"><i class="fas fa-print"></i> Salinan Struk</button>
-      </div>
-    `).join('');
-  }
-
-  window.printReceiptIndexRef = (idx) => {
-    window.executeThermalReceiptPrint(transactions[idx]);
-  };
-
-  function updateReports() { 
-    const totalSales = transactions.reduce((s,t)=>s+t.total,0); 
-    const count = transactions.length; 
-    const cashCount = transactions.filter(t=>t.payMethod==='cash').length; 
-    const qrisCount = transactions.filter(t=>t.payMethod==='qris').length; 
-    
-    document.getElementById('reportsContent').innerHTML = `
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;">
-        <div class="report-card" style="border-left: 4px solid #10B981;">
-          <div style="color:#64748B; font-weight:600; font-size:0.85rem;">OMSET PENJUALAN</div>
-          <div style="font-size:1.8rem; font-weight:800; color:#111827; margin-top:4px;">${formatRupiah(totalSales)}</div>
-        </div>
-        <div class="report-card" style="border-left: 4px solid #FF6B00;">
-          <div style="color:#64748B; font-weight:600; font-size:0.85rem;">TOTAL STRUK NOTA</div>
-          <div style="font-size:1.8rem; font-weight:800; color:#111827; margin-top:4px;">${count} Transaksi</div>
-        </div>
-        <div class="report-card" style="border-left: 4px solid #3B82F6;">
-          <div style="color:#64748B; font-weight:600; font-size:0.85rem;">METODE TRANSAKSI</div>
-          <div style="margin-top:8px; font-weight:600; font-size:0.95rem;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>💵 Uang Tunai:</span> <span>${cashCount}</span></div>
-            <div style="display:flex; justify-content:space-between;"><span>📱 Scan QRIS:</span> <span>${qrisCount}</span></div>
-          </div>
-        </div>
-      </div>
-    `; 
-  }
-
-  // Navigation Logic
-  document.querySelectorAll('.nav-item').forEach(nav=>{ 
-    nav.addEventListener('click',()=>{ 
-      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
-      nav.classList.add('active'); 
-      const view = nav.dataset.nav; 
-      
-      document.getElementById('posView').style.display = view==='pos'?'block':'none'; 
-      document.getElementById('historyView').style.display = view==='history'?'block':'none'; 
-      document.getElementById('reportsView').style.display = view==='reports'?'block':'none'; 
-      document.getElementById('orderPanelDesktop').style.display = view==='pos'?'flex':'none'; 
-      
-      const titles={pos:'Ambil Pesanan',history:'Riwayat Transaksi',reports:'Laporan Real-time'}; 
-      const subtitles={pos:'Pilih menu, tambahkan varian, selesaikan transaksi',history:'Monitor performa log transaksi keluar',reports:'Ringkasan live performa laba penjualan keuangan'}; 
-      
-      document.getElementById('pageTitle').innerText=titles[view]; 
-      document.getElementById('pageSubtitle').innerText=subtitles[view]; 
-      
-      refreshDashboardData();
-      if(window.innerWidth<=992) window.closeMobileSidebar(); 
-    }); 
-  });
-
+  // Navigation & UI events
+  document.querySelectorAll('.nav-item').forEach(nav=>{ nav.addEventListener('click',()=>{ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); nav.classList.add('active'); const view=nav.dataset.nav; document.getElementById('posView').style.display=view==='pos'?'block':'none'; document.getElementById('historyView').style.display=view==='history'?'block':'none'; document.getElementById('reportsView').style.display=view==='reports'?'block':'none'; document.getElementById('orderPanelDesktop').style.display=view==='pos'?'flex':'none'; document.getElementById('pageTitle').innerText={pos:'Ambil Pesanan',history:'Riwayat',reports:'Laporan'}[view]; refreshDashboardData(); if(window.innerWidth<=992) window.closeMobileSidebar(); }); });
   document.getElementById('clearCartBtn').onclick = () => { if(cart.length) { cart=[]; updateCartUI(); showToast('Keranjang direset.'); } };
-  document.getElementById('checkoutBtnDesktop').onclick = openPayment;
-  document.getElementById('checkoutBtnMobile').onclick = openPayment;
+  document.getElementById('checkoutBtnDesktop').onclick = openPayment; document.getElementById('checkoutBtnMobile').onclick = openPayment;
   document.getElementById('closeModalBtn').onclick = () => document.getElementById('variantModal').classList.remove('active');
   document.getElementById('closePayModal').onclick = () => document.getElementById('paymentModal').classList.remove('active');
-  
-  document.getElementById('cashMethod').onclick = () => { 
-    document.getElementById('cashInputArea').style.display='block'; 
-    document.getElementById('qrisArea').style.display='none'; 
-    document.getElementById('cashMethod').style.borderColor='#FF6B00'; document.getElementById('cashMethod').style.background='#FFF4ED'; document.getElementById('cashMethod').style.color='#FF6B00';
-    document.getElementById('qrisMethod').style.borderColor='#E2E8F0'; document.getElementById('qrisMethod').style.background='white'; document.getElementById('qrisMethod').style.color='#475569';
-  };
-  document.getElementById('qrisMethod').onclick = () => { 
-    document.getElementById('cashInputArea').style.display='none'; 
-    document.getElementById('qrisArea').style.display='block'; 
-    document.getElementById('qrisMethod').style.borderColor='#FF6B00'; document.getElementById('qrisMethod').style.background='#FFF4ED'; document.getElementById('qrisMethod').style.color='#FF6B00';
-    document.getElementById('cashMethod').style.borderColor='#E2E8F0'; document.getElementById('cashMethod').style.background='white'; document.getElementById('cashMethod').style.color='#475569';
-  };
-  
+  document.getElementById('cashMethod').onclick = () => { document.getElementById('cashInputArea').style.display='block'; document.getElementById('qrisArea').style.display='none'; document.getElementById('cashMethod').style.borderColor='#FF6B00'; document.getElementById('qrisMethod').style.borderColor='#E2E8F0'; };
+  document.getElementById('qrisMethod').onclick = () => { document.getElementById('cashInputArea').style.display='none'; document.getElementById('qrisArea').style.display='block'; document.getElementById('qrisMethod').style.borderColor='#FF6B00'; document.getElementById('cashMethod').style.borderColor='#E2E8F0'; };
   document.getElementById('confirmPayBtn').onclick = confirmPayment;
   document.getElementById('syncBtn').onclick = () => processSyncQueue();
   document.querySelectorAll('.cat-chip').forEach(chip=>{ chip.addEventListener('click',function(){ document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); this.classList.add('active'); renderProducts(this.dataset.cat); }); });
-
   window.toggleMobileSidebar = () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('open'); };
   window.closeMobileSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('mobileOverlay').classList.remove('open'); };
-  
-  const fab=document.getElementById('mobileFab'), drawer=document.getElementById('mobileCartDrawer');
-  if(fab) fab.onclick = () => drawer.classList.toggle('open');
-  document.getElementById('closeDrawerBtn')?.addEventListener('click',()=>drawer.classList.remove('open'));
-
+  document.getElementById('mobileFab').onclick = () => document.getElementById('mobileCartDrawer').classList.toggle('open');
+  document.getElementById('closeDrawerBtn').onclick = () => document.getElementById('mobileCartDrawer').classList.remove('open');
   window.addEventListener('online',()=>{ document.getElementById('onlineDot').classList.remove('offline-dot'); document.getElementById('onlineDot').classList.add('online-dot'); document.getElementById('syncText').innerText='Online'; processSyncQueue(); });
   window.addEventListener('offline',()=>{ document.getElementById('onlineDot').classList.add('offline-dot'); document.getElementById('syncText').innerText='Offline'; });
   if(!navigator.onLine) document.getElementById('onlineDot')?.classList.add('offline-dot');
-
-  // Initialization
-  renderProducts('all');
-  updateCartUI();
-  refreshDashboardData();
+  document.getElementById('categoryTabs').innerHTML = '<div class="cat-chip active" data-cat="all">Semua Menu</div><div class="cat-chip" data-cat="signature">Signature</div><div class="cat-chip" data-cat="double">Double</div>';
+  renderProducts('all'); updateCartUI(); refreshDashboardData();
+  document.querySelectorAll('.cat-chip').forEach(chip=>{ chip.addEventListener('click',function(){ document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active')); this.classList.add('active'); renderProducts(this.dataset.cat); }); });
 </script>
 </body>
 </html>
