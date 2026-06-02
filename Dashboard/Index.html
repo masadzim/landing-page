@@ -1,257 +1,329 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Dashboard</title>
+    <title>Kebab Factory | Executive Dashboard</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
         .card { background-color: #ffffff; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03); border: 1px solid #f1f5f9; padding: 1.5rem; }
-        .table-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; text-align: left;}
-        .table-cell { padding: 1rem 0; border-bottom: 1px solid #f8fafc; font-size: 0.875rem; }
+        .table-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; text-align: left; background: #f8fafc;}
+        .table-cell { padding: 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; vertical-align: middle; }
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #4f46e5; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-6 md:p-10 max-w-[1400px] mx-auto">
+<body class="p-6 md:p-10 max-w-[1600px] mx-auto">
 
+    <!-- Header -->
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Overview</h1>
-            <p class="text-sm text-slate-500 mt-1">Real-time business performance metrics.</p>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Live Kitchen Dashboard</h1>
+            <p class="text-sm text-slate-500 mt-1">The Kebab Factory - Pemantauan Pesanan Real-time</p>
         </div>
-        <div class="text-sm text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-sm">
-            Today: <strong>June 2, 2026</strong>
+        <div class="flex items-center gap-4">
+            <div id="sync-status" class="flex items-center gap-2 text-sm text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Tersinkronisasi
+            </div>
+            <button onclick="fetchData()" class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 shadow-sm transition">
+                Refresh Data
+            </button>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="card">
-            <h3 class="text-sm font-medium text-slate-500 mb-1">Revenue Today</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-3xl font-semibold tracking-tight text-slate-900">Rp 124.500.000</span>
-                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+14.2%</span>
-            </div>
-        </div>
-        <div class="card">
-            <h3 class="text-sm font-medium text-slate-500 mb-1">Orders Today</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-3xl font-semibold tracking-tight text-slate-900">342</span>
-                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+5.1%</span>
-            </div>
-        </div>
-        <div class="card">
-            <h3 class="text-sm font-medium text-slate-500 mb-1">Average Transaction</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-3xl font-semibold tracking-tight text-slate-900">Rp 364.035</span>
-                <span class="text-xs font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">-1.2%</span>
-            </div>
-        </div>
+    <!-- Loading Indicator -->
+    <div id="loading" class="hidden flex justify-center items-center py-10">
+        <div class="loader mr-3"></div> <span class="text-slate-500 text-sm font-medium">Memuat data dari server...</span>
     </div>
 
-    <div class="card mb-8">
-        <h3 class="text-base font-semibold text-slate-800 mb-4">Revenue Trend (Last 7 Days)</h3>
-        <div class="w-full h-[300px]">
-            <canvas id="revenueChart"></canvas>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        <div class="card">
-            <h3 class="text-base font-semibold text-slate-800 mb-4">Best Selling Products</h3>
-            <table class="w-full">
-                <thead>
-                    <tr>
-                        <th class="table-header">Product</th>
-                        <th class="table-header text-right">Sold</th>
-                        <th class="table-header text-right">Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">Enterprise SaaS License</td>
-                        <td class="table-cell text-right text-slate-600">45</td>
-                        <td class="table-cell text-right text-slate-900">Rp 45.000.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">Pro Subscription (Yearly)</td>
-                        <td class="table-cell text-right text-slate-600">112</td>
-                        <td class="table-cell text-right text-slate-900">Rp 28.000.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">API Integration Add-on</td>
-                        <td class="table-cell text-right text-slate-600">89</td>
-                        <td class="table-cell text-right text-slate-900">Rp 17.800.000</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3 class="text-base font-semibold text-slate-800 mb-4">Outlet Performance</h3>
-            <table class="w-full">
-                <thead>
-                    <tr>
-                        <th class="table-header">Location</th>
-                        <th class="table-header text-right">Orders</th>
-                        <th class="table-header text-right">Total Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">Jakarta Central (HQ)</td>
-                        <td class="table-cell text-right text-slate-600">156</td>
-                        <td class="table-cell text-right text-slate-900">Rp 65.200.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">Surabaya Branch</td>
-                        <td class="table-cell text-right text-slate-600">98</td>
-                        <td class="table-cell text-right text-slate-900">Rp 32.100.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell font-medium text-slate-800">Bandung Hub</td>
-                        <td class="table-cell text-right text-slate-600">88</td>
-                        <td class="table-cell text-right text-slate-900">Rp 27.200.000</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3 class="text-base font-semibold text-slate-800 mb-4">Payment Methods</h3>
-            <div class="space-y-4 mt-2">
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-slate-700 font-medium">Virtual Account / Bank Transfer</span>
-                        <span class="text-slate-900">55%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2">
-                        <div class="bg-indigo-600 h-2 rounded-full" style="width: 55%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-slate-700 font-medium">Credit Card</span>
-                        <span class="text-slate-900">30%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2">
-                        <div class="bg-sky-500 h-2 rounded-full" style="width: 30%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span class="text-slate-700 font-medium">E-Wallet (GoPay, OVO)</span>
-                        <span class="text-slate-900">15%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2">
-                        <div class="bg-emerald-400 h-2 rounded-full" style="width: 15%"></div>
-                    </div>
-                </div>
+    <div id="dashboard-content">
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <h3 class="text-sm font-medium text-slate-500 mb-1">Total Pesanan (Hari Ini)</h3>
+                <span id="kpi-orders" class="text-3xl font-semibold text-slate-900">0</span>
+            </div>
+            <div class="card">
+                <h3 class="text-sm font-medium text-slate-500 mb-1">Pendapatan (Hari Ini)</h3>
+                <span id="kpi-revenue" class="text-3xl font-semibold text-slate-900">Rp 0</span>
+            </div>
+            <div class="card border-l-4 border-l-amber-400">
+                <h3 class="text-sm font-medium text-slate-500 mb-1">Antrean (Baru & Diproses)</h3>
+                <span id="kpi-pending" class="text-3xl font-semibold text-slate-900">0</span>
+            </div>
+            <div class="card border-l-4 border-l-emerald-500">
+                <h3 class="text-sm font-medium text-slate-500 mb-1">Pesanan Selesai</h3>
+                <span id="kpi-completed" class="text-3xl font-semibold text-slate-900">0</span>
             </div>
         </div>
 
-        <div class="card">
-            <h3 class="text-base font-semibold text-slate-800 mb-4">Recent Order Status</h3>
-            <table class="w-full">
-                <thead>
-                    <tr>
-                        <th class="table-header">Order ID</th>
-                        <th class="table-header">Status</th>
-                        <th class="table-header text-right">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="table-cell text-slate-600">#ORD-9021</td>
-                        <td class="table-cell">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">Completed</span>
-                        </td>
-                        <td class="table-cell text-right text-slate-900 font-medium">Rp 2.500.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell text-slate-600">#ORD-9022</td>
-                        <td class="table-cell">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Processing</span>
-                        </td>
-                        <td class="table-cell text-right text-slate-900 font-medium">Rp 8.400.000</td>
-                    </tr>
-                    <tr>
-                        <td class="table-cell text-slate-600">#ORD-9023</td>
-                        <td class="table-cell">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">Pending</span>
-                        </td>
-                        <td class="table-cell text-right text-slate-900 font-medium">Rp 1.200.000</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <!-- Middle: Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <!-- Table: Live Orders -->
+            <div class="card lg:col-span-2 overflow-hidden px-0 pb-0">
+                <div class="px-6 mb-4 flex justify-between items-center">
+                    <h3 class="text-base font-semibold text-slate-800">Antrean Pesanan Aktif</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="table-header">Order ID</th>
+                                <th class="table-header">Pelanggan</th>
+                                <th class="table-header">Pesanan</th>
+                                <th class="table-header">Total</th>
+                                <th class="table-header">Status</th>
+                                <th class="table-header">Aksi (Update)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <!-- Rows will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
+            <!-- Chart: Status Distribution -->
+            <div class="card">
+                <h3 class="text-base font-semibold text-slate-800 mb-4">Distribusi Status Pesanan</h3>
+                <div class="w-full h-[300px]">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        
-        // Gradient for the area chart to give it that "Stripe/Shopify" feel
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)'); // Indigo-600 low opacity
-        gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
+        // =========================================================================
+        // KONFIGURASI PENTING
+        // Ganti URL ini dengan URL Web App dari Google Apps Script Anda yang berakhiran /exec
+        // =========================================================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec'; 
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Revenue (Rp Millions)',
-                    data: [85, 92, 78, 105, 110, 95, 124.5],
-                    borderColor: '#4f46e5', // Indigo 600
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#4f46e5',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    fill: true,
-                    tension: 0.4 // Smooth curves
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1e293b',
-                        padding: 12,
-                        titleFont: { family: 'Inter', size: 13 },
-                        bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return 'Rp ' + context.parsed.y + 'M';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false, drawBorder: false },
-                        ticks: { font: { family: 'Inter', size: 12 }, color: '#64748b' }
-                    },
-                    y: {
-                        grid: { color: '#f1f5f9', drawBorder: false },
-                        ticks: { 
-                            font: { family: 'Inter', size: 12 }, 
-                            color: '#64748b',
-                            callback: function(value) { return value + 'M'; }
-                        },
-                        beginAtZero: true
-                    }
-                }
+        let ordersData = [];
+        let statusChartInstance = null;
+
+        // Valid Status according to GAS code
+        const VALID_STATUS = ['Baru', 'Diproses', 'Siap', 'Diantar', 'Diambil', 'Selesai', 'Batal'];
+
+        // Helper: Format Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        };
+
+        // Helper: Get Badge Color based on status
+        const getStatusBadge = (status) => {
+            const colors = {
+                'Baru': 'bg-blue-100 text-blue-800',
+                'Diproses': 'bg-amber-100 text-amber-800',
+                'Siap': 'bg-fuchsia-100 text-fuchsia-800',
+                'Diantar': 'bg-indigo-100 text-indigo-800',
+                'Diambil': 'bg-teal-100 text-teal-800',
+                'Selesai': 'bg-emerald-100 text-emerald-800',
+                'Batal': 'bg-rose-100 text-rose-800'
+            };
+            const colorClass = colors[status] || 'bg-slate-100 text-slate-800';
+            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}">${status}</span>`;
+        };
+
+        // Fetch Data from GAS
+        async function fetchData() {
+            if (API_URL.includes('XXXXXXXXXXXX')) {
+                alert('Silakan masukkan URL Web App Google Apps Script Anda di variabel API_URL pada kode HTML.');
+                return;
             }
-        });
+
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('dashboard-content').style.opacity = '0.5';
+
+            try {
+                const response = await fetch(`${API_URL}?action=getAllOrders`);
+                const result = await response.json();
+                
+                if (result.orders) {
+                    ordersData = result.orders;
+                    renderDashboard();
+                } else {
+                    console.error('Data tidak valid', result);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Gagal mengambil data dari server. Cek koneksi internet atau URL API.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard-content').style.opacity = '1';
+            }
+        }
+
+        // Render everything
+        function renderDashboard() {
+            renderKPIs();
+            renderTable();
+            renderChart();
+        }
+
+        // Calculate and Render KPIs
+        function renderKPIs() {
+            const today = new Date().toLocaleDateString('id-ID'); // Simplification for demo
+            let totalRevenue = 0;
+            let pendingCount = 0;
+            let completedCount = 0;
+
+            ordersData.forEach(order => {
+                // Parse total (assuming format like "Rp 25.000" or raw number)
+                let numTotal = 0;
+                if(typeof order.total === 'string') {
+                    numTotal = parseInt(order.total.replace(/[^0-9]/g, '')) || 0;
+                } else if (typeof order.total === 'number') {
+                    numTotal = order.total;
+                }
+                
+                // For simplicity, we count all loaded orders as 'Today' based on your GAS limit (last 50)
+                totalRevenue += numTotal;
+
+                if (order.status === 'Baru' || order.status === 'Diproses') pendingCount++;
+                if (order.status === 'Selesai') completedCount++;
+            });
+
+            document.getElementById('kpi-orders').innerText = ordersData.length;
+            document.getElementById('kpi-revenue').innerText = formatRupiah(totalRevenue);
+            document.getElementById('kpi-pending').innerText = pendingCount;
+            document.getElementById('kpi-completed').innerText = completedCount;
+        }
+
+        // Render Data Table
+        function renderTable() {
+            const tbody = document.getElementById('orders-tbody');
+            tbody.innerHTML = '';
+
+            if (ordersData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">Belum ada pesanan masuk.</td></tr>`;
+                return;
+            }
+
+            ordersData.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                
+                // Format items (replace commas with line breaks for neatness)
+                const itemsList = order.items ? order.items.split(', ').join('<br>') : '-';
+
+                // Status Dropdown builder
+                let selectHtml = `<select onchange="updateStatus('${order.orderId}', this.value)" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2 outline-none cursor-pointer">`;
+                VALID_STATUS.forEach(st => {
+                    const selected = (order.status === st) ? 'selected' : '';
+                    selectHtml += `<option value="${st}" ${selected}>Ubah ke: ${st}</option>`;
+                });
+                selectHtml += `</select>`;
+
+                tr.innerHTML = `
+                    <td class="table-cell font-medium text-slate-800">#${order.orderId}</td>
+                    <td class="table-cell">
+                        <div class="font-medium text-slate-900">${order.nama}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${order.pengiriman}</div>
+                    </td>
+                    <td class="table-cell text-xs text-slate-600 leading-relaxed">${itemsList}</td>
+                    <td class="table-cell font-medium text-slate-900">${order.total}</td>
+                    <td class="table-cell" id="status-badge-${order.orderId}">${getStatusBadge(order.status)}</td>
+                    <td class="table-cell w-40">${selectHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Update Status to Server via POST
+        async function updateStatus(orderId, newStatus) {
+            if (!confirm(`Yakin mengubah status order ${orderId} menjadi ${newStatus}? Ini akan memicu notifikasi WA ke pelanggan.`)) {
+                fetchData(); // Reset dropdown if cancelled
+                return;
+            }
+
+            // Show temporary loading on the badge
+            const badgeContainer = document.getElementById(`status-badge-${orderId}`);
+            const originalBadge = badgeContainer.innerHTML;
+            badgeContainer.innerHTML = `<span class="text-xs text-slate-500 animate-pulse">Memproses...</span>`;
+
+            // Prepare POST data based on your GAS doPost architecture
+            const formData = new URLSearchParams();
+            formData.append('action', 'updateStatus');
+            formData.append('orderId', orderId);
+            formData.append('status', newStatus);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update local data and re-render partial or full
+                    fetchData(); // Reload all to keep synced
+                } else {
+                    alert('Gagal update: ' + (result.error || 'Unknown error'));
+                    badgeContainer.innerHTML = originalBadge;
+                }
+            } catch (error) {
+                console.error('Update failed:', error);
+                alert('Terjadi kesalahan jaringan.');
+                badgeContainer.innerHTML = originalBadge;
+            }
+        }
+
+        // Render Chart.js
+        function renderChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            // Tally statuses
+            const counts = VALID_STATUS.map(st => ordersData.filter(o => o.status === st).length);
+
+            if (statusChartInstance) {
+                statusChartInstance.destroy();
+            }
+
+            statusChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: VALID_STATUS,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: [
+                            '#bfdbfe', // Baru (Blue)
+                            '#fde68a', // Diproses (Amber)
+                            '#f5d0fe', // Siap (Fuchsia)
+                            '#c7d2fe', // Diantar (Indigo)
+                            '#ccfbf1', // Diambil (Teal)
+                            '#a7f3d0', // Selesai (Emerald)
+                            '#fecdd3'  // Batal (Rose)
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { usePointStyle: true, font: { family: 'Inter', size: 12 } } }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        // Initialize
+        window.onload = fetchData;
+        // Auto-refresh every 60 seconds
+        setInterval(fetchData, 60000);
+
     </script>
 </body>
 </html>
