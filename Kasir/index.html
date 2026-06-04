@@ -858,6 +858,8 @@ function displayOnlineOrders() {
       <div style="margin-top:10px;">${selesai.map(renderCard).join('')}</div>
     </details>`;
   }
+  el.innerHTML = html; 
+}
 window.processOnlineOrder=function(orderId){
   const o=onlineOrders.find(x=>x.orderId===orderId);
   if(!o){showToast('Pesanan tidak ditemukan');return;}
