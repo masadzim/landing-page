@@ -795,17 +795,69 @@ async function fetchOnlineOrders(){
   }
 }
 
-function displayOnlineOrders(){
-  const el=document.getElementById('onlineOrdersList');
-  if(!el) return;
-  if(!onlineOrders.length){
-    el.innerHTML='<div style="text-align:center;padding:40px;color:#64748B;"><i class="fas fa-inbox" style="font-size:2.5rem;display:block;margin-bottom:10px;"></i><strong>Belum ada pesanan</strong></div>';
+function displayOnlineOrders() {
+  const el = document.getElementById('onlineOrdersList');
+  if (!el) return;
+
+  // Pisahkan aktif vs selesai
+  const aktif = onlineOrders.filter(o => o.status !== 'Selesai' && o.status !== 'Batal');
+  const selesai = onlineOrders.filter(o => o.status === 'Selesai' || o.status === 'Batal');
+
+  if (!onlineOrders.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:#64748B;"><i class="fas fa-inbox" style="font-size:2.5rem;display:block;margin-bottom:10px;"></i><strong>Belum ada pesanan</strong></div>';
     return;
   }
-  const sorted=[...onlineOrders].sort((a,b)=>{
-    const p=s=>s==='Baru'?0:s==='Diproses'?1:s==='Siap'?2:3;
-    return p(a.status)-p(b.status);
-  });
+
+  const renderCard = (o) => {
+    const tot = parseRupiah(o.total);
+    const isDone = o.status === 'Selesai' || o.status === 'Batal';
+    const sc = o.status==='Baru'?'#EF4444'
+              :o.status==='Diproses'?'#FF6B00'
+              :o.status==='Siap'?'#10B981'
+              :o.status==='Selesai'?'#64748B':'#94A3B8';
+
+    return `<div class="online-order-card" style="${isDone ? 'opacity:0.55;border-style:dashed;' : 'border-left:4px solid '+sc+';'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:800;color:${isDone?'#94A3B8':'#FF6B00'};">${o.orderId||'-'}</span>
+        <span style="background:${sc}20;color:${sc};padding:3px 10px;border-radius:99px;font-size:0.78rem;font-weight:700;">${o.status||'Baru'}</span>
+      </div>
+      <div style="margin-bottom:5px;">
+        <strong>${o.nama||'Pelanggan'}</strong>
+        ${o.noWA?`<span style="font-size:0.72rem;color:#64748B;"> WA: ${o.noWA}</span>`:''}
+      </div>
+      <div style="font-size:0.83rem;color:#475569;margin-bottom:3px;">${o.items||'-'}</div>
+      <div style="font-size:0.78rem;color:#64748B;margin-bottom:3px;">${o.pengiriman||'-'} &bull; ${o.pembayaran||'-'}</div>
+      ${o.alamat&&o.alamat!=='-'?`<div style="font-size:0.78rem;color:#64748B;margin-bottom:5px;">${o.alamat}</div>`:''}
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:3px;">${fmtR(tot)}</div>
+      ${!isDone
+        ?`<button class="btn-primary" onclick="processOnlineOrder('${o.orderId}')"><i class="fas fa-print"></i> Proses &amp; Cetak Struk</button>`
+        :`<div style="text-align:center;padding:7px;color:#94A3B8;font-size:0.82rem;margin-top:7px;"><i class="fas fa-check-circle"></i> Sudah diproses</div>`
+      }
+    </div>`;
+  };
+
+  let html = '';
+
+  // Pesanan aktif dulu
+  if (aktif.length) {
+    html += aktif.sort((a,b)=>{
+      const p=s=>s==='Baru'?0:s==='Diproses'?1:s==='Siap'?2:3;
+      return p(a.status)-p(b.status);
+    }).map(renderCard).join('');
+  } else {
+    html += '<div style="text-align:center;padding:20px;color:#64748B;background:#F8FAFC;border-radius:12px;margin-bottom:14px;"><i class="fas fa-check-circle" style="color:#10B981;margin-right:6px;"></i>Semua pesanan sudah diproses</div>';
+  }
+
+  // Pesanan selesai dilipat
+  if (selesai.length) {
+    html += `<details style="margin-top:8px;">
+      <summary style="cursor:pointer;font-size:0.82rem;color:#64748B;padding:8px;background:#F1F5F9;border-radius:10px;list-style:none;display:flex;justify-content:space-between;">
+        <span><i class="fas fa-history"></i> Riwayat selesai (${selesai.length})</span>
+        <span>&#9660;</span>
+      </summary>
+      <div style="margin-top:10px;">${selesai.map(renderCard).join('')}</div>
+    </details>`;
+  }
   el.innerHTML=sorted.map(o=>{
     const tot=parseRupiah(o.total);
     const sc=o.status==='Baru'?'#EF4444':o.status==='Diproses'?'#FF6B00':o.status==='Siap'?'#10B981':'#64748B';
