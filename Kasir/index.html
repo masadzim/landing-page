@@ -886,7 +886,7 @@ function openVariantModal(){
   document.getElementById('itemNote').value='';
   document.getElementById('modalProductName').innerText=selectedProduct.name;
   document.getElementById('dagingGroup').innerHTML=['Ayam','Sapi'].map(d=>`<div class="chip-select ${d==='Ayam'?'selected':''}" data-daging="${d}">${d}</div>`).join('');
-  document.getElementById('pedasGroup').innerHTML=['Tidak Pedas','Pedas','Extra Pedas'].map(p=>`<div class="chip-select ${p==='Tidak Pedas'?'selected':''}" data-pedas="${p}">${p}</div>`).join('');
+  document.getElementById('pedasGroup').innerHTML=['Tidak Pedas','Summer','Pedas'].map(p=>`<div class="chip-select ${p==='Tidak Pedas'?'selected':''}" data-pedas="${p}">${p}</div>`).join('');
   document.querySelectorAll('[data-daging]').forEach(el=>el.addEventListener('click',function(){document.querySelectorAll('[data-daging]').forEach(c=>c.classList.remove('selected'));this.classList.add('selected');tempDaging=this.dataset.daging;}));
   document.querySelectorAll('[data-pedas]').forEach(el=>el.addEventListener('click',function(){document.querySelectorAll('[data-pedas]').forEach(c=>c.classList.remove('selected'));this.classList.add('selected');tempPedas=this.dataset.pedas;}));
   document.getElementById('selectedQty').innerText=tempQty;
