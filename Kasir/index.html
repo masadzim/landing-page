@@ -858,26 +858,6 @@ function displayOnlineOrders() {
       <div style="margin-top:10px;">${selesai.map(renderCard).join('')}</div>
     </details>`;
   }
-  el.innerHTML=sorted.map(o=>{
-    const tot=parseRupiah(o.total);
-    const sc=o.status==='Baru'?'#EF4444':o.status==='Diproses'?'#FF6B00':o.status==='Siap'?'#10B981':'#64748B';
-    return `<div class="online-order-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-weight:800;color:#FF6B00;">${o.orderId||'-'}</span>
-        <span style="background:${sc}20;color:${sc};padding:3px 10px;border-radius:99px;font-size:0.78rem;font-weight:700;">${o.status||'Baru'}</span>
-      </div>
-      <div style="margin-bottom:5px;"><strong>${o.nama||'Pelanggan'}</strong>${o.noWA?` <span style="font-size:0.72rem;color:#64748B;">WA: ${o.noWA}</span>`:''}</div>
-      <div style="font-size:0.83rem;color:#475569;margin-bottom:3px;">${o.items||'-'}</div>
-      <div style="font-size:0.78rem;color:#64748B;margin-bottom:3px;">${o.pengiriman||'-'} &bull; ${o.pembayaran||'-'}</div>
-      ${o.alamat&&o.alamat!=='-'?`<div style="font-size:0.78rem;color:#64748B;margin-bottom:5px;">${o.alamat}</div>`:''}
-      <div style="font-size:1.05rem;font-weight:800;margin-bottom:3px;">${fmtR(tot)}</div>
-      ${o.status!=='Selesai'&&o.status!=='Batal'
-        ?`<button class="btn-primary" onclick="processOnlineOrder('${o.orderId}')"><i class="fas fa-print"></i> Proses &amp; Cetak Struk</button>`
-        :`<div style="text-align:center;padding:7px;color:#10B981;font-size:0.82rem;margin-top:7px;"><i class="fas fa-check-circle"></i> Sudah diproses</div>`
-      }
-    </div>`;
-  }).join('');
-}
 
 window.processOnlineOrder=function(orderId){
   const o=onlineOrders.find(x=>x.orderId===orderId);
