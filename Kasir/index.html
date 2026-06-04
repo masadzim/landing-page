@@ -348,7 +348,7 @@
     const container = document.getElementById('onlineOrdersList');
     if(container) container.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>';
     try {
-      const response = await fetch(APPS_SCRIPT_URL + '?action=getOnlineOrders', { method: 'GET' });
+      const response = await fetch(APPS_SCRIPT_URL + '?action=getAllOrders', { method: 'GET' });
       if(response.ok) {
         const data = await response.json();
         onlineOrders = data.orders || [];
