@@ -365,39 +365,48 @@
   }
   
   function displayOnlineOrders() {
-    const container = document.getElementById('onlineOrdersList');
-    if(!container) return;
-    if(!onlineOrders.length) { container.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-inbox"></i><p>Belum ada pesanan online</p></div>'; return; }
-    container.innerHTML = onlineOrders.map(order => `
-      <div class="online-order-card">
-        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
-          <span style="font-weight:800;color:#FF6B00;">${order.id}</span>
-          <span style="background:#FFF4ED;padding:4px 12px;border-radius:99px;">${order.status || 'Pending'}</span>
-        </div>
-        <div><strong>${order.customer}</strong> ${order.wa ? `<span style="font-size:0.7rem;">📞 ${order.wa}</span>` : ''}</div>
-        <div style="font-size:0.85rem;margin:8px 0;">📦 ${order.items}</div>
-        <div><strong>${formatRupiah(order.total)}</strong></div>
-        <button class="btn-primary" onclick="processOnlineOrder('${order.id}')"><i class="fas fa-print"></i> Proses & Cetak Struk</button>
-      </div>
-    `).join('');
+  const container = document.getElementById('onlineOrdersList');
+  if(!container) return;
+  if(!onlineOrders.length) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-inbox"></i><p>Belum ada pesanan online</p></div>';
+    return;
   }
+  container.innerHTML = onlineOrders.map(order => `
+    <div class="online-order-card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-weight:800;color:#FF6B00;">${order.orderId || '-'}</span>
+        <span style="background:#FFF4ED;padding:4px 12px;border-radius:99px;">${order.status || 'Baru'}</span>
+      </div>
+      <div>
+        <strong>${order.nama || 'Customer'}</strong>
+        ${order.noWA ? `<span style="font-size:0.7rem;">📞 ${order.noWA}</span>` : ''}
+      </div>
+      <div style="font-size:0.85rem;margin:8px 0;">📦 ${order.items}</div>
+      <div style="font-size:0.75rem;color:#64748B;">🛵 ${order.pengiriman || '-'} • 💳 ${order.pembayaran || '-'}</div>
+      <div style="margin-top:8px;"><strong>${formatRupiah(Number(String(order.total).replace(/\D/g,'')) || 0)}</strong></div>
+      <button class="btn-primary" onclick="processOnlineOrder('${order.orderId}')">
+        <i class="fas fa-print"></i> Proses & Cetak Struk
+      </button>
+    </div>
+  `).join('');
+}
   
   window.processOnlineOrder = (orderId) => {
-    const order = onlineOrders.find(o => o.id === orderId);
-    if(!order) return;
-    const fakeTx = {
-      orderId: order.id,
-      date: formatDate(),
-      time: formatTime(),
-      items: [{ name: order.items, qty: 1, price: order.total, daging: 'Online', pedas: '-' }],
-      total: order.total,
-      payMethod: 'online'
-    };
-    printThermalReceipt(fakeTx, order.customer, order.wa);
-    onlineOrders = onlineOrders.filter(o => o.id !== orderId);
-    displayOnlineOrders();
-    showToast('✅ Pesanan diproses, struk dicetak');
+  const order = onlineOrders.find(o => o.orderId === orderId); // ← fix di sini
+  if(!order) return;
+  const fakeTx = {
+    orderId: order.orderId,
+    date: formatDate(),
+    time: formatTime(),
+    items: [{ name: order.items, qty: 1, price: Number(String(order.total).replace(/\D/g,'')) || 0, daging: 'Online', pedas: '-' }],
+    total: Number(String(order.total).replace(/\D/g,'')) || 0,
+    payMethod: 'online'
   };
+  printThermalReceipt(fakeTx, order.nama, order.noWA);
+  onlineOrders = onlineOrders.filter(o => o.orderId !== orderId);
+  displayOnlineOrders();
+  showToast('✅ Pesanan diproses, struk dicetak');
+};
   
   // Product functions
   function renderProducts() {
