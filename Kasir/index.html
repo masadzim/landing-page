@@ -857,7 +857,7 @@ function displayOnlineOrders() {
       </summary>
       <div style="margin-top:10px;">${selesai.map(renderCard).join('')}</div>
     </details>`;
-  }
+  });
 
 window.processOnlineOrder=function(orderId){
   const o=onlineOrders.find(x=>x.orderId===orderId);
