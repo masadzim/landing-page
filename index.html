@@ -1294,8 +1294,8 @@ function selectDaging(btn, daging) {
           userLat = pos.coords.latitude;
           userLng = pos.coords.longitude;
           const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-          ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
-          const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
+          ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
+          const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
 
           document.getElementById('loc-btn-text').textContent  = '✅ Lokasi Terdeteksi';
           document.getElementById('loc-result').textContent    = 'Jarak: ' + dist.toFixed(1) + ' km';
@@ -1900,7 +1900,8 @@ let _geocodeTimer = null;
 
 async function tampilkanKoordinat(lat, lng) {
   const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
-  const ongkirLabel = dist < 2 ? 'Gratis' : dist <= 5 ? 'Rp 5.000' : 'Rp 10.000';
+  const ongkir2     = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
+  const ongkirLabel = ongkir2 === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir2);
   const box   = document.getElementById('koordinat-dipilih');
 
   // Tampilkan jarak dulu sambil tunggu geocode
@@ -1957,8 +1958,8 @@ function konfirmasiMapPicker() {
   userLng = pickedLng;
 
   const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-  ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
-  const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : '> 5 km (Rp 10.000)';
+  ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
+  const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
 
   document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
   document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
