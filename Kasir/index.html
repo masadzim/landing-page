@@ -333,13 +333,34 @@
     @media (max-width:380px) {
       .product-grid { grid-template-columns:1fr; }
     }
+
+    /* PRINT STYLE KHUSUS UNTUK THERMAL */
+    @media print {
+      body * { visibility: hidden; }
+      #thermalPrintContainer, #thermalPrintContainer * { visibility: visible; }
+      #thermalPrintContainer {
+        position: absolute; left: 0; top: 0; width: 58mm;
+        font-family: 'Courier New', 'Lucida Console', monospace;
+        font-size: 10px; line-height: 1.3; color: black;
+        background: white; padding: 2mm 1mm;
+      }
+      .print-header { text-align: center; margin-bottom: 4px; }
+      .print-logo { font-size: 16px; letter-spacing: 2px; font-weight: bold; }
+      .print-divider { border-top: 1px dashed #000; margin: 4px 0; }
+      .print-item { margin: 3px 0; }
+      .print-total { font-weight: bold; font-size: 11px; text-align: right; margin-top: 4px; }
+      .print-footer { text-align: center; margin-top: 6px; font-size: 8px; }
+      .text-center { text-align: center; }
+      .text-right { text-align: right; }
+    }
   </style>
 </head>
 <body>
 
+<div id="thermalPrintContainer" style="display: none;"></div>
+
 <div class="app-container">
 
-  <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar" id="sidebar">
     <div class="logo-area">
       <div class="logo">
@@ -370,16 +391,14 @@
           <div style="font-size:0.68rem;color:#64748B;">Sistem Real-time</div>
         </div>
       </div>
-      <button class="printer-btn" id="printerConnectBtn" style="display:none;" onclick="connectUSBPrinter()">
-        <i class="fas fa-print"></i> Hubungkan Printer USB
+      <button class="printer-btn" id="printerConnectBtn" style="display:none;" onclick="showPrinterMenu()">
+        <i class="fas fa-print"></i> Hubungkan Printer
       </button>
     </div>
   </aside>
 
-  <!-- Overlay sidebar mobile -->
   <div class="overlay-bg" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 
-  <!-- ══ MAIN CONTENT ══ -->
   <main class="main-content">
     <div class="top-bar">
       <div class="top-bar-left">
@@ -396,7 +415,6 @@
       </div>
     </div>
 
-    <!-- POS VIEW -->
     <div id="posView" class="products-section">
       <div class="section-header">
         <div class="category-tabs" id="categoryTabs"></div>
@@ -408,7 +426,6 @@
       <div id="productContainer"></div>
     </div>
 
-    <!-- ONLINE VIEW -->
     <div id="onlineView" class="products-section" style="display:none;">
       <div style="background:white;border-radius:20px;padding:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
@@ -419,7 +436,6 @@
       </div>
     </div>
 
-    <!-- HISTORY VIEW -->
     <div id="historyView" class="products-section" style="display:none;">
       <div style="background:white;border-radius:20px;padding:20px;">
         <h2 style="font-weight:800;font-size:1.1rem;margin-bottom:14px;">Riwayat Transaksi</h2>
@@ -427,7 +443,6 @@
       </div>
     </div>
 
-    <!-- REPORTS VIEW -->
     <div id="reportsView" class="products-section" style="display:none;">
       <div style="background:white;border-radius:20px;padding:20px;">
         <h2 style="font-weight:800;font-size:1.1rem;">Ringkasan</h2>
@@ -436,7 +451,6 @@
     </div>
   </main>
 
-  <!-- ══ ORDER PANEL (desktop/tablet) ══ -->
   <aside class="order-panel" id="orderPanelDesktop">
     <div class="order-header">
       <h3>Pesanan</h3>
@@ -454,10 +468,7 @@
     </div>
   </aside>
 
-</div><!-- end .app-container -->
-
-<!-- ══ BOTTOM NAV (mobile) ══ -->
-<nav class="bottom-nav" id="bottomNav">
+</div><nav class="bottom-nav" id="bottomNav">
   <div class="bottom-nav-inner">
     <button class="bnav-item active" data-nav="pos">
       <i class="fas fa-utensils"></i>
@@ -484,7 +495,6 @@
   </div>
 </nav>
 
-<!-- ══ MOBILE CART DRAWER ══ -->
 <div class="mobile-cart-drawer" id="mobileCartDrawer">
   <div class="drawer-handle"></div>
   <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E2E8F0;">
@@ -504,7 +514,6 @@
 </div>
 <div class="overlay-bg" id="cartOverlay" onclick="closeCartDrawer()"></div>
 
-<!-- ══ MODAL VARIAN ══ -->
 <div class="modal-overlay" id="variantModal">
   <div class="modal-container">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -526,7 +535,6 @@
   </div>
 </div>
 
-<!-- ══ MODAL PEMBAYARAN ══ -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-container">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -566,128 +574,194 @@
 <div id="toastMsg" class="toast-message"></div>
 
 <script>
+// Helper format rupiah lokal (tanpa dependensi)
+function fmtR(n){return 'Rp '+(parseInt(String(n).replace(/\D/g,''))||0).toLocaleString('id-ID');}
+const formatRupiah = fmtR; // Alias untuk print engine
+
 // ============================================================
-// THERMAL PRINTER — WebUSB ESC/POS
+// PRINT ENGINE — 3 LAPIS OTOMATIS
+// 1. Web Bluetooth ESC/POS (HP Android + printer BT)
+// 2. WebUSB ESC/POS (PC/laptop + printer USB)
+// 3. Popup window.open() (fallback semua device)
 // ============================================================
-class ThermalPrinter {
-  constructor(o={}) { this.device=null; this.epOut=null; this.COLS=o.cols||32; this.connected=false; }
-  static get VENDOR_IDS() {
-    return [0x04b8,0x0519,0x1504,0x0fe6,0x0dd4,0x6868,0x2730,0x28e9,0x0483].map(v=>({vendorId:v}));
+
+// ── ESC/POS Builder (shared untuk BT & USB) ──────────────
+function buildEscPos(tx, cName, cWA) {
+  const COLS = 32;
+  const enc = new TextEncoder();
+  const p = [];
+  const cmd = (...b) => new Uint8Array(b);
+  const txt = s => enc.encode(String(s) + '\n');
+  const sep = () => txt('-'.repeat(COLS));
+  const dsp = () => txt('='.repeat(COLS));
+  const padLR = (l, r) => {
+    const g = COLS - l.length - r.length;
+    return g > 0 ? l + ' '.repeat(g) + r : l.substring(0, COLS - r.length - 1) + ' ' + r;
+  };
+  const met = tx.payMethod==='cash'?'TUNAI':tx.payMethod==='qris'?'QRIS':'ONLINE';
+
+  // Header
+  p.push(cmd(0x1B,0x40), cmd(0x1B,0x61,0x01), cmd(0x1B,0x45,0x01), cmd(0x1D,0x21,0x11));
+  p.push(txt('KEBAB FACTORY'));
+  p.push(cmd(0x1D,0x21,0x00), txt('A Grilled Passion'), txt('Ponorogo - Outlet 1'), txt('WA: 0813-5768-3151'), cmd(0x1B,0x45,0x00));
+  p.push(dsp(), cmd(0x1B,0x61,0x00));
+  p.push(txt('No  : '+(tx.orderId||'-')));
+  p.push(txt('Tgl : '+(tx.date||'')+' '+(tx.time||'')));
+  p.push(txt('Kasir: Kasir'));
+  if (cName) p.push(txt('Nama : '+cName));
+  if (cWA) p.push(txt('WA   : '+cWA));
+  p.push(txt('Bayar: '+met), sep());
+
+  // Items
+  (tx.items||[]).forEach(item => {
+    const nm = String(item.name||'').substring(0, COLS-7);
+    const hs = 'Rp'+(((item.price||0)/1000)|0)+'rb';
+    p.push(cmd(0x1B,0x45,0x01), txt(padLR(item.qty+'x '+nm, hs)), cmd(0x1B,0x45,0x00));
+    if (item.daging && item.daging !== 'Online') p.push(txt('  '+item.daging+' / '+(item.pedas||'-')));
+    if (item.note) p.push(txt('  Ket: '+item.note));
+  });
+
+  // Total + footer
+  p.push(sep(), cmd(0x1B,0x45,0x01));
+  p.push(txt(padLR('TOTAL', 'Rp'+(((tx.total||0)/1000)|0)+'rb')));
+  p.push(cmd(0x1B,0x45,0x00), dsp(), cmd(0x1B,0x61,0x01));
+  p.push(txt('Terima kasih sudah memesan!'), txt('Masakan Halal & Lezat'), txt('#KebabFactoryPonorogo'));
+  p.push(cmd(0x0A), cmd(0x0A), cmd(0x0A), cmd(0x1D,0x56,0x41,0x05));
+
+  // paper cut
+  const len = p.reduce((s,c)=>s+c.length, 0);
+  const buf = new Uint8Array(len);
+  let off = 0;
+  p.forEach(c => { buf.set(c, off); off += c.length; });
+  return buf;
+}
+
+// ── METODE 1: Web Bluetooth ───────────────────────────────
+// Support: printer thermal Bluetooth (Xprinter, RPP02, iDPRT, MUNBYN, Rongta, dll)
+const BT_SERVICES = [
+  '000018f0-0000-1000-8000-00805f9b34fb', // Generic ESC/POS
+  'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Xprinter
+  '49535343-fe7d-4ae5-8fa9-9fafd205e455', // iDPRT / Rongta
+  '0000ff00-0000-1000-8000-00805f9b34fb', // Generic fallback
+  '000018f0-0000-1000-8000-00805f9b34fb', // RPP series
+];
+let btChar = null;
+
+async function connectBluetooth() {
+  if (!navigator.bluetooth) throw new Error('Web Bluetooth tidak didukung. Gunakan Chrome Android.');
+  const device = await navigator.bluetooth.requestDevice({
+    filters: [
+      { services: ['000018f0-0000-1000-8000-00805f9b34fb'] },
+      { namePrefix: 'RPP' }, { namePrefix: 'XP-' }, { namePrefix: 'MTP' },
+      { namePrefix: 'PT-' }, { namePrefix: 'iDPRT' }, { namePrefix: 'Rongta' },
+      { namePrefix: 'MUNBYN' }, { namePrefix: 'Printer' }, { namePrefix: 'POS' },
+      { namePrefix: 'BlueTooth' }, { namePrefix: 'ZJ-' },
+    ],
+    optionalServices: BT_SERVICES
+  });
+  const server = await device.gatt.connect();
+
+  // Coba tiap service sampai ketemu characteristic writable
+  for (const svc of BT_SERVICES) {
+    try {
+      const service = await server.getPrimaryService(svc);
+      const chars = await service.getCharacteristics();
+      for (const c of chars) {
+        if (c.properties.write || c.properties.writeWithoutResponse) {
+          btChar = c;
+          updatePrinterBtn('bt', device.name || 'BT Printer');
+          return device.name;
+        }
+      }
+    } catch(e) { /* coba service berikutnya */ }
   }
-  async connect() {
-    if (!navigator.usb) throw new Error('WebUSB tidak didukung.');
-    this.device = await navigator.usb.requestDevice({filters:ThermalPrinter.VENDOR_IDS});
-    await this.device.open();
-    if (!this.device.configuration) await this.device.selectConfiguration(1);
-    let ok=false;
-    for (const iface of this.device.configuration.interfaces) {
-      for (const alt of iface.alternates) {
-        for (const ep of alt.endpoints) {
-          if (ep.direction==='out' && ep.type==='bulk') {
-            await this.device.claimInterface(iface.interfaceNumber);
-            this.epOut=ep.endpointNumber; ok=true; break;
-          }
-        } if(ok)break;
-      } if(ok)break;
+  throw new Error('Characteristic printer tidak ditemukan.');
+}
+
+async function printViaBluetooth(buf) {
+  if (!btChar) throw new Error('Bluetooth printer belum terhubung.');
+  const CHUNK = 512;
+  for (let i = 0; i < buf.length; i += CHUNK) {
+    const chunk = buf.slice(i, i + CHUNK);
+    try {
+      if (btChar.properties.writeWithoutResponse) await btChar.writeValueWithoutResponse(chunk);
+      else await btChar.writeValue(chunk);
+    } catch(e) {
+      throw new Error('Gagal kirim data ke printer: '+e.message);
     }
-    if(!ok) throw new Error('Endpoint OUT tidak ditemukan.');
-    this.connected=true;
-    await this._send(this._cmd(0x1B,0x40));
-    return {ok:true, name:this.device.productName};
+    await new Promise(r => setTimeout(r, 30));
   }
-  async printReceipt(tx, cName, cWA) {
-    if(!this.connected) throw new Error('Printer belum terhubung.');
-    const enc=new TextEncoder(), cols=this.COLS;
-    const txt=s=>enc.encode(String(s)+'\n');
-    const sep=()=>txt('-'.repeat(cols));
-    const padLR=(l,r)=>{const g=cols-l.length-r.length; return g>0?l+' '.repeat(g)+r:l.substring(0,cols-r.length-1)+' '+r;};
-    const met=tx.payMethod==='cash'?'TUNAI':tx.payMethod==='qris'?'QRIS':'ONLINE';
-    const p=[];
-    p.push(this._cmd(0x1B,0x40),this._cmd(0x1B,0x61,0x01),this._cmd(0x1B,0x45,0x01),this._cmd(0x1D,0x21,0x11));
-    p.push(txt('KEBAB FACTORY'));
-    p.push(this._cmd(0x1D,0x21,0x00),txt('A Grilled Passion'),txt('Ponorogo - Outlet 1'),txt('WA: 0813-5768-3151'),this._cmd(0x1B,0x45,0x00));
-    p.push(txt('='.repeat(cols)),this._cmd(0x1B,0x61,0x00));
-    p.push(txt('No  : '+(tx.orderId||'-')),txt('Tgl : '+(tx.date||'')+' '+(tx.time||'')),txt('Kasir: Kasir'));
-    if(cName) p.push(txt('Nama : '+cName));
-    if(cWA)   p.push(txt('WA   : '+cWA));
-    p.push(txt('Bayar: '+met),sep());
-    tx.items.forEach(item=>{
-      const nm=String(item.name||'').substring(0,cols-7);
-      const hs='Rp'+(((item.price||0)/1000)|0)+'rb';
-      p.push(this._cmd(0x1B,0x45,0x01),txt(padLR(item.qty+'x '+nm,hs)),this._cmd(0x1B,0x45,0x00));
-      if(item.daging&&item.daging!=='Online') p.push(txt('  '+item.daging+' / '+(item.pedas||'-')));
-      if(item.note) p.push(txt('  Ket: '+item.note));
-    });
-    p.push(sep(),this._cmd(0x1B,0x45,0x01));
-    p.push(txt(padLR('TOTAL','Rp'+(((tx.total||0)/1000)|0)+'rb')),this._cmd(0x1B,0x45,0x00),txt('='.repeat(cols)));
-    p.push(this._cmd(0x1B,0x61,0x01),txt('Terima kasih sudah memesan!'),txt('Masakan Halal & Lezat'),txt('#KebabFactoryPonorogo'));
-    p.push(this._cmd(0x0A),this._cmd(0x0A),this._cmd(0x0A),this._cmd(0x1D,0x56,0x41,0x05));
-    const total=p.reduce((s,c)=>s+c.length,0), buf=new Uint8Array(total); let off=0;
-    p.forEach(c=>{buf.set(c,off);off+=c.length;});
-    await this._send(buf);
-  }
-  _cmd(...b){return new Uint8Array(b);}
-  async _send(d){await this.device.transferOut(this.epOut,d);}
 }
 
-const usbPrinter = new ThermalPrinter({cols:32});
-if (navigator.usb) document.getElementById('printerConnectBtn').style.display='flex';
+// ── METODE 2: WebUSB ──────────────────────────────────────
+// Support: printer thermal USB di Chrome PC/laptop
+const USB_VENDORS = [0x04b8,0x0519,0x1504,0x0fe6,0x0dd4,0x6868,0x2730,0x28e9,0x0483,0x1FC9,0x0525];
+let usbDevice = null, usbEpOut = null;
 
-async function connectUSBPrinter() {
-  try {
-    const r = await usbPrinter.connect();
-    showToast('Printer terhubung: '+r.name);
-    const btn = document.getElementById('printerConnectBtn');
-    btn.classList.add('connected');
-    btn.innerHTML = '<i class="fas fa-check"></i> '+r.name;
-  } catch(e) { showToast('Gagal: '+e.message); }
-}
+async function connectUSB() {
+  if (!navigator.usb) throw new Error('WebUSB tidak didukung.');
+  usbDevice = await navigator.usb.requestDevice({
+    filters: USB_VENDORS.map(v=>({vendorId:v}))
+  });
+  await usbDevice.open();
+  if (!usbDevice.configuration) await usbDevice.selectConfiguration(1);
 
-// ============================================================
-// CETAK STRUK — WebUSB + Popup fallback
-// ============================================================
-async function printThermalReceipt(tx, cName, cWA) {
-  if (usbPrinter.connected) {
-    try { await usbPrinter.printReceipt(tx, cName||'', cWA||''); showToast('Struk dicetak via USB!'); return; }
-    catch(e) { console.warn('USB fallback:', e.message); }
+  let ok = false;
+  for (const iface of usbDevice.configuration.interfaces) {
+    for (const alt of iface.alternates) {
+      for (const ep of alt.endpoints) {
+        if (ep.direction==='out' && ep.type==='bulk') {
+          await usbDevice.claimInterface(iface.interfaceNumber);
+          usbEpOut = ep.endpointNumber;
+          ok = true; break;
+        }
+      } if(ok) break;
+    } if(ok) break;
   }
-  printViaPopup(tx, cName, cWA);
+  if (!ok) throw new Error('Endpoint USB tidak ditemukan.');
+
+  await usbDevice.transferOut(usbEpOut, new Uint8Array([0x1B,0x40])); // init
+  updatePrinterBtn('usb', usbDevice.productName || 'USB Printer');
+  return usbDevice.productName;
 }
 
+async function printViaUSB(buf) {
+  if (!usbDevice || !usbEpOut) throw new Error('USB printer belum terhubung.');
+  await usbDevice.transferOut(usbEpOut, buf);
+}
+
+// ── METODE 3: Popup window ────────────────────────────────
+// Fallback universal — semua browser, semua device
 function printViaPopup(tx, cName, cWA) {
   const met = tx.payMethod==='cash'?'TUNAI':tx.payMethod==='qris'?'QRIS':'ONLINE';
-  let rows='';
-  (tx.items||[]).forEach(it=>{
-    const sub=(it.price||0)*(it.qty||1);
-    rows+=`<div style="margin:5px 0;">
-      <div style="font-weight:bold;font-size:10px;">${String(it.name||'').substring(0,28)}</div>
+  let rows = '';
+  (tx.items||[]).forEach(it => {
+    const sub = (it.price||0)*(it.qty||1);
+    rows += `<div style="margin:5px 0;">
+      <div style="font-weight:bold;">${String(it.name||'').substring(0,28)}</div>
       ${(it.daging&&it.daging!=='Online')?`<div style="font-size:9px;padding-left:4px;">${it.daging} / ${it.pedas||'-'}</div>`:''}
       ${it.note?`<div style="font-size:8px;padding-left:4px;">Ket: ${it.note}</div>`:''}
-      <div style="text-align:right;font-size:10px;">${it.qty||1} x ${fmtR(it.price)} = ${fmtR(sub)}</div>
+      <div style="text-align:right;">${it.qty||1} x ${formatRupiah(it.price)} = ${formatRupiah(sub)}</div>
     </div>`;
   });
-  // Struk menggunakan body full width agar preview tidak mepet kiri
-  const html=`<!DOCTYPE html><html><head>
+
+  const html = `<!DOCTYPE html><html><head>
   <meta charset="UTF-8"><title>Struk</title>
   <style>
-    @page { size:80mm auto; margin:4mm 3mm; }
+    @page { size:80mm auto; margin:3mm; }
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.5;color:#000;background:#fff;}
-    .wrap{max-width:72mm;margin:0 auto;}
-    .c{text-align:center;} .r{text-align:right;} .b{font-weight:bold;}
+    body{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.5;color:#000;}
+    .wrap{max-width:74mm;margin:0 auto;}
+    .c{text-align:center;} .r{text-align:right;}
     .div{border-top:1px dashed #000;margin:5px 0;}
-    .logo{font-size:16px;font-weight:bold;letter-spacing:1px;}
-    .tot{font-size:13px;font-weight:bold;text-align:right;margin-top:3px;}
-    .foot{text-align:center;font-size:9px;margin-top:10px;line-height:1.8;}
+    .logo{font-size:15px;font-weight:bold;letter-spacing:1px;}
+    .tot{font-size:12px;font-weight:bold;}
     .row{display:flex;justify-content:space-between;}
+    .foot{text-align:center;font-size:9px;margin-top:8px;line-height:1.8;}
   </style></head><body>
   <div class="wrap">
-    <div class="c">
-      <div class="logo">KEBAB FACTORY</div>
-      <div>A Grilled Passion</div>
-      <div>Ponorogo - Outlet 1</div>
-      <div>WA: 0813-5768-3151</div>
-    </div>
+    <div class="c"><div class="logo">KEBAB FACTORY</div>
+    <div>A Grilled Passion</div><div>Ponorogo - Outlet 1</div><div>WA: 0813-5768-3151</div></div>
     <div class="div"></div>
     <div>No  : ${tx.orderId||'-'}</div>
     <div>Tgl : ${tx.date||''} ${tx.time||''}</div>
@@ -698,22 +772,76 @@ function printViaPopup(tx, cName, cWA) {
     <div class="div"></div>
     ${rows}
     <div class="div"></div>
-    <div class="row tot"><span>TOTAL</span><span>${fmtR(tx.total)}</span></div>
+    <div class="row tot"><span>TOTAL</span><span>${formatRupiah(tx.total)}</span></div>
     <div class="div"></div>
     <div class="foot">Terima kasih sudah memesan!<br>Masakan Halal dan Lezat<br>#KebabFactoryPonorogo</div>
   </div>
   <script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close();},3000);},700);};<\/script>
   </body></html>`;
 
-  const popup=window.open('','_blank','width=380,height=600');
-  if(!popup){showToast('Izinkan popup di browser!');return;}
+  const popup = window.open('', '_blank', 'width=400,height=600');
+  if (!popup) { showToast('Izinkan popup di browser!'); return; }
   popup.document.write(html);
   popup.document.close();
   showToast('Membuka struk...');
 }
 
-// Helper format rupiah lokal (tanpa dependensi)
-function fmtR(n){return 'Rp '+(parseInt(String(n).replace(/\D/g,''))||0).toLocaleString('id-ID');}
+// ── SMART PRINT — otomatis pilih metode terbaik ───────────
+async function printThermalReceipt(tx, customerName, customerWA) {
+  const buf = buildEscPos(tx, customerName||'', customerWA||'');
+
+  // 1. Coba Bluetooth dulu (prioritas HP Android)
+  if (btChar) {
+    try { await printViaBluetooth(buf); showToast('Struk dicetak via Bluetooth!'); return; }
+    catch(e) { console.warn('BT gagal, coba USB:', e.message); }
+  }
+
+  // 2. Coba USB (PC/laptop)
+  if (usbDevice && usbEpOut) {
+    try { await printViaUSB(buf); showToast('Struk dicetak via USB!'); return; }
+    catch(e) { console.warn('USB gagal, fallback popup:', e.message); }
+  }
+
+  // 3. Fallback popup
+  printViaPopup(tx, customerName||'', customerWA||'');
+}
+
+// ── UI tombol printer ─────────────────────────────────────
+function updatePrinterBtn(type, name) {
+  const btn = document.getElementById('printerConnectBtn');
+  if (!btn) return;
+  btn.classList.add('connected');
+  btn.innerHTML = '<i class="fas fa-check"></i> ' + name;
+  btn.style.display = 'flex';
+}
+
+function showPrinterMenu() {
+  const hasBT = !!navigator.bluetooth;
+  const hasUSB = !!navigator.usb;
+
+  if (hasBT && !hasUSB) { connectBluetooth().catch(e => showToast('BT: '+e.message)); return; }
+  if (!hasBT && hasUSB) { connectUSB().catch(e => showToast('USB: '+e.message)); return; }
+  if (hasBT && hasUSB) {
+    if (confirm('Pilih koneksi printer:\nOK = Bluetooth (HP Android)\nBatal = USB (PC/Laptop)')) {
+      connectBluetooth().catch(e => showToast('BT: '+e.message));
+    } else {
+      connectUSB().catch(e => showToast('USB: '+e.message));
+    }
+    return;
+  }
+  showToast('Browser tidak support koneksi printer langsung.');
+}
+
+// Init tombol printer
+(function() {
+  const btn = document.getElementById('printerConnectBtn');
+  if (!btn) return;
+  if (navigator.bluetooth || navigator.usb) {
+    btn.style.display = 'flex';
+    btn.innerHTML = '<i class="fas fa-print"></i> Hubungkan Printer';
+    btn.onclick = showPrinterMenu;
+  }
+})();
 
 // ============================================================
 // DATA PRODUK
@@ -748,7 +876,6 @@ function showToast(msg){
   t.textContent=msg; t.style.opacity='1';
   setTimeout(()=>t.style.opacity='0',2500);
 }
-function formatRupiah(n){return fmtR(n);}
 function parseRupiah(s){return parseInt(String(s).replace(/\D/g,''))||0;}
 function generateOrderId(){
   const d=new Date();
