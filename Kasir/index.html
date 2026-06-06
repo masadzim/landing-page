@@ -333,6 +333,26 @@
     @media (max-width:380px) {
       .product-grid { grid-template-columns:1fr; }
     }
+        /* ── FILTER DROPDOWN ── */
+    .filter-select {
+      background: #F1F5F9;
+      border: none;
+      color: #64748B;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      appearance: none; /* Menghilangkan panah default browser */
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      padding-right: 32px; /* Memberi ruang untuk icon panah */
+    }
+
 
     /* PRINT STYLE KHUSUS UNTUK THERMAL */
     @media print {
@@ -438,14 +458,32 @@
 
     <div id="historyView" class="products-section" style="display:none;">
       <div style="background:white;border-radius:20px;padding:20px;">
-        <h2 style="font-weight:800;font-size:1.1rem;margin-bottom:14px;">Riwayat Transaksi</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+  <h2 style="font-weight:800;font-size:1.1rem;">Riwayat Transaksi</h2>
+  <select id="historyFilter" class="filter-select" onchange="applyFilter(this.value)">
+    <option value="today">Hari Ini</option>
+    <option value="weekly">Minggu Ini</option>
+    <option value="monthly">Bulan Ini</option>
+    <option value="all">Semua</option>
+  </select>
+</div>
+
         <div id="historyList"></div>
       </div>
     </div>
 
     <div id="reportsView" class="products-section" style="display:none;">
       <div style="background:white;border-radius:20px;padding:20px;">
-        <h2 style="font-weight:800;font-size:1.1rem;">Ringkasan</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+  <h2 style="font-weight:800;font-size:1.1rem;">Ringkasan</h2>
+  <select id="reportsFilter" class="filter-select" onchange="applyFilter(this.value)">
+    <option value="today">Hari Ini</option>
+    <option value="weekly">Minggu Ini</option>
+    <option value="monthly">Bulan Ini</option>
+    <option value="all">Semua</option>
+  </select>
+</div>
+
         <div id="reportsContent"></div>
       </div>
     </div>
@@ -927,6 +965,7 @@ let tempDaging='Ayam', tempPedas='Tidak Pedas', tempQty=1;
 let transactions=JSON.parse(localStorage.getItem('kf_transactions')||'[]');
 let currentView='grid', currentCategory='all';
 let onlineOrders=[];
+let activeFilter = 'today'; // Default filter ke Hari Ini
 
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
 
@@ -953,6 +992,43 @@ window.deleteTransaction=function(idx){
     localStorage.setItem('kf_transactions',JSON.stringify(transactions));
     showHistory();updateReports();showToast('Transaksi dihapus');
   }
+};
+// --- LOGIKA FILTER WAKTU ---
+function parseIdDate(dateStr) {
+  const parts = dateStr.split('/');
+  if(parts.length === 3) return new Date(parts[2], parts[1]-1, parts[0]);
+  return new Date(); 
+}
+
+function getFilteredTransactions() {
+  const now = new Date();
+  const todayStr = formatDate();
+
+  return transactions.filter(tx => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'today') return tx.date === todayStr;
+
+    const txDate = parseIdDate(tx.date);
+
+    if (activeFilter === 'weekly') {
+      const diffTime = Math.abs(now - txDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 7; // 7 Hari terakhir
+    }
+
+    if (activeFilter === 'monthly') {
+      return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+}
+
+window.applyFilter = function(val) {
+  activeFilter = val;
+  // Sinkronkan kedua dropdown agar selalu sama
+  document.getElementById('historyFilter').value = val;
+  document.getElementById('reportsFilter').value = val;
+  refreshDashboardData(); // Update tampilan
 };
 
 // ============================================================
@@ -1229,8 +1305,13 @@ function confirmPayment(){
 // ============================================================
 function showHistory(){
   const el=document.getElementById('historyList');
-  if(!transactions.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#9CA3AF;">Belum ada transaksi</div>';return;}
-  el.innerHTML=transactions.map((tx,idx)=>`
+  const filteredTxs = getFilteredTransactions(); // Gunakan data yang difilter
+
+  if(!filteredTxs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#9CA3AF;">Belum ada transaksi di periode ini</div>';return;}
+  
+  el.innerHTML=filteredTxs.map((tx)=>{
+    const realIdx = transactions.indexOf(tx); // Ambil ID asli untuk fungsi hapus/cetak
+    return `
     <div style="background:#F8FAFC;border-radius:14px;padding:14px;margin-bottom:11px;border:1px solid #E2E8F0;">
       <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
         <strong style="color:#FF6B00;font-size:0.9rem;">${tx.orderId}</strong>
@@ -1242,29 +1323,36 @@ function showHistory(){
       </div>
       <div style="margin-bottom:9px;font-size:0.87rem;">${tx.items.map(i=>i.name+' x'+i.qty).join(', ')}</div>
       <div>
-        <button class="btn-reprint" onclick="reprintReceipt(${idx})"><i class="fas fa-print"></i> Cetak Ulang</button>
-        <button class="btn-delete-tx" onclick="deleteTransaction(${idx})"><i class="fas fa-trash"></i> Hapus</button>
+        <button class="btn-reprint" onclick="reprintReceipt(${realIdx})"><i class="fas fa-print"></i> Cetak Ulang</button>
+        <button class="btn-delete-tx" onclick="deleteTransaction(${realIdx})"><i class="fas fa-trash"></i> Hapus</button>
       </div>
-    </div>`).join('');
+    </div>`
+  }).join('');
 }
+
 
 // ============================================================
 // LAPORAN
 // ============================================================
 function updateReports(){
-  const total=transactions.reduce((s,t)=>s+(t.total||0),0);
-  const n=transactions.length;
-  const cash=transactions.filter(t=>t.payMethod==='cash').length;
-  const qris=transactions.filter(t=>t.payMethod==='qris').length;
-  const onl=transactions.filter(t=>t.payMethod==='online').length;
+  const filteredTxs = getFilteredTransactions(); // Gunakan data yang difilter
+  const total=filteredTxs.reduce((s,t)=>s+(t.total||0),0);
+  const n=filteredTxs.length;
+  const cash=filteredTxs.filter(t=>t.payMethod==='cash').length;
+  const qris=filteredTxs.filter(t=>t.payMethod==='qris').length;
+  const onl=filteredTxs.filter(t=>t.payMethod==='online').length;
+  
+  const titleMap = {today: 'Hari Ini', weekly: 'Minggu Ini', monthly: 'Bulan Ini', all: 'Semua Waktu'};
+  const labelWaktu = titleMap[activeFilter];
+
   document.getElementById('reportsContent').innerHTML=`
     <div style="display:grid;gap:14px;margin-top:14px;">
       <div style="background:#F0FDF4;border-radius:14px;padding:18px;border-left:4px solid #10B981;">
-        <div style="color:#64748B;font-size:0.82rem;">Omset Hari Ini</div>
+        <div style="color:#64748B;font-size:0.82rem;">Omset ${labelWaktu}</div>
         <div style="font-size:1.7rem;font-weight:800;">${fmtR(total)}</div>
       </div>
       <div style="background:#FFF4ED;border-radius:14px;padding:18px;border-left:4px solid #FF6B00;">
-        <div style="color:#64748B;font-size:0.82rem;">Total Transaksi</div>
+        <div style="color:#64748B;font-size:0.82rem;">Total Transaksi ${labelWaktu}</div>
         <div style="font-size:1.7rem;font-weight:800;">${n} nota</div>
       </div>
       <div style="background:#F8FAFC;border-radius:14px;padding:18px;border-left:4px solid #60A5FA;">
@@ -1273,6 +1361,7 @@ function updateReports(){
       </div>
     </div>`;
 }
+
 
 function refreshDashboardData(){showHistory();updateReports();}
 
