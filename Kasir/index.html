@@ -737,46 +737,107 @@ function printViaPopup(tx, cName, cWA) {
   let rows = '';
   (tx.items||[]).forEach(it => {
     const sub = (it.price||0)*(it.qty||1);
-    rows += `<div style="margin:5px 0;">
+    rows += `<div style="margin:6px 0;">
       <div style="font-weight:bold;">${String(it.name||'').substring(0,28)}</div>
-      ${(it.daging&&it.daging!=='Online')?`<div style="font-size:9px;padding-left:4px;">${it.daging} / ${it.pedas||'-'}</div>`:''}
-      ${it.note?`<div style="font-size:8px;padding-left:4px;">Ket: ${it.note}</div>`:''}
-      <div style="text-align:right;">${it.qty||1} x ${formatRupiah(it.price)} = ${formatRupiah(sub)}</div>
+      ${(it.daging&&it.daging!=='Online')?`<div style="font-size:10px;padding-left:6px;">&#8627; ${it.daging} / ${it.pedas||'-'}</div>`:''}
+      ${it.note?`<div style="font-size:10px;padding-left:6px;">&#8627; Ket: ${it.note}</div>`:''}
+      <div style="text-align:right; font-size:11px; margin-top:2px;">${it.qty||1} x ${formatRupiah(it.price)} = ${formatRupiah(sub)}</div>
     </div>`;
   });
 
+  // Logo SVG khusus print thermal (Hitam Putih / Monochrome)
+  const logoSvg = `<svg width="50" height="50" viewBox="0 0 100 100" fill="none" style="margin-bottom:4px;">
+    <circle cx="50" cy="50" r="48" fill="white" stroke="black" stroke-width="4"/>
+    <path d="M35 45 L50 30 L65 45 L55 45 L50 40 L45 45 L35 45Z" fill="black"/>
+    <path d="M35 55 L50 70 L65 55 L55 55 L50 60 L45 55 L35 55Z" fill="black"/>
+    <rect x="42" y="42" width="16" height="16" rx="3" fill="black"/>
+  </svg>`;
+
   const html = `<!DOCTYPE html><html><head>
-  <meta charset="UTF-8"><title>Struk</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Struk Kebab Factory</title>
   <style>
-    @page { size:80mm auto; margin:3mm; }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.5;color:#000;}
-    .wrap{max-width:74mm;margin:0 auto;}
-    .c{text-align:center;} .r{text-align:right;}
-    .div{border-top:1px dashed #000;margin:5px 0;}
-    .logo{font-size:15px;font-weight:bold;letter-spacing:1px;}
-    .tot{font-size:12px;font-weight:bold;}
-    .row{display:flex;justify-content:space-between;}
-    .foot{text-align:center;font-size:9px;margin-top:8px;line-height:1.8;}
+    /* Reset margin kertas bawaan browser agar pas di thermal */
+    @page { margin: 0; size: auto; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #000;
+      background: #fff;
+      padding: 4mm 3mm; /* Padding margin kertas roll */
+      width: 100%;    /* Lebar penuh mengikuti setting paper size printer */
+    }
+    
+    .wrap { width: 100%; max-width: 100%; }
+    .c { text-align: center; }
+    .r { text-align: right; }
+    
+    .div { 
+      border-top: 1.5px dashed #000; 
+      margin: 8px 0; 
+      width: 100%;
+    }
+    
+    .logo-title { 
+      font-size: 18px; 
+      font-weight: 900; 
+      letter-spacing: 1px; 
+      margin-top: 2px;
+    }
+    
+    .info-toko { font-size: 11px; margin-bottom: 2px; }
+    .tot { font-size: 14px; font-weight: bold; margin-top: 4px; }
+    .row { display: flex; justify-content: space-between; align-items: center; }
+    .foot { text-align: center; font-size: 10px; margin-top: 12px; line-height: 1.6; }
   </style></head><body>
   <div class="wrap">
-    <div class="c"><div class="logo">KEBAB FACTORY</div>
-    <div>A Grilled Passion</div><div>Ponorogo - Outlet 1</div><div>WA: 0813-5768-3151</div></div>
+    <div class="c">
+      ${logoSvg}
+      <div class="logo-title">KEBAB FACTORY</div>
+      <div class="info-toko">A Grilled Passion</div>
+      <div class="info-toko">Ponorogo - Outlet 1</div>
+      <div class="info-toko">WA: 0813-5768-3151</div>
+    </div>
+    
     <div class="div"></div>
-    <div>No  : ${tx.orderId||'-'}</div>
-    <div>Tgl : ${tx.date||''} ${tx.time||''}</div>
-    <div>Kasir: Kasir</div>
-    ${cName?`<div>Nama : ${cName}</div>`:''}
-    ${cWA?`<div>WA   : ${cWA}</div>`:''}
-    <div>Bayar: ${met}</div>
+    
+    <div class="row"><span>No:</span><span>${tx.orderId||'-'}</span></div>
+    <div class="row"><span>Tgl:</span><span>${tx.date||''} ${tx.time||''}</span></div>
+    <div class="row"><span>Kasir:</span><span>Kasir KF</span></div>
+    ${cName ? `<div class="row"><span>Nama:</span><span>${cName}</span></div>` : ''}
+    ${cWA ? `<div class="row"><span>WA:</span><span>${cWA}</span></div>` : ''}
+    <div class="row"><span>Bayar:</span><span>${met}</span></div>
+    
     <div class="div"></div>
+    
     ${rows}
+    
     <div class="div"></div>
-    <div class="row tot"><span>TOTAL</span><span>${formatRupiah(tx.total)}</span></div>
+    
+    <div class="row tot">
+      <span>TOTAL</span>
+      <span>${formatRupiah(tx.total)}</span>
+    </div>
+    
     <div class="div"></div>
-    <div class="foot">Terima kasih sudah memesan!<br>Masakan Halal dan Lezat<br>#KebabFactoryPonorogo</div>
+    
+    <div class="foot">
+      <strong>Terima kasih sudah memesan!</strong><br>
+      Masakan Halal dan Lezat<br>
+      #KebabFactoryPonorogo
+    </div>
   </div>
-  <script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close();},3000);},700);};<\/script>
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.print();
+        setTimeout(function(){ window.close(); }, 3000);
+      }, 700);
+    };
+  <\/script>
   </body></html>`;
 
   const popup = window.open('', '_blank', 'width=400,height=600');
@@ -785,6 +846,7 @@ function printViaPopup(tx, cName, cWA) {
   popup.document.close();
   showToast('Membuka struk...');
 }
+
 
 // ── SMART PRINT — otomatis pilih metode terbaik ───────────
 async function printThermalReceipt(tx, customerName, customerWA) {
