@@ -383,6 +383,16 @@
   // --------------------------------------------------------------
   // CONFIGURATION
   // --------------------------------------------------------------
+const qtyPrefix = raw.match(/^(\d+)x\s+/i);
+const qtySuffix = raw.match(/^(.+?)\s*x(\d+)$/i);
+
+if (qtyPrefix) {
+  qty = parseInt(qtyPrefix[1]);
+  namePart = raw.replace(/^\d+x\s+/i, '');
+} else if (qtySuffix) {
+  qty = parseInt(qtySuffix[2]);
+  namePart = qtySuffix[1].trim();
+}
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
   const REFRESH_INTERVAL = 15; // seconds (fast kitchen sync)
   let allOrders = [];
