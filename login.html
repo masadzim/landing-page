@@ -114,7 +114,6 @@
 </head>
 <body>
 <div class="wrap">
-  <!-- Brand -->
   <div class="brand">
     <div class="logo-row">
       <img src="/icon-512.png" alt="Logo" class="logo-img"/>
@@ -127,7 +126,6 @@
     <div></div>
   </div>
 
-  <!-- Form -->
   <div class="form-panel">
     <div id="sc"></div>
   </div>
@@ -250,6 +248,7 @@ function togglePw(){
   icon.className=inp.type==='password'?'far fa-eye-slash':'far fa-eye';
 }
 
+// FIX: Payload diubah dari form-urlencoded menjadi JSON string agar sesuai dengan require doPost GAS
 async function doLogin(){
   clearAlert('al1');
   const u=document.getElementById('iu')?.value.trim();
@@ -260,7 +259,11 @@ async function doLogin(){
   try{
     await new Promise(r=>grecaptcha.ready(r));
     const tok=await grecaptcha.execute(RCK,{action:'login'});
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'login',username:u,password:p,recaptchaToken:tok})});
+    const res=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type': 'application/json'},
+      body: JSON.stringify({action:'login',username:u,password:p,recaptchaToken:tok})
+    });
     const d=await res.json();
     if(d.success){S.userId=d.userId;S.nama=d.nama;S.role=d.role;S.waHint=d.waHint;renderStep2();}
     else{setLoad('bl',false,'<i class="fas fa-arrow-right"></i> Lanjutkan');alert_('al1',d.error||'Login gagal.');}
@@ -284,13 +287,18 @@ function renderStep2(dir){
   `,dir);
 }
 
+// FIX: Payload diubah menjadi format JSON
 async function resendKasirOTP(){
   clearAlert('al2');
   document.querySelectorAll('.oi').forEach(i=>i.value='');
   try{
     await new Promise(r=>grecaptcha.ready(r));
     const tok=await grecaptcha.execute(RCK,{action:'login'});
-    await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'login',username:S.username,password:S.password,recaptchaToken:tok})});
+    await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type': 'application/json'},
+      body: JSON.stringify({action:'login',username:S.username,password:S.password,recaptchaToken:tok})
+    });
     alert_('al2','OTP baru dikirim ke WhatsApp.','ok');
   }catch(e){alert_('al2','Gagal kirim ulang.');}
 }
@@ -318,13 +326,18 @@ function renderAdminOTP(dir){
   `,dir);
 }
 
+// FIX: Payload diubah menjadi format JSON & action reCAPTCHA disamakan ke 'login'
 async function doAdminRequestOTP(){
   clearAlert('al-admin');
   setLoad('ba',true);
   try{
     await new Promise(r=>grecaptcha.ready(r));
-    const tok=await grecaptcha.execute(RCK,{action:'admin_otp'});
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'adminRequestOTP',recaptchaToken:tok})});
+    const tok=await grecaptcha.execute(RCK,{action:'login'});
+    const res=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type': 'application/json'},
+      body: JSON.stringify({action:'adminRequestOTP',recaptchaToken:tok})
+    });
     const d=await res.json();
     if(d.success){
       S.userId='admin';S.role='admin';S.hint=d.hint;
@@ -358,6 +371,7 @@ function renderAdminVerify(d){
 // ════════════════════════════════════════════════════════════
 // SHARED — Verify OTP (kasir & admin)
 // ════════════════════════════════════════════════════════════
+// FIX: Payload diubah menjadi format JSON string
 async function doVerifyOTP(){
   const alertId = S.mode==='admin' ? 'al-adminv' : 'al2';
   clearAlert(alertId);
@@ -369,7 +383,11 @@ async function doVerifyOTP(){
     : '<i class="fas fa-check"></i> Verifikasi & Lanjut';
   setLoad(btnId,true);
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action:'verifyOTP',userId:S.userId,otp})});
+    const res=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type': 'application/json'},
+      body: JSON.stringify({action:'verifyOTP',userId:S.userId,otp:otp})
+    });
     const d=await res.json();
     if(d.success){
       S.sessionToken=d.sessionToken;S.role=d.user.role;
