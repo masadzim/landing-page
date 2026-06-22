@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Kelola Cabang — The Kebab Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg:#F8FAFC;--surface:#FFFFFF;--surface-hover:#F1F5F9;
+      --border:#E2E8F0;--text:#0F172A;--text2:#475569;--muted:#94A3B8;
+      --accent:#FF6B00;--accent-d:#E05E00;--accent-s:#FFF4ED;
+      --ok:#10B981;--ok-s:#ECFDF5;--err:#EF4444;--err-s:#FEF2F2;
+      --warn:#F59E0B;--warn-s:#FFFBEB;
+      --sidebar-w:260px;--topbar-h:64px;--r:16px;--r-sm:10px;
+      --sh:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --sh-md:0 4px 16px rgba(0,0,0,0.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+
+    /* Sidebar */
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo{width:36px;height:36px;object-fit:contain;background:var(--accent);border-radius:10px;padding:4px;flex-shrink:0;}
+    .sidebar-brand h2{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;}
+    .sidebar-brand p{font-size:0.65rem;color:var(--muted);font-weight:500;}
+    .sidebar-user{margin:12px;padding:12px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FFB347);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;flex-shrink:0;}
+    .user-info .name{font-size:0.82rem;font-weight:700;}
+    .user-info .role{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .nav-section{padding:8px 12px 4px;font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.15s;font-size:0.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
+    .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item i{width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background 0.15s;}
+    .btn-logout:hover{background:var(--err-s);}
+
+    /* Main */
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-size:1rem;font-weight:700;}
+    .topbar-sub{font-size:0.78rem;color:var(--muted);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .content{padding:28px;}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:none;border-radius:var(--r-sm);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-primary:hover{background:var(--accent-d);box-shadow:0 4px 12px rgba(255,107,0,0.25);}
+    .btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+    .btn-secondary:hover{background:var(--surface-hover);}
+    .btn-danger{background:var(--err-s);color:var(--err);border:1px solid #FECACA;}
+    .btn-danger:hover{background:#FEE2E2;}
+    .btn-ok{background:var(--ok-s);color:var(--ok);border:1px solid #A7F3D0;}
+    .btn-sm{padding:6px 12px;font-size:0.75rem;}
+    .btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:8px;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+    /* KPI */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;}
+    .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);}
+    .kpi-card.accent{border-left:4px solid var(--accent);}
+    .kpi-card.ok{border-left:4px solid var(--ok);}
+    .kpi-card.warn{border-left:4px solid var(--warn);}
+    .kpi-label{font-size:0.72rem;font-weight:600;color:var(--text2);margin-bottom:8px;}
+    .kpi-value{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;}
+    .kpi-sub{font-size:0.7rem;color:var(--muted);margin-top:4px;}
+
+    /* Layout grid */
+    .grid-main{display:grid;grid-template-columns:1fr 380px;gap:20px;}
+
+    /* Card */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+    .card-title{font-size:0.9rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+    .card-body{padding:20px;}
+
+    /* Toolbar */
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .search-wrap{position:relative;flex:1;min-width:180px;}
+    .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;}
+    .search-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.84rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s;}
+    .search-input:focus{border-color:var(--accent);background:white;}
+
+    /* Cabang Cards */
+    .cabang-list{display:flex;flex-direction:column;gap:12px;padding:20px;}
+    .cabang-card{
+      background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);
+      padding:16px;display:flex;align-items:flex-start;gap:14px;
+      transition:all 0.2s;cursor:pointer;
+    }
+    .cabang-card:hover{border-color:var(--accent);background:var(--accent-s);}
+    .cabang-card.selected{border-color:var(--accent);background:var(--accent-s);box-shadow:0 2px 8px rgba(255,107,0,0.12);}
+    .cabang-icon{
+      width:44px;height:44px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),#FFB347);
+      display:flex;align-items:center;justify-content:center;
+      color:white;font-size:1.1rem;flex-shrink:0;
+    }
+    .cabang-icon.tutup{background:linear-gradient(135deg,#94A3B8,#64748B);}
+    .cabang-info{flex:1;min-width:0;}
+    .cabang-nama{font-weight:700;font-size:0.9rem;margin-bottom:4px;}
+    .cabang-alamat{font-size:0.75rem;color:var(--text2);line-height:1.4;margin-bottom:6px;}
+    .cabang-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+    .cabang-badge{font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+    .cabang-badge.aktif{background:var(--ok-s);color:var(--ok);}
+    .cabang-badge.tutup{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
+    .cabang-notelp{font-size:0.72rem;color:var(--text2);display:flex;align-items:center;gap:4px;}
+    .cabang-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+
+    /* Detail panel */
+    .detail-panel{position:sticky;top:calc(var(--topbar-h) + 20px);}
+    .detail-empty{text-align:center;padding:40px 20px;color:var(--muted);}
+    .detail-empty i{font-size:2rem;display:block;margin-bottom:10px;opacity:0.3;}
+    .detail-empty p{font-size:0.82rem;}
+
+    /* Map embed */
+    .map-frame{width:100%;height:200px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);overflow:hidden;}
+    .map-frame iframe{width:100%;height:100%;border:none;}
+    .map-placeholder{width:100%;height:200px;border-radius:var(--r-sm);border:1.5px dashed var(--border);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:0.8rem;gap:8px;cursor:pointer;transition:all 0.2s;}
+    .map-placeholder:hover{border-color:var(--accent);color:var(--accent);}
+    .map-placeholder i{font-size:1.5rem;}
+
+    /* Detail rows */
+    .detail-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.84rem;}
+    .detail-row:last-child{border-bottom:none;}
+    .detail-key{color:var(--text2);font-weight:500;}
+    .detail-val{font-weight:600;text-align:right;max-width:60%;}
+
+    /* Badge */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;}
+    .badge-active{background:var(--ok-s);color:var(--ok);}
+    .badge-inactive{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--surface);border-radius:var(--r);width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin:auto;}
+    .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);border-radius:var(--r) var(--r) 0 0;z-index:1;}
+    .modal-title{font-size:1rem;font-weight:700;}
+    .modal-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:4px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .modal-close:hover{background:var(--surface-hover);color:var(--text);}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+    /* Form */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .field{margin-bottom:0;}
+    .field.span2{grid-column:1/-1;}
+    label.flabel{display:block;font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+    .req{color:var(--err);}
+    input[type=text],input[type=tel],select.finput,textarea{
+      width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);
+      border-radius:var(--r-sm);font-size:0.88rem;font-family:'Inter',sans-serif;
+      color:var(--text);outline:none;transition:all 0.2s;
+    }
+    input:focus,select.finput:focus,textarea:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(255,107,0,0.08);}
+    textarea{resize:vertical;min-height:70px;}
+    .field-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
+
+    /* Koordinat helper */
+    .coord-row{display:flex;gap:8px;align-items:flex-end;}
+    .coord-row .field{flex:1;}
+    .btn-maps{padding:10px 12px;white-space:nowrap;flex-shrink:0;}
+
+    /* Paste from maps */
+    .paste-maps{
+      background:var(--info-s,#EFF6FF);border:1px solid #BFDBFE;border-radius:var(--r-sm);
+      padding:12px 14px;font-size:0.78rem;color:#1D4ED8;margin-bottom:16px;
+      display:flex;align-items:flex-start;gap:8px;line-height:1.5;
+    }
+    .paste-maps input{
+      width:100%;margin-top:6px;padding:8px 10px;border-radius:8px;
+      border:1px solid #BFDBFE;font-size:0.82rem;background:white;
+      font-family:'Inter',sans-serif;color:var(--text);outline:none;
+    }
+    .paste-maps input:focus{border-color:var(--accent);}
+
+    /* Toast */
+    #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;box-shadow:var(--sh-md);font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.3s ease;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .toast.success i{color:var(--ok);}
+    .toast.error i{color:var(--err);}
+    .toast.info i{color:var(--accent);}
+
+    /* Confirm */
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;align-items:center;justify-content:center;}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:var(--surface);border-radius:var(--r);padding:28px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
+    .confirm-icon{font-size:2.5rem;margin-bottom:12px;}
+    .confirm-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+    .confirm-msg{font-size:0.84rem;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+
+    .empty{text-align:center;padding:40px 20px;color:var(--muted);}
+    .empty i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.35;}
+    .empty p{font-size:0.84rem;}
+
+    @media(max-width:1100px){.grid-main{grid-template-columns:1fr;}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.form-grid{grid-template-columns:1fr;}.content{padding:16px;}}
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div class="user-info"><div class="name" id="user-name">Administrator</div><div class="role">Admin</div></div>
+  </div>
+  <div class="nav-section">Utama</div>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-receipt"></i> Semua Order</a>
+  <div class="nav-section">Kelola</div>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item active" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button style="display:none;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text2)" id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div>
+        <div class="topbar-title">Kelola Cabang</div>
+        <div class="topbar-sub">Manajemen lokasi, koordinat, dan status cabang</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" onclick="openModal()">
+        <i class="fas fa-plus"></i> Tambah Cabang
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Total Cabang</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-sub">Terdaftar</div>
+      </div>
+      <div class="kpi-card ok">
+        <div class="kpi-label">Aktif</div>
+        <div class="kpi-value" id="kpi-aktif">—</div>
+        <div class="kpi-sub">Beroperasi</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-label">Tutup</div>
+        <div class="kpi-value" id="kpi-tutup">—</div>
+        <div class="kpi-sub">Nonaktif</div>
+      </div>
+    </div>
+
+    <!-- Grid: List + Detail -->
+    <div class="grid-main">
+      <!-- List -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="toolbar">
+              <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="search-cabang" placeholder="Cari nama atau alamat..." oninput="filterCabang()"/>
+              </div>
+            </div>
+            <div style="font-size:0.78rem;color:var(--muted)" id="cabang-count"></div>
+          </div>
+          <div class="cabang-list" id="cabang-list">
+            <div class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Panel -->
+      <div class="detail-panel">
+        <div class="card" id="detail-card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-store" style="color:var(--accent)"></i> Detail Cabang</div>
+          </div>
+          <div class="card-body" id="detail-body">
+            <div class="detail-empty">
+              <i class="fas fa-hand-pointer"></i>
+              <p>Klik cabang untuk melihat detail</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah/Edit Cabang -->
+<div class="modal-overlay" id="modal-cabang">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Tambah Cabang</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="c-id"/>
+
+      <!-- Paste from Google Maps -->
+      <div class="paste-maps">
+        <i class="fas fa-map-location-dot" style="font-size:1rem;flex-shrink:0;margin-top:2px;"></i>
+        <div>
+          <div style="font-weight:700;margin-bottom:2px;">Paste link Google Maps</div>
+          <div>Buka Google Maps → share → copy link → paste di sini untuk otomatis isi koordinat</div>
+          <input type="text" id="paste-maps-input" placeholder="https://maps.google.com/..." oninput="parseMapsLink(this.value)"/>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field span2">
+          <label class="flabel">Nama Cabang <span class="req">*</span></label>
+          <input type="text" id="c-nama" placeholder="cth: Cabang Utama Ponorogo"/>
+        </div>
+        <div class="field span2">
+          <label class="flabel">Alamat Lengkap <span class="req">*</span></label>
+          <textarea id="c-alamat" placeholder="Jl. Mlarak-Jabung, Tepat Timur Qoni' Mart, Ponorogo"></textarea>
+        </div>
+
+        <!-- Koordinat -->
+        <div class="field">
+          <label class="flabel">Latitude <span class="req">*</span></label>
+          <input type="text" id="c-lat" placeholder="cth: -7.9258" oninput="updateMapPreview()"/>
+          <div class="field-hint">Format: -7.9258 (negatif untuk selatan)</div>
+        </div>
+        <div class="field">
+          <label class="flabel">Longitude <span class="req">*</span></label>
+          <input type="text" id="c-lng" placeholder="cth: 111.4635" oninput="updateMapPreview()"/>
+          <div class="field-hint">Format: 111.4635 (positif untuk timur)</div>
+        </div>
+
+        <!-- Map preview -->
+        <div class="field span2">
+          <label class="flabel">Preview Lokasi</label>
+          <div id="map-preview-container">
+            <div class="map-placeholder" id="map-placeholder" onclick="openMaps()">
+              <i class="fas fa-map-location-dot"></i>
+              <span>Isi koordinat untuk preview peta</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="flabel">No. HP / WA Cabang</label>
+          <input type="tel" id="c-notelp" placeholder="cth: 6281234567890"/>
+          <div class="field-hint">Format internasional: 628xxx</div>
+        </div>
+        <div class="field">
+          <label class="flabel">Status</label>
+          <select class="finput" id="c-status">
+            <option value="Aktif">Aktif — beroperasi</option>
+            <option value="Tutup">Tutup — tidak aktif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" id="btn-save" onclick="saveCabang()">
+        <i class="fas fa-check"></i> Simpan Cabang
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Konfirmasi</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'GANTI_DENGAN_URL_APPS_SCRIPT_EXEC';
+let session    = null;
+let cabangList = [];
+let selected   = null;
+
+// ── AUTH ─────────────────────────────────────────────────────
+function checkAuth() {
+  try {
+    const raw = localStorage.getItem('kf_session');
+    if (!raw) return redirect();
+    session = JSON.parse(raw);
+    if (!session?.sessionToken || session.role !== 'admin') return redirect();
+    document.getElementById('user-avatar').textContent = (session.nama||'A')[0].toUpperCase();
+    document.getElementById('user-name').textContent   = session.nama||'Admin';
+  } catch(e) { redirect(); }
+}
+function redirect() { localStorage.removeItem('kf_session'); window.location.href='../login.html'; }
+function doLogout() { if(!confirm('Yakin keluar?')) return; localStorage.removeItem('kf_session'); window.location.href='../login.html'; }
+
+// ── API ──────────────────────────────────────────────────────
+async function apiPost(action, extra={}) {
+  const res = await fetch(API, {
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({ action, sessionToken:session.sessionToken, ...extra })
+  });
+  return res.json();
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function toast(msg, type='info') {
+  const icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+// ── LOAD ─────────────────────────────────────────────────────
+async function loadCabang() {
+  try {
+    const d = await apiPost('getCabangList');
+    if (!d.success) throw new Error(d.error);
+    cabangList = d.cabang||[];
+    renderKPI();
+    renderList(cabangList);
+  } catch(e) {
+    toast('Gagal memuat cabang: '+e.message,'error');
+  }
+}
+
+function renderKPI() {
+  const aktif = cabangList.filter(c=>c.status==='Aktif').length;
+  const tutup = cabangList.filter(c=>c.status!=='Aktif').length;
+  document.getElementById('kpi-total').textContent = cabangList.length;
+  document.getElementById('kpi-aktif').textContent = aktif;
+  document.getElementById('kpi-tutup').textContent = tutup;
+}
+
+function filterCabang() {
+  const q = document.getElementById('search-cabang').value.toLowerCase();
+  renderList(q ? cabangList.filter(c=>c.namaCabang.toLowerCase().includes(q)||(c.alamat||'').toLowerCase().includes(q)) : cabangList);
+}
+
+function renderList(list) {
+  const container = document.getElementById('cabang-list');
+  document.getElementById('cabang-count').textContent = list.length + ' cabang';
+  if (!list.length) {
+    container.innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>Belum ada cabang terdaftar.</p></div>`;
+    return;
+  }
+  container.innerHTML = list.map(c => `
+    <div class="cabang-card ${selected===c.idCabang?'selected':''}" onclick="selectCabang('${c.idCabang}')">
+      <div class="cabang-icon ${c.status!=='Aktif'?'tutup':''}">
+        <i class="fas fa-store"></i>
+      </div>
+      <div class="cabang-info">
+        <div class="cabang-nama">${c.namaCabang}</div>
+        <div class="cabang-alamat">${c.alamat||'—'}</div>
+        <div class="cabang-meta">
+          <span class="cabang-badge ${c.status==='Aktif'?'aktif':'tutup'}">
+            <i class="fas fa-circle" style="font-size:0.5rem"></i> ${c.status}
+          </span>
+          ${c.noHp?`<span class="cabang-notelp"><i class="fab fa-whatsapp"></i>${c.noHp}</span>`:''}
+          ${c.lat&&c.lng?`<span style="font-size:0.68rem;color:var(--muted)"><i class="fas fa-location-dot"></i> ${parseFloat(c.lat).toFixed(4)}, ${parseFloat(c.lng).toFixed(4)}</span>`:''}
+        </div>
+      </div>
+      <div class="cabang-actions">
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="event.stopPropagation();editCabang('${c.idCabang}')" title="Edit"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="event.stopPropagation();hapusCabang('${c.idCabang}','${c.namaCabang}')" title="Hapus"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+// ── SELECT CABANG → SHOW DETAIL ───────────────────────────────
+function selectCabang(id) {
+  selected = id;
+  renderList(cabangList.filter(c=>{
+    const q = document.getElementById('search-cabang').value.toLowerCase();
+    return !q || c.namaCabang.toLowerCase().includes(q) || (c.alamat||'').toLowerCase().includes(q);
+  }));
+  const c = cabangList.find(x=>x.idCabang===id);
+  if (!c) return;
+  renderDetail(c);
+}
+
+function renderDetail(c) {
+  const hasCoord = c.lat && c.lng;
+  const mapsUrl  = hasCoord ? `https://www.google.com/maps?q=${c.lat},${c.lng}` : '';
+
+  document.getElementById('detail-body').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">${c.namaCabang}</div>
+      <span class="badge ${c.status==='Aktif'?'badge-active':'badge-inactive'}">
+        <i class="fas fa-circle" style="font-size:0.5rem"></i> ${c.status}
+      </span>
+    </div>
+
+    ${hasCoord ? `
+    <div class="map-frame" style="margin-bottom:16px;">
+      <iframe
+        src="https://www.google.com/maps?q=${c.lat},${c.lng}&z=16&output=embed"
+        allowfullscreen loading="lazy">
+      </iframe>
+    </div>` : `
+    <div class="map-placeholder" style="margin-bottom:16px;" onclick="editCabang('${c.idCabang}')">
+      <i class="fas fa-map-location-dot"></i>
+      <span>Belum ada koordinat — klik Edit untuk menambahkan</span>
+    </div>`}
+
+    <div class="detail-row"><span class="detail-key">ID Cabang</span><span class="detail-val" style="font-family:monospace;font-size:0.78rem">${c.idCabang}</span></div>
+    <div class="detail-row"><span class="detail-key">Alamat</span><span class="detail-val">${c.alamat||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">No. HP / WA</span><span class="detail-val">${c.noHp||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">Koordinat</span><span class="detail-val" style="font-size:0.78rem">${hasCoord?`${c.lat}, ${c.lng}`:'—'}</span></div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="editCabang('${c.idCabang}')"><i class="fas fa-pen"></i> Edit</button>
+      ${hasCoord?`<a class="btn btn-secondary btn-sm" href="${mapsUrl}" target="_blank"><i class="fas fa-map-location-dot"></i> Buka Maps</a>`:''}
+      ${c.noHp?`<a class="btn btn-ok btn-sm" href="https://wa.me/${c.noHp.replace(/\D/g,'')}" target="_blank"><i class="fab fa-whatsapp"></i> WA</a>`:''}
+      <button class="btn btn-danger btn-sm" onclick="hapusCabang('${c.idCabang}','${c.namaCabang}')"><i class="fas fa-trash"></i> Hapus</button>
+    </div>
+  `;
+}
+
+// ── MODAL ────────────────────────────────────────────────────
+function openModal(data=null) {
+  document.getElementById('modal-title').textContent = data ? 'Edit Cabang' : 'Tambah Cabang';
+  document.getElementById('c-id').value      = data?.idCabang||'';
+  document.getElementById('c-nama').value    = data?.namaCabang||'';
+  document.getElementById('c-alamat').value  = data?.alamat||'';
+  document.getElementById('c-lat').value     = data?.lat||'';
+  document.getElementById('c-lng').value     = data?.lng||'';
+  document.getElementById('c-notelp').value  = data?.noHp||'';
+  document.getElementById('c-status').value  = data?.status||'Aktif';
+  document.getElementById('paste-maps-input').value = '';
+  updateMapPreview();
+  document.getElementById('modal-cabang').classList.add('open');
+  setTimeout(()=>document.getElementById('c-nama').focus(), 100);
+}
+
+function editCabang(id) {
+  const c = cabangList.find(x=>x.idCabang===id);
+  if(c) openModal(c);
+}
+
+function closeModal() { document.getElementById('modal-cabang').classList.remove('open'); }
+
+// ── PARSE GOOGLE MAPS LINK ────────────────────────────────────
+function parseMapsLink(url) {
+  if (!url) return;
+  // Berbagai format Google Maps URL
+  const patterns = [
+    /@(-?\d+\.\d+),(-?\d+\.\d+)/,          // @lat,lng
+    /\?q=(-?\d+\.\d+),(-?\d+\.\d+)/,       // ?q=lat,lng
+    /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,        // ll=lat,lng
+    /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,      // !3d lat !4d lng
+  ];
+  for (const pat of patterns) {
+    const m = url.match(pat);
+    if (m) {
+      document.getElementById('c-lat').value = m[1];
+      document.getElementById('c-lng').value = m[2];
+      updateMapPreview();
+      toast('Koordinat berhasil diekstrak dari link Maps!','success');
+      return;
+    }
+  }
+}
+
+// ── MAP PREVIEW ──────────────────────────────────────────────
+function updateMapPreview() {
+  const lat = document.getElementById('c-lat').value.trim();
+  const lng = document.getElementById('c-lng').value.trim();
+  const container = document.getElementById('map-preview-container');
+
+  if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+    container.innerHTML = `
+      <div class="map-frame">
+        <iframe src="https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div style="text-align:right;margin-top:6px;">
+        <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" style="font-size:0.72rem;color:var(--accent)">
+          <i class="fas fa-external-link"></i> Buka di Google Maps
+        </a>
+      </div>`;
+  } else {
+    container.innerHTML = `
+      <div class="map-placeholder" onclick="openMaps()">
+        <i class="fas fa-map-location-dot"></i>
+        <span>Isi koordinat untuk preview peta</span>
+      </div>`;
+  }
+}
+
+function openMaps() {
+  window.open('https://www.google.com/maps','_blank');
+}
+
+// ── SAVE ─────────────────────────────────────────────────────
+async function saveCabang() {
+  const nama   = document.getElementById('c-nama').value.trim();
+  const alamat = document.getElementById('c-alamat').value.trim();
+  const lat    = document.getElementById('c-lat').value.trim();
+  const lng    = document.getElementById('c-lng').value.trim();
+
+  if (!nama || !alamat) {
+    toast('Nama dan alamat cabang wajib diisi.','error'); return;
+  }
+  if ((lat||lng) && (isNaN(lat)||isNaN(lng))) {
+    toast('Koordinat tidak valid. Isi keduanya atau kosongkan keduanya.','error'); return;
+  }
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const d = await apiPost('saveCabang', {
+      data: JSON.stringify({
+        idCabang:   document.getElementById('c-id').value||undefined,
+        namaCabang: nama,
+        alamat,
+        lat:        lat||'',
+        lng:        lng||'',
+        noHp:       document.getElementById('c-notelp').value.trim(),
+        status:     document.getElementById('c-status').value,
+      })
+    });
+    if (d.success) {
+      toast('Cabang berhasil disimpan!','success');
+      closeModal();
+      await loadCabang();
+      if(d.idCabang) selectCabang(d.idCabang);
+    } else {
+      toast(d.error||'Gagal menyimpan.','error');
+    }
+  } catch(e) { toast('Error: '+e.message,'error'); }
+  finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> Simpan Cabang'; }
+}
+
+// ── HAPUS ─────────────────────────────────────────────────────
+function hapusCabang(id, nama) {
+  showConfirm('🗑️',`Hapus cabang "${nama}"?`,
+    'Cabang akan dihapus permanen. Pastikan tidak ada order aktif di cabang ini.',
+    async () => {
+      try {
+        const d = await apiPost('deleteCabang',{idCabang:id});
+        if(d.success){
+          toast('Cabang dihapus.','success');
+          selected=null;
+          document.getElementById('detail-body').innerHTML='<div class="detail-empty"><i class="fas fa-hand-pointer"></i><p>Klik cabang untuk melihat detail</p></div>';
+          loadCabang();
+        } else toast(d.error,'error');
+      }catch(e){toast('Gagal.','error');}
+    }
+  );
+}
+
+// ── CONFIRM ──────────────────────────────────────────────────
+function showConfirm(icon,title,msg,cb){
+  document.getElementById('confirm-icon').textContent=icon;
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-overlay').classList.add('open');
+  document.getElementById('confirm-ok').onclick=async()=>{closeConfirm();await cb();};
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
+
+// ── MOBILE ───────────────────────────────────────────────────
+function checkMobile(){
+  document.getElementById('menu-toggle').style.display=window.innerWidth<=768?'block':'none';
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('resize',checkMobile);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeConfirm();}
+});
+document.getElementById('modal-cabang').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modal-cabang'))closeModal();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  checkAuth();checkMobile();loadCabang();
+});
+</script>
+</body>
+</html>

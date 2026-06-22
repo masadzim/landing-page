@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Pengaturan — The Kebab Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- CodeMirror for CSS/HTML editor -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <style>
+    :root{
+      --bg:#F8FAFC;--surface:#FFFFFF;--surface-hover:#F1F5F9;
+      --border:#E2E8F0;--text:#0F172A;--text2:#475569;--muted:#94A3B8;
+      --accent:#FF6B00;--accent-d:#E05E00;--accent-s:#FFF4ED;
+      --ok:#10B981;--ok-s:#ECFDF5;--err:#EF4444;--err-s:#FEF2F2;
+      --warn:#F59E0B;--warn-s:#FFFBEB;--info:#3B82F6;--info-s:#EFF6FF;
+      --sidebar-w:260px;--topbar-h:64px;--r:16px;--r-sm:10px;
+      --sh:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --sh-md:0 4px 16px rgba(0,0,0,0.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo{width:36px;height:36px;object-fit:contain;background:var(--accent);border-radius:10px;padding:4px;flex-shrink:0;}
+    .sidebar-brand h2{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;}
+    .sidebar-brand p{font-size:0.65rem;color:var(--muted);font-weight:500;}
+    .sidebar-user{margin:12px;padding:12px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FFB347);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;flex-shrink:0;}
+    .user-info .name{font-size:0.82rem;font-weight:700;}
+    .user-info .role-lbl{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .nav-section{padding:8px 12px 4px;font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.15s;font-size:0.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
+    .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item i{width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background 0.15s;}
+    .btn-logout:hover{background:var(--err-s);}
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-size:1rem;font-weight:700;}
+    .topbar-sub{font-size:0.78rem;color:var(--muted);}
+    .content{padding:28px;display:flex;gap:24px;}
+
+    /* Settings nav (left within content) */
+    .settings-nav{width:220px;flex-shrink:0;}
+    .settings-nav-item{
+      display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--r-sm);
+      cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--text2);
+      transition:all 0.15s;margin-bottom:4px;
+    }
+    .settings-nav-item:hover{background:var(--surface-hover);}
+    .settings-nav-item.active{background:var(--accent-s);color:var(--accent);}
+    .settings-nav-item i{width:18px;text-align:center;color:var(--muted);}
+    .settings-nav-item.active i{color:var(--accent);}
+    .settings-content{flex:1;min-width:0;}
+
+    .panel{display:none;}
+    .panel.active{display:block;animation:fadeIn 0.2s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Card */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);}
+    .card-title{font-size:0.9rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+    .card-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+    .card-body{padding:20px;}
+
+    /* Form */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .field{margin-bottom:16px;}
+    .field.span2{grid-column:1/-1;}
+    label.flabel{display:block;font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+    .field-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
+    input[type=text],input[type=number],input[type=password],input[type=time],select.finput,textarea{
+      width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);
+      border-radius:var(--r-sm);font-size:0.88rem;font-family:'Inter',sans-serif;
+      color:var(--text);outline:none;transition:all 0.2s;
+    }
+    input:focus,select.finput:focus,textarea:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(255,107,0,0.08);}
+    textarea{resize:vertical;min-height:70px;font-family:'Inter',sans-serif;}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:none;border-radius:var(--r-sm);font-size:0.84rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-primary:hover{background:var(--accent-d);box-shadow:0 4px 12px rgba(255,107,0,0.25);}
+    .btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+    .btn-secondary:hover{background:var(--surface-hover);}
+    .btn-sm{padding:7px 14px;font-size:0.78rem;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+    /* Toggle switch */
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+    .toggle-row:last-child{border-bottom:none;}
+    .toggle-label{font-size:0.84rem;font-weight:600;}
+    .toggle-desc{font-size:0.74rem;color:var(--muted);margin-top:2px;}
+    .switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .switch input{opacity:0;width:0;height:0;}
+    .slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:24px;transition:0.3s;}
+    .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;}
+    input:checked + .slider{background:var(--accent);}
+    input:checked + .slider::before{transform:translateX(20px);}
+
+    /* API Key rows */
+    .apikey-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);}
+    .apikey-row:last-child{border-bottom:none;}
+    .apikey-info{flex:1;}
+    .apikey-name{font-size:0.84rem;font-weight:700;font-family:monospace;}
+    .apikey-desc{font-size:0.74rem;color:var(--muted);margin-top:2px;}
+    .apikey-status{font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+    .apikey-status.set{background:var(--ok-s);color:var(--ok);}
+    .apikey-status.unset{background:var(--err-s);color:var(--err);}
+    .apikey-input-wrap{display:flex;gap:8px;min-width:280px;}
+    .apikey-input-wrap input{flex:1;font-family:monospace;font-size:0.8rem;}
+
+    /* Mode toggle (QRIS sandbox/prod) */
+    .mode-toggle{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:4px;width:fit-content;}
+    .mode-btn{padding:8px 18px;border:none;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);background:transparent;transition:all 0.15s;}
+    .mode-btn.active{background:var(--accent);color:white;}
+    .mode-btn.production.active{background:var(--ok);}
+
+    /* CSS Editor */
+    .editor-toolbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+    .CodeMirror{height:400px;font-size:0.84rem;border-radius:0 0 var(--r-sm) var(--r-sm);}
+    .editor-tabs{display:flex;gap:4px;}
+    .editor-tab{padding:6px 14px;border:none;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);background:transparent;transition:all 0.15s;}
+    .editor-tab.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+
+    /* Preview frame */
+    .preview-wrap{border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:white;}
+    .preview-header{background:var(--bg);padding:8px 12px;font-size:0.72rem;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+    #preview-frame{width:100%;height:300px;border:none;}
+
+    /* CSS snippet library */
+    .snippet-list{display:flex;flex-direction:column;gap:8px;}
+    .snippet-item{
+      background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);
+      padding:12px 14px;cursor:pointer;transition:all 0.15s;
+    }
+    .snippet-item:hover{border-color:var(--accent);background:var(--accent-s);}
+    .snippet-title{font-size:0.82rem;font-weight:700;margin-bottom:2px;}
+    .snippet-desc{font-size:0.72rem;color:var(--text2);}
+
+    /* Save bar */
+    .save-bar{
+      position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);
+      padding:14px 20px;display:flex;justify-content:flex-end;gap:10px;margin:0 -20px -20px;
+      border-radius:0 0 var(--r) var(--r);
+    }
+
+    /* Toast */
+    #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;box-shadow:var(--sh-md);font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.3s ease;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .toast.success i{color:var(--ok);}
+    .toast.error i{color:var(--err);}
+    .toast.info i{color:var(--accent);}
+
+    @media(max-width:900px){.content{flex-direction:column;}.settings-nav{width:100%;display:flex;overflow-x:auto;gap:6px;}.settings-nav-item{white-space:nowrap;margin-bottom:0;}.form-grid{grid-template-columns:1fr;}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.content{padding:16px;}.apikey-input-wrap{min-width:100%;}.apikey-row{flex-direction:column;align-items:flex-start;}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div class="user-info"><div class="name" id="user-name">Administrator</div><div class="role-lbl">Admin</div></div>
+  </div>
+  <div class="nav-section">Utama</div>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-receipt"></i> Semua Order</a>
+  <div class="nav-section">Kelola</div>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="konten.html"><i class="fas fa-photo-film"></i> Konten Web</a>
+  <a class="nav-item active" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button style="display:none;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text2)" id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div>
+        <div class="topbar-title">Pengaturan</div>
+        <div class="topbar-sub">Konfigurasi sistem, integrasi, dan tampilan</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Settings Nav -->
+    <div class="settings-nav">
+      <div class="settings-nav-item active" onclick="switchPanel('umum',this)"><i class="fas fa-store"></i> Umum</div>
+      <div class="settings-nav-item" onclick="switchPanel('ongkir',this)"><i class="fas fa-truck"></i> Ongkir</div>
+      <div class="settings-nav-item" onclick="switchPanel('pembayaran',this)"><i class="fas fa-qrcode"></i> Pembayaran</div>
+      <div class="settings-nav-item" onclick="switchPanel('bot',this)"><i class="fas fa-robot"></i> Bot AI</div>
+      <div class="settings-nav-item" onclick="switchPanel('notifikasi',this)"><i class="fab fa-whatsapp"></i> Notifikasi WA</div>
+      <div class="settings-nav-item" onclick="switchPanel('apikeys',this)"><i class="fas fa-key"></i> API Keys</div>
+      <div class="settings-nav-item" onclick="switchPanel('tema',this)"><i class="fas fa-palette"></i> Tema & CSS</div>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="settings-content">
+
+      <!-- ════════ PANEL: UMUM ════════ -->
+      <div class="panel active" id="panel-umum">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-store" style="color:var(--accent)"></i> Informasi Toko</div>
+            <div class="card-sub">Data dasar yang ditampilkan ke customer</div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field span2">
+                <label class="flabel">Nama Toko</label>
+                <input type="text" id="s-namaToko" placeholder="The Kebab Factory"/>
+              </div>
+              <div class="field span2">
+                <label class="flabel">Alamat Toko</label>
+                <textarea id="s-alamatToko" placeholder="Jl. Mlarak-Jabung, Timur Qoni' Mart, Ponorogo"></textarea>
+              </div>
+              <div class="field">
+                <label class="flabel">Jam Buka</label>
+                <input type="time" id="s-jamBuka"/>
+              </div>
+              <div class="field">
+                <label class="flabel">Jam Tutup</label>
+                <input type="time" id="s-jamTutup"/>
+              </div>
+              <div class="field">
+                <label class="flabel">No. WA Admin</label>
+                <input type="text" id="s-noWAAdmin" placeholder="6281357683151"/>
+                <div class="field-hint">Untuk notifikasi order baru</div>
+              </div>
+              <div class="field">
+                <label class="flabel">Link Google Maps</label>
+                <input type="text" id="s-linkMaps" placeholder="https://maps.google.com?q=..."/>
+              </div>
+              <div class="field span2">
+                <label class="flabel">Versi Aplikasi</label>
+                <input type="text" id="s-versiApp" placeholder="1.0.0"/>
+                <div class="field-hint">Ditampilkan di footer untuk tracking versi</div>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveSetting('umum')"><i class="fas fa-check"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: ONGKIR ════════ -->
+      <div class="panel" id="panel-ongkir">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-truck" style="color:var(--accent)"></i> Konfigurasi Ongkos Kirim</div>
+            <div class="card-sub">Aturan tarif pengiriman berdasarkan jarak</div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label class="flabel">Radius Gratis Ongkir (km)</label>
+                <input type="number" id="s-ongkirGratis" placeholder="2" step="0.1"/>
+                <div class="field-hint">Jarak dalam km yang gratis ongkir</div>
+              </div>
+              <div class="field"></div>
+              <div class="field">
+                <label class="flabel">Tarif 2–5 km (Rp)</label>
+                <input type="number" id="s-ongkirMenengah" placeholder="5000"/>
+              </div>
+              <div class="field">
+                <label class="flabel">Tarif 5–7 km (Rp)</label>
+                <input type="number" id="s-ongkirJauh" placeholder="10000"/>
+              </div>
+              <div class="field span2">
+                <label class="flabel">Tarif Per Km Setelah 7km (Rp)</label>
+                <input type="number" id="s-ongkirPerKm" placeholder="2000"/>
+                <div class="field-hint">cth: jarak 9km = Rp 10.000 + (9-7) × Rp 2.000 = Rp 14.000</div>
+              </div>
+            </div>
+
+            <!-- Simulator -->
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:16px;margin-top:8px;">
+              <div style="font-size:0.82rem;font-weight:700;margin-bottom:10px;"><i class="fas fa-calculator" style="color:var(--accent)"></i> Simulasi Ongkir</div>
+              <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:120px;">
+                  <label class="flabel">Jarak (km)</label>
+                  <input type="number" id="sim-jarak" placeholder="cth: 6" oninput="simulasiOngkir()"/>
+                </div>
+                <div style="background:var(--accent-s);border-radius:var(--r-sm);padding:10px 18px;font-weight:800;color:var(--accent);font-size:1.1rem;" id="sim-hasil">Rp 0</div>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveSetting('ongkir')"><i class="fas fa-check"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: PEMBAYARAN ════════ -->
+      <div class="panel" id="panel-pembayaran">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-qrcode" style="color:var(--accent)"></i> QRIS Payment</div>
+            <div class="card-sub">Konfigurasi metode pembayaran QRIS</div>
+          </div>
+          <div class="card-body">
+            <div class="field" style="margin-bottom:20px;">
+              <label class="flabel">Mode Qrisly</label>
+              <div class="mode-toggle" id="qrisly-mode-toggle">
+                <button class="mode-btn" data-mode="sandbox" onclick="setQrislyMode('sandbox')">🧪 Sandbox</button>
+                <button class="mode-btn production" data-mode="production" onclick="setQrislyMode('production')">🚀 Production</button>
+              </div>
+              <div class="field-hint" id="qrisly-mode-hint">Mode sandbox untuk testing, tidak ada transaksi nyata.</div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label class="flabel">Mode Pembayaran QRIS</label>
+                <select class="finput" id="s-modeQRIS">
+                  <option value="dinamis">Dinamis (Qrisly) — Otomatis</option>
+                  <option value="statis">Statis — Upload Bukti Manual</option>
+                  <option value="keduanya">Keduanya — Dinamis + Fallback Statis</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="flabel">Expired QRIS Dinamis (menit)</label>
+                <input type="number" id="s-expiryQRIS" placeholder="15"/>
+              </div>
+              <div class="field span2">
+                <label class="flabel">URL Gambar QRIS Statis (Fallback)</label>
+                <input type="text" id="s-urlQRISStatis" placeholder="https://thekebabfactory.github.io/qrisbayar.jpg"/>
+                <div class="field-hint">Digunakan jika Qrisly gagal generate QRIS dinamis</div>
+              </div>
+            </div>
+
+            <div style="margin-top:8px;padding:14px;background:var(--info-s);border:1px solid #BFDBFE;border-radius:var(--r-sm);font-size:0.8rem;color:#1D4ED8;display:flex;gap:10px;align-items:flex-start;">
+              <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+              <div>Token Qrisly diatur di tab <strong>API Keys</strong>. Pastikan token sudah diisi sebelum mengaktifkan mode dinamis.</div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveSetting('pembayaran')"><i class="fas fa-check"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: BOT AI ════════ -->
+      <div class="panel" id="panel-bot">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-robot" style="color:var(--accent)"></i> Asisten AI</div>
+            <div class="card-sub">Pengaturan chatbot WhatsApp & Web</div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label class="flabel">Nama Bot</label>
+                <input type="text" id="s-namaBot" placeholder="Mas Aladin"/>
+                <div class="field-hint">Nama yang digunakan bot saat menyapa customer</div>
+              </div>
+              <div class="field">
+                <label class="flabel">Jam Aktif Bot</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input type="time" id="s-jamAktifBotMulai" style="flex:1"/>
+                  <span style="color:var(--muted)">—</span>
+                  <input type="time" id="s-jamAktifBotSelesai" style="flex:1"/>
+                </div>
+                <div class="field-hint">Di luar jam ini, bot tidak akan membalas otomatis</div>
+              </div>
+            </div>
+
+            <div style="margin-top:8px;padding:14px;background:var(--info-s);border:1px solid #BFDBFE;border-radius:var(--r-sm);font-size:0.8rem;color:#1D4ED8;display:flex;gap:10px;align-items:flex-start;">
+              <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+              <div>Menu, harga, dan varian otomatis diambil dari data <strong>Produk & Varian</strong> — tidak perlu diatur manual di sini.</div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveSetting('bot')"><i class="fas fa-check"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: NOTIFIKASI WA ════════ -->
+      <div class="panel" id="panel-notifikasi">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fab fa-whatsapp" style="color:#25D366"></i> Template Pesan WhatsApp</div>
+            <div class="card-sub">Pesan otomatis yang dikirim ke customer per status order</div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label class="flabel">✅ Pesan Konfirmasi Order</label>
+              <textarea id="s-pesanKonfirmasi" placeholder="Pesanan kamu sudah diterima dan sedang diproses! 🥙"></textarea>
+            </div>
+            <div class="field">
+              <label class="flabel">🛵 Pesan Status "Diantar"</label>
+              <textarea id="s-pesanDiantar" placeholder="Pesanan sedang dalam perjalanan menuju lokasimu 🛵"></textarea>
+            </div>
+            <div class="field">
+              <label class="flabel">🎉 Pesan Status "Selesai"</label>
+              <textarea id="s-pesanSelesai" placeholder="Pesanan selesai! Terima kasih sudah order di The Kebab Factory 😊"></textarea>
+            </div>
+            <div class="field">
+              <label class="flabel">❌ Pesan Status "Batal"</label>
+              <textarea id="s-pesanBatal" placeholder="Maaf pesanan dibatalkan. Hubungi 0813-5768-3151 untuk info lebih lanjut."></textarea>
+            </div>
+            <div class="field-hint" style="margin-top:-6px;">
+              Variabel yang bisa dipakai: <code>{nama}</code>, <code>{orderId}</code>, <code>{total}</code>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveSetting('notifikasi')"><i class="fas fa-check"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: API KEYS ════════ -->
+      <div class="panel" id="panel-apikeys">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-key" style="color:var(--accent)"></i> API Keys & Integrasi</div>
+            <div class="card-sub">Disimpan di PropertiesService — tidak terlihat di Spreadsheet</div>
+          </div>
+          <div class="card-body">
+            <div style="padding:12px 14px;background:var(--warn-s);border:1px solid #FDE68A;border-radius:var(--r-sm);font-size:0.8rem;color:#92400E;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;">
+              <i class="fas fa-shield-halved" style="margin-top:2px;flex-shrink:0;"></i>
+              <div>Untuk keamanan, nilai API key yang sudah tersimpan <strong>tidak ditampilkan</strong>. Isi field hanya jika ingin mengubah/menambahkan key baru.</div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">🤖 AI & Chatbot</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">GROQ_API_KEY</div><div class="apikey-desc">API key untuk Groq LLM (chatbot AI)</div></div>
+              <span class="apikey-status" id="status-GROQ_API_KEY">—</span>
+              <div class="apikey-input-wrap"><input type="password" id="key-GROQ_API_KEY" placeholder="gsk_..."/><button class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility('GROQ_API_KEY')"><i class="far fa-eye"></i></button></div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">💬 WhatsApp</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">FONNTE_TOKEN</div><div class="apikey-desc">Token Fonnte untuk kirim/terima WA</div></div>
+              <span class="apikey-status" id="status-FONNTE_TOKEN">—</span>
+              <div class="apikey-input-wrap"><input type="password" id="key-FONNTE_TOKEN" placeholder="Token Fonnte"/><button class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility('FONNTE_TOKEN')"><i class="far fa-eye"></i></button></div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">💳 Pembayaran</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">QRISLY_TOKEN</div><div class="apikey-desc">Token Qrisly untuk generate QRIS dinamis</div></div>
+              <span class="apikey-status" id="status-QRISLY_TOKEN">—</span>
+              <div class="apikey-input-wrap"><input type="password" id="key-QRISLY_TOKEN" placeholder="Token Qrisly"/><button class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility('QRISLY_TOKEN')"><i class="far fa-eye"></i></button></div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">🔐 Keamanan & Admin</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">RECAPTCHA_SECRET_KEY</div><div class="apikey-desc">Google reCAPTCHA v3 secret key</div></div>
+              <span class="apikey-status" id="status-RECAPTCHA_SECRET_KEY">—</span>
+              <div class="apikey-input-wrap"><input type="password" id="key-RECAPTCHA_SECRET_KEY" placeholder="6L..."/><button class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility('RECAPTCHA_SECRET_KEY')"><i class="far fa-eye"></i></button></div>
+            </div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">ADMIN_PHONE</div><div class="apikey-desc">No. WA pemilik untuk login OTP admin</div></div>
+              <span class="apikey-status" id="status-ADMIN_PHONE">—</span>
+              <div class="apikey-input-wrap"><input type="text" id="key-ADMIN_PHONE" placeholder="628..."/></div>
+            </div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">ADMIN_EMAIL</div><div class="apikey-desc">Email fallback OTP jika WA gagal</div></div>
+              <span class="apikey-status" id="status-ADMIN_EMAIL">—</span>
+              <div class="apikey-input-wrap"><input type="text" id="key-ADMIN_EMAIL" placeholder="email@gmail.com"/></div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">📸 Instagram (Opsional)</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">INSTAGRAM_ACCESS_TOKEN</div><div class="apikey-desc">Access token Instagram Graph API</div></div>
+              <span class="apikey-status" id="status-INSTAGRAM_ACCESS_TOKEN">—</span>
+              <div class="apikey-input-wrap"><input type="password" id="key-INSTAGRAM_ACCESS_TOKEN" placeholder="Token"/><button class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility('INSTAGRAM_ACCESS_TOKEN')"><i class="far fa-eye"></i></button></div>
+            </div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">INSTAGRAM_PAGE_ID</div><div class="apikey-desc">ID halaman Instagram bisnis</div></div>
+              <span class="apikey-status" id="status-INSTAGRAM_PAGE_ID">—</span>
+              <div class="apikey-input-wrap"><input type="text" id="key-INSTAGRAM_PAGE_ID" placeholder="ID Halaman"/></div>
+            </div>
+
+            <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px;">⚡ Make.com (Opsional)</div>
+            <div class="apikey-row">
+              <div class="apikey-info"><div class="apikey-name">MAKE_WEBHOOK_URL</div><div class="apikey-desc">Webhook trigger untuk automation</div></div>
+              <span class="apikey-status" id="status-MAKE_WEBHOOK_URL">—</span>
+              <div class="apikey-input-wrap"><input type="text" id="key-MAKE_WEBHOOK_URL" placeholder="https://hook.eu1.make.com/..."/></div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveAPIKeys()"><i class="fas fa-shield-halved"></i> Simpan API Keys</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PANEL: TEMA & CSS ════════ -->
+      <div class="panel" id="panel-tema">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-palette" style="color:var(--accent)"></i> Custom CSS — Web Customer</div>
+            <div class="card-sub">Sesuaikan tampilan halaman customer tanpa edit kode sumber. CSS ini di-inject ke halaman web customer.</div>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div class="editor-toolbar">
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text2);"><i class="fas fa-code"></i> Editor CSS Custom</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-secondary btn-sm" onclick="formatCSS()"><i class="fas fa-broom"></i> Rapikan</button>
+                <button class="btn btn-secondary btn-sm" onclick="resetCSS()"><i class="fas fa-rotate-left"></i> Reset</button>
+              </div>
+            </div>
+            <div id="css-editor"></div>
+          </div>
+          <div style="padding:20px;">
+            <!-- Snippet library -->
+            <div style="font-size:0.82rem;font-weight:700;margin-bottom:10px;"><i class="fas fa-puzzle-piece" style="color:var(--accent)"></i> Snippet Cepat</div>
+            <div class="snippet-list" id="snippet-list">
+              <div class="snippet-item" onclick="insertSnippet('color')">
+                <div class="snippet-title">🎨 Ubah Warna Aksen</div>
+                <div class="snippet-desc">Ganti warna utama tombol & highlight</div>
+              </div>
+              <div class="snippet-item" onclick="insertSnippet('font')">
+                <div class="snippet-title">🔤 Ubah Font</div>
+                <div class="snippet-desc">Ganti jenis huruf seluruh halaman</div>
+              </div>
+              <div class="snippet-item" onclick="insertSnippet('banner')">
+                <div class="snippet-title">📢 Banner Pengumuman</div>
+                <div class="snippet-desc">Tambah banner promo di atas halaman</div>
+              </div>
+              <div class="snippet-item" onclick="insertSnippet('rounded')">
+                <div class="snippet-title">⭕ Sudut Lebih Bulat</div>
+                <div class="snippet-desc">Buat kartu & tombol lebih rounded</div>
+              </div>
+              <div class="snippet-item" onclick="insertSnippet('hide')">
+                <div class="snippet-title">🙈 Sembunyikan Elemen</div>
+                <div class="snippet-desc">Contoh cara sembunyikan bagian tertentu</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Preview -->
+          <div style="padding:0 20px 20px;">
+            <div style="font-size:0.82rem;font-weight:700;margin-bottom:10px;"><i class="fas fa-eye" style="color:var(--accent)"></i> Live Preview</div>
+            <div class="preview-wrap">
+              <div class="preview-header"><i class="fas fa-globe"></i> Preview halaman customer dengan CSS kamu</div>
+              <iframe id="preview-frame" srcdoc=""></iframe>
+            </div>
+          </div>
+
+          <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveCustomCSS()"><i class="fas fa-check"></i> Simpan & Terapkan CSS</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'GANTI_DENGAN_URL_APPS_SCRIPT_EXEC';
+let session = null;
+let cssEditor = null;
+
+const API_KEYS = ['GROQ_API_KEY','FONNTE_TOKEN','QRISLY_TOKEN','RECAPTCHA_SECRET_KEY','ADMIN_PHONE','ADMIN_EMAIL','INSTAGRAM_ACCESS_TOKEN','INSTAGRAM_PAGE_ID','MAKE_WEBHOOK_URL'];
+
+// ── AUTH ─────────────────────────────────────────────────────
+function checkAuth() {
+  try {
+    const raw = localStorage.getItem('kf_session');
+    if (!raw) return redirect();
+    session = JSON.parse(raw);
+    if (!session?.sessionToken || session.role !== 'admin') return redirect();
+    document.getElementById('user-avatar').textContent = (session.nama||'A')[0].toUpperCase();
+    document.getElementById('user-name').textContent   = session.nama||'Admin';
+  } catch(e) { redirect(); }
+}
+function redirect(){localStorage.removeItem('kf_session');window.location.href='../login.html';}
+function doLogout(){if(!confirm('Yakin keluar?'))return;localStorage.removeItem('kf_session');window.location.href='../login.html';}
+
+async function apiPost(action, extra={}) {
+  const res = await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action,sessionToken:session.sessionToken,...extra})});
+  return res.json();
+}
+
+function toast(msg,type='info'){
+  const icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+// ── PANEL SWITCHER ───────────────────────────────────────────
+function switchPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.settings-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='tema' && cssEditor) setTimeout(()=>cssEditor.refresh(),50);
+}
+
+// ── LOAD SETTINGS ────────────────────────────────────────────
+let currentSetting = {};
+async function loadSettings() {
+  try {
+    const d = await apiPost('getSetting');
+    if (!d.success) throw new Error(d.error);
+    currentSetting = d.setting||{};
+
+    // Umum
+    setVal('s-namaToko', currentSetting.namaToko);
+    setVal('s-alamatToko', currentSetting.alamatToko);
+    setVal('s-jamBuka', toTimeFormat(currentSetting.jamBuka));
+    setVal('s-jamTutup', toTimeFormat(currentSetting.jamTutup));
+    setVal('s-noWAAdmin', currentSetting.noWAAdmin);
+    setVal('s-linkMaps', currentSetting.linkMaps);
+    setVal('s-versiApp', currentSetting.versiApp);
+
+    // Ongkir
+    setVal('s-ongkirGratis', currentSetting.ongkirGratis);
+    setVal('s-ongkirMenengah', currentSetting.ongkirMenengah);
+    setVal('s-ongkirJauh', currentSetting.ongkirJauh);
+    setVal('s-ongkirPerKm', currentSetting.ongkirPerKm);
+    simulasiOngkir();
+
+    // Pembayaran
+    setVal('s-modeQRIS', currentSetting.modeQRIS||'dinamis');
+    setVal('s-expiryQRIS', currentSetting.expiryQRIS||'15');
+    setVal('s-urlQRISStatis', currentSetting.urlQRISStatis);
+
+    // Bot
+    setVal('s-namaBot', currentSetting.namaBot);
+    const jamAktif = (currentSetting.jamAktifBot||'00.00-23.59').split('-');
+    setVal('s-jamAktifBotMulai', toTimeFormat(jamAktif[0]));
+    setVal('s-jamAktifBotSelesai', toTimeFormat(jamAktif[1]));
+
+    // Notifikasi
+    setVal('s-pesanKonfirmasi', currentSetting.pesanKonfirmasi);
+    setVal('s-pesanDiantar', currentSetting.pesanDiantar);
+    setVal('s-pesanSelesai', currentSetting.pesanSelesai);
+    setVal('s-pesanBatal', currentSetting.pesanBatal);
+
+    // Custom CSS
+    if(cssEditor) cssEditor.setValue(currentSetting.customCSS || getDefaultCSS());
+    updatePreview();
+
+    // API Key status
+    Object.keys(d.apiStatus||{}).forEach(key=>{
+      const el = document.getElementById('status-'+key);
+      if(!el) return;
+      const isSet = (d.apiStatus[key]||'').includes('✅');
+      el.textContent = isSet ? 'Terisi' : 'Belum diset';
+      el.className = 'apikey-status ' + (isSet?'set':'unset');
+    });
+
+    // QRIS mode toggle
+    const qrislyMode = d.apiStatus?.QRISLY_MODE_VALUE || 'sandbox';
+    setQrislyMode(localStorage.getItem('kf_qrisly_mode')||'sandbox', false);
+
+  } catch(e) {
+    toast('Gagal memuat pengaturan: '+e.message,'error');
+  }
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if(el && val!==undefined && val!==null && val!=='') el.value = val;
+}
+
+function toTimeFormat(str) {
+  if(!str) return '';
+  // "11.00" -> "11:00"
+  return String(str).replace('.',':');
+}
+function fromTimeFormat(str) {
+  if(!str) return '';
+  return str.replace(':','.');
+}
+
+// ── SAVE SETTING PER PANEL ─────────────────────────────────────
+async function saveSetting(panel) {
+  let data = {};
+  if(panel==='umum') {
+    data = {
+      namaToko: val('s-namaToko'), alamatToko: val('s-alamatToko'),
+      jamBuka: fromTimeFormat(val('s-jamBuka')), jamTutup: fromTimeFormat(val('s-jamTutup')),
+      noWAAdmin: val('s-noWAAdmin'), linkMaps: val('s-linkMaps'), versiApp: val('s-versiApp'),
+    };
+  } else if(panel==='ongkir') {
+    data = {
+      ongkirGratis: val('s-ongkirGratis'), ongkirMenengah: val('s-ongkirMenengah'),
+      ongkirJauh: val('s-ongkirJauh'), ongkirPerKm: val('s-ongkirPerKm'),
+    };
+  } else if(panel==='pembayaran') {
+    data = {
+      modeQRIS: val('s-modeQRIS'), expiryQRIS: val('s-expiryQRIS'), urlQRISStatis: val('s-urlQRISStatis'),
+    };
+  } else if(panel==='bot') {
+    const mulai = fromTimeFormat(val('s-jamAktifBotMulai'))||'00.00';
+    const selesai = fromTimeFormat(val('s-jamAktifBotSelesai'))||'23.59';
+    data = { namaBot: val('s-namaBot'), jamAktifBot: mulai+'-'+selesai };
+  } else if(panel==='notifikasi') {
+    data = {
+      pesanKonfirmasi: val('s-pesanKonfirmasi'), pesanDiantar: val('s-pesanDiantar'),
+      pesanSelesai: val('s-pesanSelesai'), pesanBatal: val('s-pesanBatal'),
+    };
+  }
+
+  try {
+    const d = await apiPost('saveSetting', { data: JSON.stringify(data) });
+    if(d.success) toast('Pengaturan berhasil disimpan!','success');
+    else toast(d.error||'Gagal menyimpan.','error');
+  } catch(e) { toast('Error: '+e.message,'error'); }
+}
+function val(id){ return document.getElementById(id)?.value?.trim() || ''; }
+
+// ── ONGKIR SIMULATOR ─────────────────────────────────────────
+function simulasiOngkir() {
+  const jarak = parseFloat(document.getElementById('sim-jarak').value)||0;
+  const gratis = parseFloat(val('s-ongkirGratis'))||2;
+  const menengah = parseInt(val('s-ongkirMenengah'))||5000;
+  const jauh = parseInt(val('s-ongkirJauh'))||10000;
+  const perKm = parseInt(val('s-ongkirPerKm'))||2000;
+
+  let hasil = 0;
+  if(jarak < gratis) hasil = 0;
+  else if(jarak <= 5) hasil = menengah;
+  else if(jarak <= 7) hasil = jauh;
+  else hasil = jauh + Math.ceil(jarak-7)*perKm;
+
+  document.getElementById('sim-hasil').textContent = 'Rp '+hasil.toLocaleString('id-ID');
+}
+['s-ongkirGratis','s-ongkirMenengah','s-ongkirJauh','s-ongkirPerKm'].forEach(id=>{
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById(id)?.addEventListener('input',simulasiOngkir);
+  });
+});
+
+// ── QRIS MODE TOGGLE ─────────────────────────────────────────
+function setQrislyMode(mode, save=true) {
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+  document.getElementById('qrisly-mode-hint').textContent = mode==='production'
+    ? '⚠️ Mode production aktif — transaksi QRIS bersifat NYATA.'
+    : 'Mode sandbox untuk testing, tidak ada transaksi nyata.';
+  if(save) {
+    localStorage.setItem('kf_qrisly_mode', mode);
+    apiPost('saveAPIKey',{data:JSON.stringify({QRISLY_MODE:mode})})
+      .then(d=>{ if(d.success) toast('Mode Qrisly: '+mode,'success'); });
+  }
+}
+
+// ── API KEYS ─────────────────────────────────────────────────
+function toggleKeyVisibility(key) {
+  const inp = document.getElementById('key-'+key);
+  inp.type = inp.type==='password'?'text':'password';
+}
+
+async function saveAPIKeys() {
+  const data = {};
+  let count = 0;
+  API_KEYS.forEach(key=>{
+    const v = document.getElementById('key-'+key)?.value.trim();
+    if(v) { data[key]=v; count++; }
+  });
+  if(count===0) { toast('Tidak ada API key yang diisi.','info'); return; }
+
+  try {
+    const d = await apiPost('saveAPIKey',{data:JSON.stringify(data)});
+    if(d.success) {
+      toast(`${d.saved.length} API key berhasil disimpan!`,'success');
+      // Clear inputs & reload status
+      API_KEYS.forEach(key=>{ const el=document.getElementById('key-'+key); if(el) el.value=''; });
+      loadSettings();
+    } else toast(d.error||'Gagal.','error');
+  } catch(e) { toast('Error: '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════════════════════
+// CUSTOM CSS EDITOR
+// ════════════════════════════════════════════════════════════
+function initCSSEditor() {
+  cssEditor = CodeMirror(document.getElementById('css-editor'), {
+    value: getDefaultCSS(),
+    mode: 'css',
+    theme: 'dracula',
+    lineNumbers: true,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    tabSize: 2,
+    indentWithTabs: false,
+  });
+  cssEditor.on('change', debounce(updatePreview, 400));
+}
+
+function debounce(fn, delay) {
+  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args),delay); };
+}
+
+function getDefaultCSS() {
+  return `/* ═══════════════════════════════════════════
+   CUSTOM CSS — Web Customer
+   CSS ini akan di-inject ke halaman customer
+   Gunakan untuk menyesuaikan tampilan tanpa
+   mengubah kode sumber utama.
+═══════════════════════════════════════════ */
+
+/* Contoh: ubah warna aksen utama */
+/*
+:root {
+  --accent: #FF6B00;
+}
+*/
+
+/* Tulis CSS kustom kamu di bawah ini */
+`;
+}
+
+function resetCSS() {
+  if(!confirm('Reset CSS ke default? Perubahan yang belum disimpan akan hilang.')) return;
+  cssEditor.setValue(getDefaultCSS());
+  updatePreview();
+}
+
+function formatCSS() {
+  // Simple format: normalize indentation
+  let css = cssEditor.getValue();
+  css = css.replace(/\s*{\s*/g,' {\n  ').replace(/;\s*/g,';\n  ').replace(/\s*}\s*/g,'\n}\n\n').replace(/\n  \n}/g,'\n}');
+  cssEditor.setValue(css);
+  toast('CSS dirapikan.','success');
+}
+
+// ── PREVIEW ──────────────────────────────────────────────────
+function updatePreview() {
+  const css = cssEditor.getValue();
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif;}
+  :root{--accent:#FF6B00;--bg:#F8FAFC;--text:#0F172A;}
+  body{background:var(--bg);color:var(--text);padding:20px;}
+  .header{background:var(--accent);color:white;padding:16px;border-radius:12px;margin-bottom:16px;font-weight:800;}
+  .card{background:white;border:1px solid #E2E8F0;border-radius:12px;padding:16px;margin-bottom:12px;}
+  .btn{background:var(--accent);color:white;padding:10px 20px;border-radius:10px;border:none;font-weight:700;cursor:pointer;}
+  .menu-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E2E8F0;}
+  .price{color:var(--accent);font-weight:700;}
+</style>
+${css}
+</head>
+<body>
+  <div class="header">🥙 The Kebab Factory</div>
+  <div class="card">
+    <div class="menu-item"><span>Kebab Original</span><span class="price">Rp 10.000</span></div>
+    <div class="menu-item"><span>Kebab Telur</span><span class="price">Rp 15.000</span></div>
+    <div class="menu-item"><span>Triple Special</span><span class="price">Rp 25.000</span></div>
+  </div>
+  <button class="btn">Pesan Sekarang</button>
+</body>
+</html>`;
+  document.getElementById('preview-frame').srcdoc = html;
+}
+
+// ── SAVE CSS ─────────────────────────────────────────────────
+async function saveCustomCSS() {
+  const css = cssEditor.getValue();
+  try {
+    const d = await apiPost('saveSetting',{data:JSON.stringify({customCSS:css})});
+    if(d.success) toast('CSS berhasil disimpan & diterapkan!','success');
+    else toast(d.error||'Gagal menyimpan.','error');
+  } catch(e) { toast('Error: '+e.message,'error'); }
+}
+
+// ── SNIPPETS ─────────────────────────────────────────────────
+const SNIPPETS = {
+  color: `:root {
+  --accent: #2563EB;        /* Ganti warna utama (biru) */
+  --accent-dark: #1D4ED8;
+  --accent-soft: #EFF6FF;
+}`,
+  font: `body, * {
+  font-family: 'Poppins', sans-serif !important;
+}
+/* Jangan lupa tambahkan link Google Fonts di <head> jika belum ada */`,
+  banner: `.promo-banner {
+  background: linear-gradient(135deg, #FF6B00, #FFB347);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.promo-banner::before {
+  content: "🔥 Promo Spesial Hari Ini! Gunakan kode HEMAT10 ";
+}`,
+  rounded: `.card, .btn, input, select {
+  border-radius: 20px !important;
+}`,
+  hide: `/* Sembunyikan elemen tertentu berdasarkan class */
+.element-yang-ingin-disembunyikan {
+  display: none !important;
+}`,
+};
+
+function insertSnippet(key) {
+  const snippet = SNIPPETS[key];
+  if(!snippet) return;
+  const doc = cssEditor.getDoc();
+  const cursor = doc.getCursor();
+  doc.replaceRange('\n\n'+snippet+'\n', cursor);
+  cssEditor.focus();
+  toast('Snippet ditambahkan ke editor.','info');
+}
+
+// ── MOBILE ───────────────────────────────────────────────────
+function checkMobile(){document.getElementById('menu-toggle').style.display=window.innerWidth<=768?'block':'none';}
+window.addEventListener('resize',()=>{checkMobile();if(cssEditor)cssEditor.refresh();});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  checkAuth();
+  checkMobile();
+  initCSSEditor();
+  loadSettings();
+});
+</script>
+</body>
+</html>

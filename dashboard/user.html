@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Kelola User — The Kebab Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg:#F8FAFC;--surface:#FFFFFF;--surface-hover:#F1F5F9;
+      --border:#E2E8F0;--text:#0F172A;--text2:#475569;--muted:#94A3B8;
+      --accent:#FF6B00;--accent-d:#E05E00;--accent-s:#FFF4ED;
+      --ok:#10B981;--ok-s:#ECFDF5;--err:#EF4444;--err-s:#FEF2F2;
+      --warn:#F59E0B;--warn-s:#FFFBEB;--info:#3B82F6;--info-s:#EFF6FF;
+      --purple:#8B5CF6;--purple-s:#F5F3FF;
+      --sidebar-w:260px;--topbar-h:64px;--r:16px;--r-sm:10px;
+      --sh:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --sh-md:0 4px 16px rgba(0,0,0,0.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo{width:36px;height:36px;object-fit:contain;background:var(--accent);border-radius:10px;padding:4px;flex-shrink:0;}
+    .sidebar-brand h2{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;}
+    .sidebar-brand p{font-size:0.65rem;color:var(--muted);font-weight:500;}
+    .sidebar-user{margin:12px;padding:12px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FFB347);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;flex-shrink:0;}
+    .user-info .name{font-size:0.82rem;font-weight:700;}
+    .user-info .role-lbl{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .nav-section{padding:8px 12px 4px;font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.15s;font-size:0.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
+    .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item i{width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background 0.15s;}
+    .btn-logout:hover{background:var(--err-s);}
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-size:1rem;font-weight:700;}
+    .topbar-sub{font-size:0.78rem;color:var(--muted);}
+    .content{padding:28px;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:none;border-radius:var(--r-sm);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-primary:hover{background:var(--accent-d);box-shadow:0 4px 12px rgba(255,107,0,0.25);}
+    .btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+    .btn-secondary:hover{background:var(--surface-hover);}
+    .btn-danger{background:var(--err-s);color:var(--err);border:1px solid #FECACA;}
+    .btn-danger:hover{background:#FEE2E2;}
+    .btn-sm{padding:6px 12px;font-size:0.75rem;}
+    .btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:8px;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;}
+    .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);}
+    .kpi-card.accent{border-left:4px solid var(--accent);}
+    .kpi-card.ok{border-left:4px solid var(--ok);}
+    .kpi-card.info{border-left:4px solid var(--info);}
+    .kpi-card.purple{border-left:4px solid var(--purple);}
+    .kpi-label{font-size:0.72rem;font-weight:600;color:var(--text2);margin-bottom:8px;}
+    .kpi-value{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;}
+    .kpi-sub{font-size:0.7rem;color:var(--muted);margin-top:4px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+    .card-title{font-size:0.9rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .search-wrap{position:relative;flex:1;min-width:180px;}
+    .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;}
+    .search-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.84rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s;}
+    .search-input:focus{border-color:var(--accent);background:white;}
+    select.filter{padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.82rem;font-family:'Inter',sans-serif;color:var(--text2);outline:none;cursor:pointer;}
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--border);text-align:left;background:var(--bg);white-space:nowrap;}
+    tbody tr{transition:background 0.1s;}
+    tbody tr:hover{background:var(--surface-hover);}
+    tbody td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:0.84rem;vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}
+    .avatar-cell{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;color:white;flex-shrink:0;}
+    .role-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;}
+    .role-admin{background:#FEF3C7;color:#92400E;}
+    .role-kasir{background:var(--info-s);color:var(--info);}
+    .role-kds{background:var(--purple-s);color:var(--purple);}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--surface);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin:auto;}
+    .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);border-radius:var(--r) var(--r) 0 0;z-index:1;}
+    .modal-title{font-size:1rem;font-weight:700;}
+    .modal-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:4px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .modal-close:hover{background:var(--surface-hover);color:var(--text);}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .field{margin-bottom:0;}
+    .field.span2{grid-column:1/-1;}
+    label.flabel{display:block;font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+    .req{color:var(--err);}
+    input[type=text],input[type=tel],input[type=password],select.finput{width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.88rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s;}
+    input:focus,select.finput:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(255,107,0,0.08);}
+    .field-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
+    .pw-wrap{position:relative;}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;}
+    .role-info{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;margin-top:4px;}
+    .role-info-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:0.78rem;border-bottom:1px solid var(--border);}
+    .role-info-item:last-child{border-bottom:none;padding-bottom:0;}
+    .role-info-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;}
+    .role-info-desc .title{font-weight:700;margin-bottom:2px;}
+    .role-info-desc .desc{color:var(--text2);line-height:1.4;}
+    .security-note{background:var(--warn-s);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:12px 14px;font-size:0.78rem;color:#92400E;display:flex;align-items:flex-start;gap:8px;margin-bottom:20px;line-height:1.5;}
+    #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;box-shadow:var(--sh-md);font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.3s ease;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .toast.success i{color:var(--ok);}
+    .toast.error i{color:var(--err);}
+    .toast.info i{color:var(--accent);}
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;align-items:center;justify-content:center;}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:var(--surface);border-radius:var(--r);padding:28px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
+    .confirm-icon{font-size:2.5rem;margin-bottom:12px;}
+    .confirm-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+    .confirm-msg{font-size:0.84rem;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+    .empty{text-align:center;padding:48px 20px;color:var(--muted);}
+    .empty i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.35;}
+    .empty p{font-size:0.84rem;}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.form-grid{grid-template-columns:1fr;}.content{padding:16px;}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div class="user-info"><div class="name" id="user-name">Administrator</div><div class="role-lbl">Admin</div></div>
+  </div>
+  <div class="nav-section">Utama</div>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-receipt"></i> Semua Order</a>
+  <div class="nav-section">Kelola</div>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item active" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="konten.html"><i class="fas fa-photo-film"></i> Konten Web</a>
+  <a class="nav-item" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button style="display:none;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text2)" id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div>
+        <div class="topbar-title">User & Akses</div>
+        <div class="topbar-sub">Kelola akun kasir, KDS, dan admin</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Tambah User</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Total User</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-sub">Semua akun</div>
+      </div>
+      <div class="kpi-card ok">
+        <div class="kpi-label">Admin</div>
+        <div class="kpi-value" id="kpi-admin">—</div>
+        <div class="kpi-sub">Akses penuh</div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label">Kasir</div>
+        <div class="kpi-value" id="kpi-kasir">—</div>
+        <div class="kpi-sub">Input order</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">KDS</div>
+        <div class="kpi-value" id="kpi-kds">—</div>
+        <div class="kpi-sub">Kitchen display</div>
+      </div>
+    </div>
+
+    <!-- Role Guide -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> Panduan Role Akses</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;padding:4px 0;">
+        <div style="padding:16px 20px;border-right:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;color:#92400E;font-size:0.8rem;"><i class="fas fa-crown"></i></div>
+            <span style="font-weight:700;font-size:0.84rem;">Admin</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text2);line-height:1.5;">Akses penuh ke semua fitur: dashboard, laporan, kelola produk, promo, cabang, user, dan pengaturan.</p>
+        </div>
+        <div style="padding:16px 20px;border-right:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:8px;background:var(--info-s);display:flex;align-items:center;justify-content:center;color:var(--info);font-size:0.8rem;"><i class="fas fa-cash-register"></i></div>
+            <span style="font-weight:700;font-size:0.84rem;">Kasir</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text2);line-height:1.5;">Input order manual, lihat order cabang sendiri, generate QRIS, update status. Tidak bisa akses laporan & pengaturan.</p>
+        </div>
+        <div style="padding:16px 20px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:28px;height:28px;border-radius:8px;background:var(--purple-s);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:0.8rem;"><i class="fas fa-kitchen-set"></i></div>
+            <span style="font-weight:700;font-size:0.84rem;">KDS</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text2);line-height:1.5;">Kitchen Display System: lihat order masuk cabang sendiri, update status masak. Tidak bisa input order baru.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="search-user" placeholder="Cari nama atau username..." oninput="filterUser()"/>
+          </div>
+          <select class="filter" id="filter-role" onchange="filterUser()">
+            <option value="">Semua Role</option>
+            <option value="admin">Admin</option>
+            <option value="kasir">Kasir</option>
+            <option value="kds">KDS</option>
+          </select>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted)" id="user-count"></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th><th>Nama</th><th>Username</th><th>Role</th>
+              <th>No. HP / WA</th><th>ID Cabang</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="user-tbody">
+            <tr><td colspan="7" class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal User -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Tambah User</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="u-id"/>
+
+      <div class="security-note">
+        <i class="fas fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px;"></i>
+        <div>Password disimpan di Google Sheets. Gunakan password yang berbeda dari akun pribadi. Jangan gunakan password yang terlalu sederhana.</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field span2">
+          <label class="flabel">Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="u-nama" placeholder="cth: Budi Santoso"/>
+        </div>
+        <div class="field">
+          <label class="flabel">Username <span class="req">*</span></label>
+          <input type="text" id="u-username" placeholder="cth: kasir_01" oninput="this.value=this.value.toLowerCase().replace(/\s/g,'_')"/>
+          <div class="field-hint">Huruf kecil, tanpa spasi (gunakan _)</div>
+        </div>
+        <div class="field">
+          <label class="flabel">No. HP / WA <span class="req">*</span></label>
+          <input type="tel" id="u-nohp" placeholder="cth: 6281234567890"/>
+          <div class="field-hint">Format: 628xxx (untuk kirim OTP)</div>
+        </div>
+        <div class="field">
+          <label class="flabel">Password <span id="pw-required" class="req">*</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="u-password" placeholder="Min. 8 karakter"/>
+            <button type="button" class="pw-toggle" onclick="togglePw()"><i id="pw-icon" class="far fa-eye-slash"></i></button>
+          </div>
+          <div class="field-hint" id="pw-hint">Wajib diisi untuk user baru</div>
+        </div>
+        <div class="field">
+          <label class="flabel">Role <span class="req">*</span></label>
+          <select class="finput" id="u-role" onchange="updateRoleInfo()">
+            <option value="kasir">Kasir</option>
+            <option value="kds">KDS</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="field span2">
+          <label class="flabel">ID Cabang</label>
+          <select class="finput" id="u-cabang">
+            <option value="">— Tidak terikat cabang (rolling) —</option>
+          </select>
+          <div class="field-hint">Kosongkan jika karyawan rolling antar cabang</div>
+        </div>
+      </div>
+
+      <!-- Role info -->
+      <div id="role-info-box" style="margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" id="btn-save" onclick="saveUser()">
+        <i class="fas fa-check"></i> Simpan User
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-overlay" id="modal-reset-pw">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <div class="modal-title">Reset Password</div>
+      <button class="modal-close" onclick="document.getElementById('modal-reset-pw').classList.remove('open')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rp-id"/>
+      <p style="font-size:0.84rem;color:var(--text2);margin-bottom:16px;">Reset password untuk user <strong id="rp-nama"></strong>.</p>
+      <div class="field" style="margin-bottom:16px;">
+        <label class="flabel">Password Baru <span class="req">*</span></label>
+        <div class="pw-wrap">
+          <input type="password" id="rp-password" placeholder="Min. 8 karakter"/>
+          <button type="button" class="pw-toggle" onclick="togglePw2()"><i id="pw-icon2" class="far fa-eye-slash"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('modal-reset-pw').classList.remove('open')">Batal</button>
+      <button class="btn btn-primary" id="btn-reset-pw" onclick="doResetPassword()">
+        <i class="fas fa-key"></i> Reset Password
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Konfirmasi</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'GANTI_DENGAN_URL_APPS_SCRIPT_EXEC';
+let session  = null;
+let userList = [];
+let cabangList = [];
+
+const ROLE_COLORS = {
+  admin:'#92400E', kasir:'#1D4ED8', kds:'#6D28D9'
+};
+const ROLE_BG = {
+  admin:'#FEF3C7', kasir:'#EFF6FF', kds:'#F5F3FF'
+};
+const ROLE_ICONS = {
+  admin:'fa-crown', kasir:'fa-cash-register', kds:'fa-kitchen-set'
+};
+const ROLE_DESC = {
+  admin:'Akses penuh ke seluruh sistem termasuk laporan dan pengaturan.',
+  kasir:'Input order, lihat order cabang, generate QRIS, update status.',
+  kds:'Lihat order masuk, update status masak. Hanya cabang sendiri.'
+};
+
+function checkAuth() {
+  try {
+    const raw = localStorage.getItem('kf_session');
+    if (!raw) return redirect();
+    session = JSON.parse(raw);
+    if (!session?.sessionToken || session.role !== 'admin') return redirect();
+    document.getElementById('user-avatar').textContent = (session.nama||'A')[0].toUpperCase();
+    document.getElementById('user-name').textContent   = session.nama||'Admin';
+  } catch(e) { redirect(); }
+}
+function redirect(){localStorage.removeItem('kf_session');window.location.href='../login.html';}
+function doLogout(){if(!confirm('Yakin keluar?'))return;localStorage.removeItem('kf_session');window.location.href='../login.html';}
+
+async function apiPost(action, extra={}) {
+  const res = await fetch(API,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({action,sessionToken:session.sessionToken,...extra})});
+  return res.json();
+}
+
+function toast(msg,type='info'){
+  const icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+function getAvatarColor(nama) {
+  const colors=['#FF6B00','#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#06B6D4'];
+  let h=0; for(let c of (nama||'A')) h=(h*31+c.charCodeAt(0))%colors.length;
+  return colors[h];
+}
+
+async function loadData() {
+  try {
+    const [u, c] = await Promise.all([apiPost('getUserList'), apiPost('getCabangList')]);
+    userList   = u.users||[];
+    cabangList = c.cabang||[];
+    renderKPI();
+    renderTable(userList);
+    populateCabangSelect();
+  } catch(e) { toast('Gagal memuat data: '+e.message,'error'); }
+}
+
+function renderKPI() {
+  document.getElementById('kpi-total').textContent = userList.length;
+  document.getElementById('kpi-admin').textContent = userList.filter(u=>u.role==='admin').length;
+  document.getElementById('kpi-kasir').textContent = userList.filter(u=>u.role==='kasir').length;
+  document.getElementById('kpi-kds').textContent   = userList.filter(u=>u.role==='kds').length;
+}
+
+function filterUser() {
+  const q    = document.getElementById('search-user').value.toLowerCase();
+  const role = document.getElementById('filter-role').value;
+  renderTable(userList.filter(u=>
+    (!q    || u.nama.toLowerCase().includes(q) || u.username.toLowerCase().includes(q)) &&
+    (!role || u.role===role)
+  ));
+}
+
+function renderTable(list) {
+  document.getElementById('user-count').textContent = list.length + ' user';
+  const tbody = document.getElementById('user-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty"><i class="fas fa-users"></i><p>Tidak ada user ditemukan.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(u => {
+    const ini   = (u.nama||'U')[0].toUpperCase();
+    const color = getAvatarColor(u.nama);
+    const cabang = cabangList.find(c=>c.idCabang===u.idCabang);
+    const isMe  = u.id === session.userId;
+    return `<tr>
+      <td><div class="avatar-cell" style="background:${color}">${ini}</div></td>
+      <td>
+        <div style="font-weight:700">${u.nama} ${isMe?'<span style="font-size:0.68rem;background:var(--accent-s);color:var(--accent);padding:1px 6px;border-radius:4px;font-weight:600">Kamu</span>':''}</div>
+      </td>
+      <td><code style="font-size:0.82rem;background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">${u.username}</code></td>
+      <td>
+        <span class="role-badge" style="background:${ROLE_BG[u.role]||'var(--bg)'};color:${ROLE_COLORS[u.role]||'var(--text2)'}">
+          <i class="fas ${ROLE_ICONS[u.role]||'fa-user'}"></i> ${u.role}
+        </span>
+      </td>
+      <td style="font-size:0.78rem;color:var(--text2)">${u.noHP||'—'}</td>
+      <td style="font-size:0.78rem;color:var(--text2)">${cabang?cabang.namaCabang:(u.idCabang||'<span style="color:var(--muted)">Rolling</span>')}</td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="editUser('${u.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openResetPw('${u.id}','${u.nama}')" title="Reset Password"><i class="fas fa-key"></i></button>
+          ${!isMe?`<button class="btn btn-danger btn-sm btn-icon" onclick="hapusUser('${u.id}','${u.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function populateCabangSelect() {
+  const sel = document.getElementById('u-cabang');
+  sel.innerHTML = '<option value="">— Tidak terikat cabang (rolling) —</option>' +
+    cabangList.map(c=>`<option value="${c.idCabang}">${c.namaCabang}</option>`).join('');
+}
+
+// ── MODAL ────────────────────────────────────────────────────
+function openModal(data=null) {
+  const isEdit = !!data;
+  document.getElementById('modal-title').textContent = isEdit ? 'Edit User' : 'Tambah User';
+  document.getElementById('u-id').value       = data?.id||'';
+  document.getElementById('u-nama').value     = data?.nama||'';
+  document.getElementById('u-username').value = data?.username||'';
+  document.getElementById('u-nohp').value     = data?.noHP||'';
+  document.getElementById('u-password').value = '';
+  document.getElementById('u-role').value     = data?.role||'kasir';
+  document.getElementById('u-cabang').value   = data?.idCabang||'';
+
+  // Password hint
+  document.getElementById('pw-required').style.display = isEdit ? 'none' : 'inline';
+  document.getElementById('pw-hint').textContent = isEdit
+    ? 'Kosongkan jika tidak ingin mengubah password'
+    : 'Wajib diisi untuk user baru';
+
+  // Username readonly saat edit
+  document.getElementById('u-username').readOnly = isEdit;
+  document.getElementById('u-username').style.opacity = isEdit ? '0.6' : '1';
+
+  updateRoleInfo();
+  document.getElementById('modal-user').classList.add('open');
+  setTimeout(()=>document.getElementById('u-nama').focus(), 100);
+}
+
+function editUser(id) {
+  const u = userList.find(x=>x.id===id);
+  if(u) openModal(u);
+}
+
+function closeModal() { document.getElementById('modal-user').classList.remove('open'); }
+
+function togglePw() {
+  const inp=document.getElementById('u-password'), icon=document.getElementById('pw-icon');
+  inp.type=inp.type==='password'?'text':'password';
+  icon.className=inp.type==='password'?'far fa-eye-slash':'far fa-eye';
+}
+function togglePw2() {
+  const inp=document.getElementById('rp-password'), icon=document.getElementById('pw-icon2');
+  inp.type=inp.type==='password'?'text':'password';
+  icon.className=inp.type==='password'?'far fa-eye-slash':'far fa-eye';
+}
+
+function updateRoleInfo() {
+  const role = document.getElementById('u-role').value;
+  const box  = document.getElementById('role-info-box');
+  if (!role) { box.innerHTML=''; return; }
+  box.innerHTML = `
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;font-size:0.78rem;">
+      <div style="width:28px;height:28px;border-radius:8px;background:${ROLE_BG[role]};display:flex;align-items:center;justify-content:center;color:${ROLE_COLORS[role]};flex-shrink:0;">
+        <i class="fas ${ROLE_ICONS[role]}"></i>
+      </div>
+      <div>
+        <div style="font-weight:700;margin-bottom:3px;text-transform:capitalize;">${role}</div>
+        <div style="color:var(--text2);line-height:1.5;">${ROLE_DESC[role]}</div>
+      </div>
+    </div>`;
+}
+
+async function saveUser() {
+  const id       = document.getElementById('u-id').value;
+  const nama     = document.getElementById('u-nama').value.trim();
+  const username = document.getElementById('u-username').value.trim();
+  const noHP     = document.getElementById('u-nohp').value.trim();
+  const password = document.getElementById('u-password').value;
+  const role     = document.getElementById('u-role').value;
+  const idCabang = document.getElementById('u-cabang').value;
+
+  if (!nama||!username||!role) { toast('Nama, username, dan role wajib diisi.','error'); return; }
+  if (!id && !password)         { toast('Password wajib diisi untuk user baru.','error'); return; }
+  if (!noHP)                    { toast('No. HP/WA wajib diisi untuk kirim OTP.','error'); return; }
+  if (password && password.length < 8) { toast('Password minimal 8 karakter.','error'); return; }
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const d = await apiPost('saveUser', {
+      data: JSON.stringify({ id:id||undefined, user:nama, username, password:password||undefined, role, nama, noHP, idCabang:idCabang||undefined })
+    });
+    if(d.success){toast('User berhasil disimpan!','success');closeModal();loadData();}
+    else toast(d.error||'Gagal.','error');
+  } catch(e){toast('Error: '+e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-check"></i> Simpan User';}
+}
+
+// ── RESET PASSWORD ───────────────────────────────────────────
+function openResetPw(id, nama) {
+  document.getElementById('rp-id').value  = id;
+  document.getElementById('rp-nama').textContent = nama;
+  document.getElementById('rp-password').value   = '';
+  document.getElementById('modal-reset-pw').classList.add('open');
+  setTimeout(()=>document.getElementById('rp-password').focus(),100);
+}
+
+async function doResetPassword() {
+  const id  = document.getElementById('rp-id').value;
+  const pw  = document.getElementById('rp-password').value;
+  if (!pw || pw.length < 8) { toast('Password minimal 8 karakter.','error'); return; }
+
+  const btn = document.getElementById('btn-reset-pw');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+
+  try {
+    const u = userList.find(x=>x.id===id);
+    const d = await apiPost('saveUser',{data:JSON.stringify({id,password:pw,username:u?.username,role:u?.role,nama:u?.nama,noHP:u?.noHP})});
+    if(d.success){toast('Password berhasil direset!','success');document.getElementById('modal-reset-pw').classList.remove('open');}
+    else toast(d.error,'error');
+  }catch(e){toast('Error: '+e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-key"></i> Reset Password';}
+}
+
+// ── HAPUS ─────────────────────────────────────────────────────
+function hapusUser(id, nama) {
+  showConfirm('🗑️',`Hapus user "${nama}"?`,
+    'Akun akan dihapus permanen. User tidak bisa login setelah ini.',
+    async()=>{
+      try{
+        const d=await apiPost('deleteUser',{userId:id});
+        if(d.success){toast('User dihapus.','success');loadData();}
+        else toast(d.error,'error');
+      }catch(e){toast('Gagal.','error');}
+    }
+  );
+}
+
+function showConfirm(icon,title,msg,cb){
+  document.getElementById('confirm-icon').textContent=icon;
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-overlay').classList.add('open');
+  document.getElementById('confirm-ok').onclick=async()=>{closeConfirm();await cb();};
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
+
+function checkMobile(){document.getElementById('menu-toggle').style.display=window.innerWidth<=768?'block':'none';}
+window.addEventListener('resize',checkMobile);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeConfirm();document.getElementById('modal-reset-pw').classList.remove('open');}
+});
+document.getElementById('modal-user').addEventListener('click',e=>{if(e.target===document.getElementById('modal-user'))closeModal();});
+document.addEventListener('DOMContentLoaded',()=>{checkAuth();checkMobile();loadData();});
+</script>
+</body>
+</html>

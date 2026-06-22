@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>AI Assistant — The Kebab Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --bg:#F8FAFC; --surface:#FFFFFF; --surface-hover:#F1F5F9;
+      --border:#E2E8F0; --text:#0F172A; --text2:#475569; --muted:#94A3B8;
+      --accent:#FF6B00; --accent-d:#E05E00; --accent-s:#FFF4ED;
+      --ok:#10B981; --ok-s:#ECFDF5; --err:#EF4444;
+      --ai-bg:#1E1B4B; --ai-accent:#818CF8;
+      --sidebar-w:260px; --topbar-h:64px; --r:16px; --r-sm:10px;
+      --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+      --sh-md:0 4px 16px rgba(0,0,0,.08);
+      /* Lebar panel caption saat terbuka */
+      --caption-w:420px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;}
+
+    /* ── Sidebar ── */
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform .3s;}
+    .sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo{width:36px;height:36px;object-fit:contain;background:var(--accent);border-radius:10px;padding:4px;flex-shrink:0;}
+    .sidebar-brand h2{font-size:.95rem;font-weight:800;}
+    .sidebar-brand p{font-size:.65rem;color:var(--muted);font-weight:500;}
+    .sidebar-user{margin:12px;padding:12px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FFB347);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:.9rem;flex-shrink:0;}
+    .nav-section{padding:8px 12px 4px;font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all .15s;font-size:.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
+    .nav-item:hover{background:var(--surface-hover);}
+    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item i{width:18px;text-align:center;font-size:.9rem;color:var(--muted);}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background .15s;}
+    .btn-logout:hover{background:#FEF2F2;}
+
+    /* ── Main layout ── */
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-right .3s;}
+    .main.caption-open{margin-right:var(--caption-w);}
+
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-size:1rem;font-weight:700;}
+    .topbar-sub{font-size:.78rem;color:var(--muted);}
+
+    .page-body{flex:1;display:flex;flex-direction:column;padding:28px;gap:20px;}
+
+    /* ── AI Chat ── */
+    .chat-card{
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+      box-shadow:var(--sh);display:flex;flex-direction:column;flex:1;min-height:500px;overflow:hidden;
+    }
+    .chat-header{
+      padding:16px 20px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      background:linear-gradient(135deg,var(--ai-bg),#312E81);
+    }
+    .chat-header-left{display:flex;align-items:center;gap:12px;}
+    .ai-avatar{
+      width:40px;height:40px;border-radius:12px;
+      background:linear-gradient(135deg,var(--ai-accent),#A78BFA);
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+    }
+    .ai-name{font-weight:700;font-size:.95rem;color:white;}
+    .ai-desc{font-size:.72rem;color:rgba(255,255,255,.6);}
+    .chip-live{
+      display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);
+      padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.8);
+    }
+    .chip-live span{width:7px;height:7px;background:#34D399;border-radius:50%;animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    .chat-messages{
+      flex:1;overflow-y:auto;padding:20px;
+      display:flex;flex-direction:column;gap:14px;
+      background:linear-gradient(180deg,#F8F7FF 0%,var(--bg) 100%);
+    }
+    .msg{display:flex;gap:10px;align-items:flex-start;animation:msgIn .2s ease;}
+    @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .msg.user{flex-direction:row-reverse;}
+    .msg-avatar{
+      width:32px;height:32px;border-radius:10px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;
+    }
+    .msg-avatar.ai{background:linear-gradient(135deg,var(--ai-bg),#312E81);color:var(--ai-accent);}
+    .msg-avatar.user{background:var(--accent-s);color:var(--accent);}
+    .msg-bubble{
+      max-width:75%;padding:12px 16px;border-radius:var(--r);font-size:.88rem;
+      line-height:1.6;box-shadow:var(--sh);
+    }
+    .msg-bubble.ai{background:white;color:var(--text);border-radius:0 var(--r) var(--r) var(--r);}
+    .msg-bubble.user{background:var(--accent);color:white;border-radius:var(--r) 0 var(--r) var(--r);}
+    .msg-bubble pre{white-space:pre-wrap;font-family:inherit;}
+
+    /* Quick questions */
+    .quick-wrap{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:white;}
+    .quick-btn{
+      background:var(--bg);border:1px solid var(--border);border-radius:20px;
+      padding:6px 14px;font-size:.75rem;font-weight:600;cursor:pointer;
+      color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;
+    }
+    .quick-btn:hover{background:var(--accent-s);border-color:var(--accent);color:var(--accent);}
+
+    /* Chat input */
+    .chat-input-wrap{
+      padding:14px 20px;border-top:1px solid var(--border);
+      display:flex;gap:10px;align-items:center;background:white;
+    }
+    .chat-input{
+      flex:1;padding:11px 14px;background:var(--bg);border:1.5px solid var(--border);
+      border-radius:var(--r-sm);font-size:.88rem;font-family:'Inter',sans-serif;
+      color:var(--text);outline:none;transition:all .2s;resize:none;max-height:100px;
+    }
+    .chat-input:focus{border-color:var(--ai-accent);background:white;box-shadow:0 0 0 3px rgba(129,140,248,.12);}
+    .btn-send{
+      width:42px;height:42px;background:var(--ai-bg);color:white;border:none;
+      border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;
+      justify-content:center;font-size:.9rem;transition:all .2s;flex-shrink:0;
+    }
+    .btn-send:hover{background:#312E81;}
+    .btn-send:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* Typing */
+    .typing-dots{display:flex;gap:4px;align-items:center;padding:4px 0;}
+    .typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--ai-accent);animation:bounce .9s infinite;}
+    .typing-dots span:nth-child(2){animation-delay:.15s;}
+    .typing-dots span:nth-child(3){animation-delay:.3s;}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+    /* ── Caption Panel (>> <<) ── */
+    .caption-panel{
+      position:fixed;top:0;right:0;bottom:0;width:var(--caption-w);
+      background:var(--surface);border-left:1px solid var(--border);
+      display:flex;flex-direction:column;z-index:90;
+      transform:translateX(100%);transition:transform .3s ease;
+      box-shadow:-4px 0 24px rgba(0,0,0,.08);
+    }
+    .caption-panel.open{transform:translateX(0);}
+
+    /* Tombol >> (saat panel tertutup) */
+    .caption-toggle-btn{
+      position:fixed;right:0;top:50%;transform:translateY(-50%);
+      background:var(--accent);color:white;border:none;cursor:pointer;
+      width:32px;height:80px;border-radius:12px 0 0 12px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:4px;z-index:91;box-shadow:-2px 0 12px rgba(255,107,0,.25);
+      transition:all .2s;font-size:.6rem;font-weight:700;font-family:'Inter',sans-serif;
+    }
+    .caption-toggle-btn:hover{width:36px;background:var(--accent-d);}
+    .caption-toggle-btn i{font-size:.85rem;}
+    .caption-toggle-btn.hidden{display:none;}
+
+    .caption-header{
+      padding:16px 20px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      background:linear-gradient(135deg,#FF6B00,#FF8A3C);color:white;
+    }
+    .caption-title{font-size:.95rem;font-weight:700;}
+    .caption-subtitle{font-size:.72rem;opacity:.85;margin-top:2px;}
+    .btn-close-caption{
+      background:rgba(255,255,255,.15);border:none;color:white;cursor:pointer;
+      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+      justify-content:center;font-size:.9rem;transition:background .15s;
+    }
+    .btn-close-caption:hover{background:rgba(255,255,255,.25);}
+
+    .caption-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
+
+    /* Form di dalam panel caption */
+    .cap-field{margin-bottom:0;}
+    .cap-label{display:block;font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .cap-select,.cap-input{
+      width:100%;padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);
+      border-radius:var(--r-sm);font-size:.84rem;font-family:'Inter',sans-serif;
+      color:var(--text);outline:none;transition:all .2s;
+    }
+    .cap-select:focus,.cap-input:focus{border-color:var(--accent);background:white;}
+
+    .tone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .tone-btn{
+      padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;
+      font-size:.78rem;font-weight:600;cursor:pointer;background:white;
+      color:var(--text2);text-align:center;transition:all .15s;font-family:'Inter',sans-serif;
+    }
+    .tone-btn.active{border-color:var(--accent);background:var(--accent-s);color:var(--accent);}
+    .tone-btn .tone-icon{display:block;font-size:1.1rem;margin-bottom:3px;}
+
+    .btn-generate{
+      width:100%;background:var(--accent);color:white;border:none;padding:12px;
+      border-radius:var(--r-sm);font-size:.88rem;font-weight:700;cursor:pointer;
+      font-family:'Inter',sans-serif;transition:all .2s;display:flex;align-items:center;
+      justify-content:center;gap:8px;
+    }
+    .btn-generate:hover:not(:disabled){background:var(--accent-d);box-shadow:0 4px 12px rgba(255,107,0,.3);}
+    .btn-generate:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* Hasil caption */
+    .caption-result{display:none;flex-direction:column;gap:12px;}
+    .caption-result.show{display:flex;}
+    .caption-card{
+      background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);
+      overflow:hidden;transition:border-color .2s;
+    }
+    .caption-card:hover{border-color:var(--accent);}
+    .caption-card-head{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:8px 12px;border-bottom:1px solid var(--border);
+      background:white;
+    }
+    .caption-num{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;}
+    .btn-copy{
+      background:none;border:none;cursor:pointer;font-size:.75rem;font-weight:700;
+      color:var(--text2);display:flex;align-items:center;gap:5px;padding:4px 8px;
+      border-radius:6px;transition:all .15s;font-family:'Inter',sans-serif;
+    }
+    .btn-copy:hover{background:var(--accent-s);color:var(--accent);}
+    .btn-copy.copied{color:var(--ok);}
+    .caption-text{padding:12px;font-size:.82rem;line-height:1.7;white-space:pre-wrap;color:var(--text);}
+
+    /* Panduan Meta */
+    .guide-section{
+      background:var(--bg);border-radius:var(--r-sm);padding:14px;
+      border-left:3px solid var(--ai-accent);
+    }
+    .guide-title{font-size:.75rem;font-weight:700;color:var(--ai-bg);margin-bottom:8px;
+      display:flex;align-items:center;gap:6px;}
+    .guide-item{font-size:.75rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border);
+      display:flex;align-items:flex-start;gap:8px;line-height:1.4;}
+    .guide-item:last-child{border-bottom:none;}
+    .guide-item i{color:var(--ai-accent);flex-shrink:0;margin-top:2px;}
+
+    /* Toast */
+    #toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:#1E293B;color:white;padding:9px 18px;border-radius:9px;
+      z-index:600;opacity:0;transition:opacity .2s;pointer-events:none;
+      font-size:.84rem;white-space:nowrap;
+    }
+
+    /* Spinner */
+    .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%);}
+      .main{margin-left:0;}
+      .caption-panel{width:100%;}
+      --caption-w:100%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div style="min-width:0;">
+      <div style="font-size:.82rem;font-weight:700;" id="user-name">Administrator</div>
+      <div style="font-size:.68rem;color:var(--muted);">Admin</div>
+    </div>
+  </div>
+  <div class="nav-section">Utama</div>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-receipt"></i> Semua Order</a>
+  <div class="nav-section">Kelola</div>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="konten.html"><i class="fas fa-photo-film"></i> Konten Web</a>
+  <a class="nav-item" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <a class="nav-item active" href="ai-assistant.html"><i class="fas fa-robot"></i> AI Assistant</a>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main" id="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title"><i class="fas fa-robot" style="color:var(--ai-accent);margin-right:6px;"></i>AI Assistant</div>
+      <div class="topbar-sub">Tanya soal bisnis atau buat caption Meta — semua dalam satu tempat</div>
+    </div>
+    <button onclick="openCaptionPanel()" id="btn-open-caption"
+      style="display:flex;align-items:center;gap:8px;background:var(--accent);color:white;border:none;padding:9px 16px;border-radius:var(--r-sm);font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">
+      <i class="fas fa-pen-nib"></i> Buat Caption &raquo;
+    </button>
+  </div>
+
+  <div class="page-body">
+    <div class="chat-card" id="chat-card">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-name">Asisten Bisnis AI</div>
+            <div class="ai-desc">Data toko diperbarui otomatis setiap sesi</div>
+          </div>
+        </div>
+        <div class="chip-live"><span></span> Live</div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg">
+          <div class="msg-avatar ai"><i class="fas fa-robot"></i></div>
+          <div class="msg-bubble ai">
+            Halo! Saya asisten bisnis AI The Kebab Factory 👋<br><br>
+            Saya bisa bantu analisis data order, produk terlaris, performa promo, saran operasional, dan banyak lagi.<br><br>
+            Mau tanya apa hari ini?
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick questions -->
+      <div class="quick-wrap" id="quick-wrap">
+        <button class="quick-btn" onclick="sendQuick('Produk apa yang paling laku hari ini?')">📦 Produk terlaris</button>
+        <button class="quick-btn" onclick="sendQuick('Berapa total pendapatan hari ini?')">💰 Pendapatan hari ini</button>
+        <button class="quick-btn" onclick="sendQuick('Ada berapa order yang masih aktif sekarang?')">🔥 Order aktif</button>
+        <button class="quick-btn" onclick="sendQuick('Promo mana yang paling sering dipakai pelanggan?')">🏷️ Performa promo</button>
+        <button class="quick-btn" onclick="sendQuick('Kasih saran untuk meningkatkan penjualan minggu ini')">💡 Saran penjualan</button>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chat-input" rows="1"
+          placeholder="Tanya soal bisnis, stok, order, promo..."
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+        <button class="btn-send" id="btn-send" onclick="sendChat()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tombol >> (panel caption tertutup) ── -->
+<button class="caption-toggle-btn" id="caption-toggle-btn" onclick="openCaptionPanel()">
+  <i class="fas fa-chevron-left"></i>
+  <span style="writing-mode:vertical-rl;font-size:.6rem;">Caption</span>
+</button>
+
+<!-- ── Caption Panel ── -->
+<div class="caption-panel" id="caption-panel">
+  <div class="caption-header">
+    <div>
+      <div class="caption-title"><i class="fas fa-pen-nib"></i> Caption Generator</div>
+      <div class="caption-subtitle">Meta Business Suite — Instagram & Facebook</div>
+    </div>
+    <button class="btn-close-caption" onclick="closeCaptionPanel()" title="Tutup panel">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="caption-body">
+    <!-- Form -->
+    <div>
+      <label class="cap-label">Apa yang ingin dipromosikan?</label>
+      <select class="cap-select" id="cap-type" onchange="onCapTypeChange()">
+        <option value="">— Pilih tipe konten —</option>
+        <option value="produk">Produk</option>
+        <option value="promo">Promo / Diskon</option>
+        <option value="custom">Topik bebas</option>
+      </select>
+    </div>
+
+    <div id="cap-produk-wrap" style="display:none;">
+      <label class="cap-label">Pilih Produk</label>
+      <select class="cap-select" id="cap-produk-id"></select>
+    </div>
+
+    <div id="cap-promo-wrap" style="display:none;">
+      <label class="cap-label">Pilih Promo</label>
+      <select class="cap-select" id="cap-promo-kode"></select>
+    </div>
+
+    <div id="cap-custom-wrap" style="display:none;">
+      <label class="cap-label">Topik / Deskripsi</label>
+      <input type="text" class="cap-input" id="cap-topik"
+        placeholder="cth: Grand opening, event, ulang tahun toko..."/>
+    </div>
+
+    <div>
+      <label class="cap-label">Tone</label>
+      <div class="tone-grid">
+        <button class="tone-btn active" data-tone="santai" onclick="selectTone(this)">
+          <span class="tone-icon">😊</span>Santai
+        </button>
+        <button class="tone-btn" data-tone="profesional" onclick="selectTone(this)">
+          <span class="tone-icon">👔</span>Profesional
+        </button>
+        <button class="tone-btn" data-tone="viral" onclick="selectTone(this)">
+          <span class="tone-icon">🔥</span>Viral
+        </button>
+        <button class="tone-btn" data-tone="storytelling" onclick="selectTone(this)">
+          <span class="tone-icon">📖</span>Storytelling
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <label class="cap-label">Platform</label>
+      <select class="cap-select" id="cap-platform">
+        <option value="keduanya">Instagram + Facebook</option>
+        <option value="instagram">Instagram saja</option>
+        <option value="facebook">Facebook saja</option>
+      </select>
+    </div>
+
+    <button class="btn-generate" id="btn-generate" onclick="generateCaption()">
+      <i class="fas fa-wand-magic-sparkles"></i> Generate Caption
+    </button>
+
+    <!-- Hasil -->
+    <div class="caption-result" id="caption-result"></div>
+
+    <!-- Panduan Meta Business Suite -->
+    <div class="guide-section">
+      <div class="guide-title"><i class="fab fa-meta"></i> Tips Meta Business Suite</div>
+      <div class="guide-item"><i class="fas fa-image"></i><span>Rasio gambar terbaik: <b>1:1</b> (1080×1080) untuk feed, <b>9:16</b> untuk Stories/Reels</span></div>
+      <div class="guide-item"><i class="fas fa-clock"></i><span>Waktu posting terbaik: <b>11.00–13.00</b> dan <b>19.00–21.00 WIB</b> (data rata-rata UMKM kuliner Indonesia)</span></div>
+      <div class="guide-item"><i class="fas fa-hashtag"></i><span>Instagram: 10–15 hashtag di akhir caption. Facebook: 3–5 saja</span></div>
+      <div class="guide-item"><i class="fas fa-chart-line"></i><span>Boost post dengan <b>Meta Ads</b> minimal Rp 15.000/hari untuk jangkauan lokal Ponorogo</span></div>
+      <div class="guide-item"><i class="fas fa-reply"></i><span>Balas semua komentar dalam <b>1 jam pertama</b> — Meta memberi reward post yang aktif berinteraksi</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'GANTI_DENGAN_URL_APPS_SCRIPT_EXEC';
+let session     = null;
+let selectedTone = 'santai';
+let produkCache  = [];
+let promoCache   = [];
+
+// ── AUTH ──────────────────────────────────────────────────────
+(function checkAuth() {
+  try {
+    const raw = localStorage.getItem('kf_session');
+    if (!raw) return redirect();
+    session = JSON.parse(raw);
+    if (!session?.sessionToken || session.role !== 'admin') return redirect();
+    document.getElementById('user-avatar').textContent = (session.nama || 'A')[0].toUpperCase();
+    document.getElementById('user-name').textContent   = session.nama || 'Admin';
+  } catch(e) { redirect(); }
+})();
+function redirect() { localStorage.removeItem('kf_session'); window.location.href = '../login.html'; }
+function doLogout() { if (!confirm('Yakin keluar?')) return; localStorage.removeItem('kf_session'); window.location.href = '../login.html'; }
+
+async function apiPost(action, extra = {}) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ action, sessionToken: session.sessionToken, ...extra }),
+  });
+  return res.json();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.style.opacity = '0', 2400);
+}
+
+// ── CHAT ──────────────────────────────────────────────────────
+function addMsg(text, isUser) {
+  const wrap = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = 'msg' + (isUser ? ' user' : '');
+  div.innerHTML = isUser
+    ? '<div class="msg-avatar user"><i class="fas fa-user"></i></div>' +
+      '<div class="msg-bubble user">' + escHtml(text) + '</div>'
+    : '<div class="msg-avatar ai"><i class="fas fa-robot"></i></div>' +
+      '<div class="msg-bubble ai"><pre>' + escHtml(text) + '</pre></div>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const wrap = document.getElementById('chat-messages');
+  const div  = document.createElement('div');
+  div.className = 'msg'; div.id = 'typing-msg';
+  div.innerHTML =
+    '<div class="msg-avatar ai"><i class="fas fa-robot"></i></div>' +
+    '<div class="msg-bubble ai"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function removeTyping() { document.getElementById('typing-msg')?.remove(); }
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const msg = inp.value.trim();
+  if (!msg) return;
+
+  inp.value = ''; inp.style.height = 'auto';
+  document.getElementById('quick-wrap').style.display = 'none';
+  document.getElementById('btn-send').disabled = true;
+
+  addMsg(msg, true);
+  addTyping();
+
+  try {
+    const d = await apiPost('adminAiChat', { message: msg });
+    removeTyping();
+    if (d.success) {
+      addMsg(d.reply, false);
+    } else {
+      addMsg('Maaf, ada gangguan. Coba lagi ya.', false);
+    }
+  } catch(e) {
+    removeTyping();
+    addMsg('Gagal terhubung ke server.', false);
+  } finally {
+    document.getElementById('btn-send').disabled = false;
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+// ── CAPTION PANEL >> << ───────────────────────────────────────
+function openCaptionPanel() {
+  document.getElementById('caption-panel').classList.add('open');
+  document.getElementById('main').classList.add('caption-open');
+  document.getElementById('caption-toggle-btn').classList.add('hidden');
+  document.getElementById('btn-open-caption').style.display = 'none';
+  loadProdukPromoOptions();
+}
+
+function closeCaptionPanel() {
+  document.getElementById('caption-panel').classList.remove('open');
+  document.getElementById('main').classList.remove('caption-open');
+  document.getElementById('caption-toggle-btn').classList.remove('hidden');
+  document.getElementById('btn-open-caption').style.display = '';
+}
+
+// ── Load produk & promo untuk dropdown ───────────────────────
+async function loadProdukPromoOptions() {
+  if (produkCache.length && promoCache.length) return; // sudah dimuat
+
+  try {
+    const [dp, dpr] = await Promise.all([
+      fetch(API + '?action=getMenu').then(r => r.json()),
+      fetch(API + '?action=validasiPromo&kodePromo=X').then(r => r.json()).catch(() => ({ promo: [] })),
+    ]);
+
+    produkCache = (dp.menu || []);
+    const selProduk = document.getElementById('cap-produk-id');
+    selProduk.innerHTML = '<option value="">— Pilih produk —</option>' +
+      produkCache.map(p => '<option value="' + p.idProduk + '">' + p.nama +
+        ' (Rp ' + Number(p.harga).toLocaleString('id-ID') + ')</option>').join('');
+  } catch(e) { console.warn('Gagal load produk/promo:', e); }
+
+  // Load promo list via admin endpoint
+  try {
+    const dp2 = await apiPost('getPromoList');
+    promoCache = (dp2.promo || []).filter(function(p){ return p.status === 'Aktif'; });
+    const selPromo = document.getElementById('cap-promo-kode');
+    selPromo.innerHTML = '<option value="">— Pilih promo —</option>' +
+      promoCache.map(function(p) {
+        return '<option value="' + p.kodePromo + '">' + p.namaPromo +
+          ' (' + p.kodePromo + ', -Rp ' + Number(p.nilaiDiskon).toLocaleString('id-ID') + ')</option>';
+      }).join('');
+  } catch(e) {}
+}
+
+function onCapTypeChange() {
+  const v = document.getElementById('cap-type').value;
+  document.getElementById('cap-produk-wrap').style.display  = v === 'produk'  ? 'block' : 'none';
+  document.getElementById('cap-promo-wrap').style.display   = v === 'promo'   ? 'block' : 'none';
+  document.getElementById('cap-custom-wrap').style.display  = v === 'custom'  ? 'block' : 'none';
+}
+
+function selectTone(el) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedTone = el.dataset.tone;
+}
+
+async function generateCaption() {
+  const type     = document.getElementById('cap-type').value;
+  const platform = document.getElementById('cap-platform').value;
+
+  if (!type) { showToast('Pilih tipe konten dulu'); return; }
+
+  const extra = { tone: selectedTone, platform };
+
+  if (type === 'produk') {
+    extra.produkId = document.getElementById('cap-produk-id').value;
+    if (!extra.produkId) { showToast('Pilih produk dulu'); return; }
+  } else if (type === 'promo') {
+    extra.kodePromo = document.getElementById('cap-promo-kode').value;
+    if (!extra.kodePromo) { showToast('Pilih promo dulu'); return; }
+  } else {
+    extra.topik = document.getElementById('cap-topik').value.trim();
+    if (!extra.topik) { showToast('Isi topik dulu'); return; }
+  }
+
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Generating...';
+
+  const resultEl = document.getElementById('caption-result');
+  resultEl.classList.remove('show');
+  resultEl.innerHTML = '';
+
+  try {
+    const d = await apiPost('generateCaption', extra);
+
+    if (d.success && d.captions && d.captions.length > 0) {
+      resultEl.innerHTML = '<div style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Hasil Caption</div>' +
+        d.captions.map(function(cap, i) {
+          return '<div class="caption-card">' +
+            '<div class="caption-card-head">' +
+              '<span class="caption-num">Caption ' + (i+1) + '</span>' +
+              '<button class="btn-copy" onclick="copyCaption(this, ' + i + ')">' +
+                '<i class="fas fa-copy"></i> Salin' +
+              '</button>' +
+            '</div>' +
+            '<div class="caption-text" id="cap-text-' + i + '">' + escHtml(cap) + '</div>' +
+          '</div>';
+        }).join('');
+      resultEl.classList.add('show');
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      showToast(d.error || 'Gagal generate caption. Coba lagi.');
+    }
+  } catch(e) {
+    showToast('Gagal terhubung ke server.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Caption';
+  }
+}
+
+function copyCaption(btn, idx) {
+  const text = document.getElementById('cap-text-' + idx)?.textContent || '';
+  navigator.clipboard.writeText(text).then(function() {
+    btn.innerHTML = '<i class="fas fa-check"></i> Disalin!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.innerHTML = '<i class="fas fa-copy"></i> Salin';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(function() {
+    showToast('Gagal menyalin. Pilih teks manual.');
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "thekebabfactory-web",
+  "version": "1.0.0",
+  "description": "The Kebab Factory - Web Customer (Frontend + Vercel Proxy)",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests\" && exit 0"
+  },
+  "license": "ISC",
+  "type": "module"
+}
