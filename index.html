@@ -8,14 +8,6 @@
   <script src="https://www.google.com/recaptcha/api.js?render=6LdOGhItAAAAAHqcMLE_8gP81b_SUTGwX54b3czL"></script>
   <link rel="manifest" href="/manifest.json?v=2">
   <meta name="theme-color" content="#ea580c">
-  <!-- ============================================================
-       EXTERNAL LIBRARIES
-       Tailwind CSS    → utility framework
-       Font Awesome    → ikon-ikon UI
-       ⚠️  HAPUS: swiper-bundle.min.js di bawah sudah tidak terpakai.
-           initCarousel() (kode Swiper) tidak pernah dipanggil dan
-           elemen #swiper-wrapper tidak ada di HTML.
-  ============================================================ -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -120,14 +112,13 @@
       object-fit: contain; background: white;
     }
 
-    /* ── AI CHAT BUTTON PULSE ───────────────────────────── */
     @keyframes pulseBot {
       0%   { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
       50%  { transform: scale(1.08); box-shadow: 0 10px 28px rgba(234,88,12,0.55); }
       100% { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
     }
 
-    /* ── MINI AI ICON (dalam header chat) ───────────────── */
+    /* ── MINI AI ICON ───────────────── */
     .mini-ai-icon {
       width: 2.5rem; height: 2.5rem;
       border-radius: 50%; overflow: hidden;
@@ -141,128 +132,67 @@
       background: white;
     }
     /* ── EFEK 3D ────────────────────────────────────────────── */
-.btn-3d {
-  box-shadow: 0 6px 0 rgba(0,0,0,0.25);
-  transform: translateY(0);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-.btn-3d:active {
-  box-shadow: 0 2px 0 rgba(0,0,0,0.25);
-  transform: translateY(4px);
-}
+    .btn-3d {
+      box-shadow: 0 6px 0 rgba(0,0,0,0.25);
+      transform: translateY(0);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-3d:active {
+      box-shadow: 0 2px 0 rgba(0,0,0,0.25);
+      transform: translateY(4px);
+    }
   </style>
 </head>
 <body class="bg-gray-50">
 
-  <!-- ============================================================
-       NAVBAR
-  ============================================================ -->
   <nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-
-      <!-- Logo -->
       <div class="flex items-center gap-4 pr-2">
-        <img src="./logo.png" alt="Logo" class="h-12 w-auto"
-          onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
-        <!-- Fallback teks jika logo.png tidak ada -->
+        <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
         <div id="lt" style="display:none">
-          <span class="text-2xl font-black"
-            style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">
-            Kebab
-          </span>
+          <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
           <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
         </div>
       </div>
-
-      <!-- Nav Links (desktop) -->
       <div class="hidden md:flex gap-8 text-white/80 font-medium text-sm">
-        <a href="#menu"   class="hover:text-orange-400 transition">Menu</a>
+        <a href="#menu" class="hover:text-orange-400 transition">Menu</a>
         <a href="#galeri" class="hover:text-orange-400 transition">Galeri</a>
-        <a href="#pesan"  class="hover:text-orange-400 transition">Pesan</a>
+        <a href="#pesan" class="hover:text-orange-400 transition">Pesan</a>
         <a href="#lokasi" class="hover:text-orange-400 transition">Lokasi</a>
       </div>
-
-      <!-- Tombol kanan -->
       <div class="flex items-center gap-4">
-        <button onclick="document.getElementById('modal-status').style.display='flex'"
-          class="text-white hover:text-orange-400 transition text-sm font-semibold hidden md:block">
-          Cek Order
-        </button>
-        <!-- Search global -->
-        <button onclick="bukaSearch()" class="text-white hover:text-orange-400 transition" title="Cari">
-          <i class="fas fa-search text-xl"></i>
-        </button>
-        <!-- Ikon keranjang + badge jumlah -->
+        <button onclick="document.getElementById('modal-status').style.display='flex'" class="text-white hover:text-orange-400 transition text-sm font-semibold hidden md:block">Cek Order</button>
+        <button onclick="bukaSearch()" class="text-white hover:text-orange-400 transition" title="Cari"><i class="fas fa-search text-xl"></i></button>
         <button onclick="toggleCart()" class="relative text-white hover:text-orange-400 transition">
           <i class="fas fa-shopping-cart text-2xl"></i>
-          <span id="cart-count"
-            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-            0
-          </span>
+          <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
         </button>
-        <!-- Tombol hamburger (mobile) -->
-        <button onclick="toggleMobileMenu()" class="text-white md:hidden">
-          <i class="fas fa-bars text-2xl"></i>
-        </button>
+        <button onclick="toggleMobileMenu()" class="text-white md:hidden"><i class="fas fa-bars text-2xl"></i></button>
       </div>
-
     </div>
   </nav>
 
-  <!-- ============================================================
-       NEWS BAR: Pengumuman (di bawah navbar, di atas hero)
-       Diisi dinamis oleh loadPengumuman() — auto-hide jika kosong
-  ============================================================ -->
   <div id="news-bar" style="display:none;background:linear-gradient(90deg,#ea580c,#f97316);color:white;overflow:hidden;position:relative;">
-    <div id="news-bar-track" style="display:flex;align-items:center;gap:3rem;padding:0.55rem 1rem;white-space:nowrap;animation:newsBarScroll 22s linear infinite;font-size:0.85rem;font-weight:600;">
-      <!-- diisi oleh JS -->
+    <div id="news-bar-track" style="display:flex;align-items:center;gap:3rem;padding:0.55rem 1rem;white-space:nowrap;animation:newsBarScroll 22s linear infinite;font-size:0.85rem;font-weight:600;"></div>
+  </div>
+
+  <div id="mobile-menu" style="display:none;position:fixed;top:64px;right:1rem;z-index:49;min-width:180px" class="md:hidden">
+    <div class="bg-[#3d2010] text-white rounded-2xl shadow-2xl overflow-hidden py-2">
+      <a href="#menu" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Menu</a>
+      <a href="#galeri" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Galeri</a>
+      <a href="#pesan" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Info & Edukasi</a>
+      <a href="#lokasi" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition">Lokasi</a>
     </div>
   </div>
-  <style>
-    @keyframes newsBarScroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    #news-bar:hover #news-bar-track { animation-play-state: paused; }
-    .news-bar-item { display:inline-flex; align-items:center; gap:0.5rem; }
-    .news-bar-item a { color:white; text-decoration:underline; text-underline-offset:2px; }
-  </style>
 
-  <!-- Mobile Menu Dropdown -->
-  <div id="mobile-menu"
-  style="display:none;position:fixed;top:64px;right:1rem;z-index:49;min-width:180px"
-  class="md:hidden">
-  <div class="bg-[#3d2010] text-white rounded-2xl shadow-2xl overflow-hidden py-2">
-    <a href="#menu"   onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Menu</a>
-    <a href="#galeri" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Galeri</a>
-    <a href="#pesan"  onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition border-b border-white/10">Info & Edukasi</a>
-    <a href="#lokasi" onclick="toggleMobileMenu()" class="block px-5 py-3 hover:bg-white/10 transition">Lokasi</a>
-  </div>
-</div>
-
-  <!-- ============================================================
-       MODAL: CEK STATUS PESANAN
-  ============================================================ -->
-  <div id="modal-status"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem">
+  <div id="modal-status" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem">
     <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%">
-
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
         <h3 style="font-weight:900;font-size:1.2rem">Cek Status Pesanan</h3>
-        <button onclick="document.getElementById('modal-status').style.display='none'"
-          style="font-size:2rem;color:#9ca3af">&times;</button>
+        <button onclick="document.getElementById('modal-status').style.display='none'" style="font-size:2rem;color:#9ca3af">×</button>
       </div>
-
-      <input id="input-orderid" type="text"
-        placeholder="Masukkan Order ID (contoh: KF-260522-1234)"
-        style="width:100%;padding:0.875rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem;margin-bottom:1rem">
-
-      <button onclick="cekStatus()"
-        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;margin-bottom:1rem">
-        Cek Status
-      </button>
-
-      <!-- Area hasil pencarian status -->
+      <input id="input-orderid" type="text" placeholder="Masukkan Order ID (contoh: KF-260522-1234)" style="width:100%;padding:0.875rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem;margin-bottom:1rem">
+      <button onclick="cekStatus()" style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;margin-bottom:1rem">Cek Status</button>
       <div id="status-result" style="display:none;background:#f9fafb;border-radius:1rem;padding:1rem">
         <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
           <span style="color:#6b7280;font-size:0.85rem">Order ID</span>
@@ -278,44 +208,29 @@
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="color:#6b7280;font-size:0.85rem">Status</span>
-          <span id="res-status"
-            style="font-weight:900;font-size:1rem;padding:0.25rem 0.875rem;border-radius:2rem"></span>
+          <span id="res-status" style="font-weight:900;font-size:1rem;padding:0.25rem 0.875rem;border-radius:2rem"></span>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- ============================================================
-       MODAL: BACA BERITA & EDUKASI
-  ============================================================ -->
-  <div id="modal-berita"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem"
-    onclick="tutupBerita(event)">
+  <div id="modal-berita" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:center;justify-content:center;padding:1.5rem" onclick="tutupBerita(event)">
     <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:560px;width:100%;max-height:85vh;overflow-y:auto" onclick="event.stopPropagation()">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:1rem">
         <h3 id="berita-judul" style="font-weight:900;font-size:1.3rem;line-height:1.3"></h3>
-        <button onclick="tutupBerita()" style="font-size:2rem;color:#9ca3af;flex-shrink:0;line-height:1">&times;</button>
+        <button onclick="tutupBerita()" style="font-size:2rem;color:#9ca3af;flex-shrink:0;line-height:1">×</button>
       </div>
       <img id="berita-gambar" src="" alt="" style="width:100%;border-radius:1rem;margin-bottom:1rem;max-height:280px;object-fit:cover">
       <div id="berita-konten" style="color:#374151;font-size:0.95rem;line-height:1.7"></div>
     </div>
   </div>
 
-  <!-- ============================================================
-       MODAL: SEARCH GLOBAL
-       Mencari di: Menu, Berita & Edukasi, dan section halaman
-  ============================================================ -->
-  <div id="modal-search"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:160;align-items:flex-start;justify-content:center;padding:1.5rem"
-    onclick="tutupSearch(event)">
+  <div id="modal-search" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:160;align-items:flex-start;justify-content:center;padding:1.5rem" onclick="tutupSearch(event)">
     <div style="background:white;border-radius:1.5rem;padding:1.5rem;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;margin-top:4rem" onclick="event.stopPropagation()">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem">
         <i class="fas fa-search text-gray-400"></i>
-        <input id="search-input" type="text" placeholder="Cari menu, berita, atau halaman..."
-          style="flex:1;border:none;outline:none;font-size:1.05rem;font-weight:600"
-          oninput="doSearch(this.value)" autocomplete="off">
-        <button onclick="tutupSearch()" style="font-size:1.5rem;color:#9ca3af;line-height:1">&times;</button>
+        <input id="search-input" type="text" placeholder="Cari menu, berita, atau halaman..." style="flex:1;border:none;outline:none;font-size:1.05rem;font-weight:600" oninput="doSearch(this.value)" autocomplete="off">
+        <button onclick="tutupSearch()" style="font-size:1.5rem;color:#9ca3af;line-height:1">×</button>
       </div>
       <div id="search-results">
         <p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>
@@ -323,62 +238,32 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       MODAL: PROMO POPUP
-       Tampil sekali per sesi, menampilkan foto galeri/promo
-       dengan CTA. Konten diambil dari Galeri (admin/konten.html).
-  ============================================================ -->
-  <div id="modal-promo-popup"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:170;align-items:center;justify-content:center;padding:1.25rem"
-    onclick="tutupPromoPopup(event)">
+  <div id="modal-promo-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:170;align-items:center;justify-content:center;padding:1.25rem" onclick="tutupPromoPopup(event)">
     <div style="position:relative;max-width:380px;width:100%" onclick="event.stopPropagation()">
-      <button onclick="tutupPromoPopup()"
-        style="position:absolute;top:-14px;right:-14px;width:36px;height:36px;background:white;border-radius:50%;border:none;font-size:1.3rem;color:#374151;box-shadow:0 4px 12px rgba(0,0,0,0.2);cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center">
-        &times;
-      </button>
+      <button onclick="tutupPromoPopup()" style="position:absolute;top:-14px;right:-14px;width:36px;height:36px;background:white;border-radius:50%;border:none;font-size:1.3rem;color:#374151;box-shadow:0 4px 12px rgba(0,0,0,0.2);cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center">×</button>
       <div style="background:white;border-radius:1.25rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
         <img id="promo-popup-img" src="" alt="Promo" style="width:100%;max-height:420px;object-fit:cover;display:block">
         <div style="padding:1.25rem">
           <p id="promo-popup-judul" style="font-weight:900;font-size:1.1rem;text-align:center;margin-bottom:0.75rem;color:#111827"></p>
-          <button onclick="tujuPromo()"
-            style="width:100%;background:linear-gradient(135deg,#ea580c,#f97316);color:white;font-weight:800;padding:0.9rem;border-radius:1rem;border:none;font-size:0.95rem;box-shadow:0 8px 20px rgba(234,88,12,0.35);cursor:pointer">
-            🔥 Tunjukkan Sekarang
-          </button>
+          <button onclick="tujuPromo()" style="width:100%;background:linear-gradient(135deg,#ea580c,#f97316);color:white;font-weight:800;padding:0.9rem;border-radius:1rem;border:none;font-size:0.95rem;box-shadow:0 8px 20px rgba(234,88,12,0.35);cursor:pointer">🔥 Tunjukkan Sekarang</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============================================================
-       FLOATING CTA: Carousel promo geser-geser (bottom area)
-       Auto-hide jika tidak ada konten galeri.
-  ============================================================ -->
   <div id="floating-promo-cta" style="display:none;position:fixed;bottom:90px;right:1rem;z-index:120;max-width:200px">
-    <button onclick="tutupFloatingCta()" style="position:absolute;top:-8px;right:-8px;width:24px;height:24px;background:#374151;color:white;border-radius:50%;border:none;font-size:0.9rem;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25)">&times;</button>
-    <div id="floating-cta-track" style="display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:1rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);scrollbar-width:none">
-      <!-- diisi oleh JS -->
-    </div>
-    <style>#floating-cta-track::-webkit-scrollbar{display:none}</style>
+    <button onclick="tutupFloatingCta()" style="position:absolute;top:-8px;right:-8px;width:24px;height:24px;background:#374151;color:white;border-radius:50%;border:none;font-size:0.9rem;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25)">×</button>
+    <div id="floating-cta-track" style="display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:1rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);scrollbar-width:none"></div>
   </div>
 
-  <!-- ============================================================
-       HERO SECTION
-  ============================================================ -->
   <section class="hero-bg text-white py-24 md:py-36">
     <div class="max-w-4xl mx-auto px-6 text-center">
       <h1 class="text-5xl md:text-7xl font-black mb-4">The Kebab Factory</h1>
       <p class="text-orange-400 font-semibold tracking-widest uppercase text-sm mb-3">A Grilled Passion</p>
-      <p class="text-xl md:text-2xl font-light mb-10 text-white/80">
-        Kebab Signature &bull; With Extras &bull; Grilled with Passion
-      </p>
+      <p class="text-xl md:text-2xl font-light mb-10 text-white/80">Kebab Signature • With Extras • Grilled with Passion</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#menu" class="bg-orange-600 hover:bg-orange-700 px-8 py-4 rounded-full font-bold text-lg transition">
-          <i class="fas fa-utensils mr-2"></i>Lihat Menu
-        </a>
-        <button onclick="document.getElementById('modal-status').style.display='flex'"
-          class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition text-white">
-          🔍 Cek Order
-        </button>
+        <a href="#menu" class="bg-orange-600 hover:bg-orange-700 px-8 py-4 rounded-full font-bold text-lg transition"><i class="fas fa-utensils mr-2"></i>Lihat Menu</a>
+        <button onclick="document.getElementById('modal-status').style.display='flex'" class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition text-white">🔍 Cek Order</button>
       </div>
       <div class="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/70">
         <span><i class="fas fa-clock mr-1 text-orange-400"></i><strong class="text-white">11.00 – 23.00 WIB</strong></span>
@@ -387,9 +272,6 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       MENU SECTION
-  ============================================================ -->
   <section id="menu" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-14">
@@ -397,46 +279,26 @@
         <h2 class="text-4xl font-black mt-1">Menu Kami</h2>
         <p class="text-gray-500 mt-2">Tap Tambah untuk masukkan ke keranjang</p>
       </div>
-      <!-- Kartu menu di-render oleh renderMenu() -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container"></div>
     </div>
   </section>
 
-  <!-- ============================================================
-       MODAL: PILIH VARIAN
-  ============================================================ -->
-  <div id="modal-varian"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center"
-    onclick="closeModal(event)">
+  <div id="modal-varian" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeModal(event)">
     <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:90vh;overflow-y:auto">
-
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <h3 id="modal-nama" style="font-weight:900;font-size:1.2rem"></h3>
-        <button onclick="document.getElementById('modal-varian').style.display='none'"
-          style="font-size:2rem;color:#9ca3af">&times;</button>
+        <button onclick="document.getElementById('modal-varian').style.display='none'" style="font-size:2rem;color:#9ca3af">×</button>
       </div>
       <p id="modal-harga" style="color:#ea580c;font-weight:900;font-size:1.3rem;margin-bottom:1rem"></p>
-
-      <!-- Grup varian dinamis (rasa, daging, ukuran, dll — sesuai data produk) -->
       <div id="modal-varian-groups"></div>
-
-      <!-- Catatan tambahan -->
       <p style="font-weight:700;margin-bottom:0.5rem">Catatan Khusus</p>
-      <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll"
-        style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem">
-      </textarea>
-
-      <button onclick="confirmAddToCart()"class="btn-3d";
-        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:1rem;border-radius:1rem;font-size:1.1rem">
+      <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll" style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem"></textarea>
+      <button onclick="confirmAddToCart()" class="btn-3d w-full bg-[#ea580c] text-white font-heavy p-4 rounded-xl text-lg font-bold">
         + Tambah ke Keranjang
       </button>
-
     </div>
   </div>
 
-  <!-- ============================================================
-       GALERI SECTION (Carousel custom — bukan Swiper)
-  ============================================================ -->
   <section id="galeri" class="py-20 bg-gray-50">
     <div class="max-w-5xl mx-auto px-6">
       <div class="text-center mb-12">
@@ -444,26 +306,14 @@
         <h2 class="text-4xl font-black mt-1">Galeri Kami</h2>
       </div>
       <div class="relative overflow-hidden rounded-2xl">
-        <!-- Track carousel di-render oleh renderCarousel() -->
         <div class="carousel-track" id="carousel-track"></div>
-        <button onclick="moveCarousel(-1)"
-          class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button onclick="moveCarousel(1)"
-          class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition">
-          <i class="fas fa-chevron-right"></i>
-        </button>
+        <button onclick="moveCarousel(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="moveCarousel(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition"><i class="fas fa-chevron-right"></i></button>
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" id="carousel-dots"></div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================================
-       INFO & EDUKASI SECTION
-       ⚠️  BUG ASLI: Ada dua <section> bersarang (#pesan & #informasi).
-           Diperbaiki di sini menjadi satu section dengan dua id.
-  ============================================================ -->
   <section id="pesan" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12">
@@ -471,7 +321,6 @@
         <h2 class="text-4xl font-black mt-1">Jurnal Kebab Factory</h2>
         <p class="text-gray-500 mt-2">Ketahui rahasia di balik bahan premium kami & info terkini</p>
       </div>
-
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container">
         <div class="col-span-full text-center py-8">
           <p class="text-gray-400 font-medium animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat berita & edukasi...</p>
@@ -480,9 +329,6 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       LOKASI SECTION
-  ============================================================ -->
   <section id="lokasi" class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12">
@@ -491,21 +337,14 @@
         <p class="text-gray-500 mt-2">Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Ponorogo</p>
       </div>
       <div class="rounded-3xl overflow-hidden shadow-xl">
-        <iframe src="https://maps.google.com/maps?q=-7.919438,111.496355&hl=id&z=17&output=embed"
-          width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <iframe src="https://maps.google.com/maps?q=-7.919438,111.496355&hl=id&z=17&output=embed" width="100%" height="420" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
       </div>
       <div class="mt-6 text-center">
-        <a href="https://www.google.com/maps?q=-7.919438,111.496355" target="_blank"
-          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition">
-          <i class="fas fa-directions"></i> Buka di Google Maps
-        </a>
+        <a href="https://www.google.com/maps?q=-7.919438,111.496355" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition"><i class="fas fa-directions"></i> Buka di Google Maps</a>
       </div>
     </div>
   </section>
 
-  <!-- ============================================================
-       FOOTER: Info kontak & jam
-  ============================================================ -->
   <section class="bg-[#3d2010] text-white py-16">
     <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
       <div>
@@ -530,15 +369,11 @@
       </div>
       <div class="text-center md:text-left">
         <p class="text-white/60 mb-6 text-lg">Pesanan langsung diproses setelah konfirmasi WhatsApp. Kami siap melayani!</p>
-        <a href="https://wa.me/6281357683151" target="_blank"
-          class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition">
-          <i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp
-        </a>
+        <a href="https://wa.me/6281357683151" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition"><i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp</a>
       </div>
     </div>
   </section>
 
-  <!-- Footer: Metode Pembayaran -->
   <section class="bg-[#3d2010] py-8 border-t border-white/10">
     <div class="max-w-7xl mx-auto px-6 text-center">
       <p class="text-white/60 text-sm mb-4">Pembayaran Tersedia</p>
@@ -554,19 +389,15 @@
     </div>
   </section>
 
-  <!-- Footer: Copyright -->
   <footer class="bg-black text-gray-600 text-center py-5 text-sm">
-    © 2026 The Kebab Factory &bull; A Grilled Passion &bull; Ponorogo
+    © 2026 The Kebab Factory • A Grilled Passion • Ponorogo
   </footer>
 
-  <!-- ============================================================
-       CART SIDEBAR
-  ============================================================ -->
   <div id="cart-sidebar">
     <div class="p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-black">Keranjang</h2>
-        <button onclick="toggleCart()" class="text-4xl text-gray-400 hover:text-gray-700 leading-none">&times;</button>
+        <button onclick="toggleCart()" class="text-4xl text-gray-400 hover:text-gray-700 leading-none">×</button>
       </div>
       <div id="cart-items" class="space-y-4 min-h-[200px]">
         <p class="text-gray-400 text-center mt-10">Keranjang masih kosong</p>
@@ -576,31 +407,19 @@
           <span>Total</span>
           <span id="cart-total-price" class="text-orange-600">Rp 0</span>
         </div>
-        <!-- ✅ BUG DIPERBAIKI: Aslinya ada tanda kutip ganda ekstra → onclick="openCheckout()"" -->
-        <button onclick="openCheckout()"
-  class="w-full text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-3 btn-3d"
-  style="background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 8px 24px rgba(234,88,12,0.4);">
-  <i class="fas fa-shopping-cart text-xl"></i> Checkout
-</button>
+        <button onclick="openCheckout()" class="w-full text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-3 btn-3d" style="background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 8px 24px rgba(234,88,12,0.4);">
+          <i class="fas fa-shopping-cart text-xl"></i> Checkout
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================================
-       MODAL: CHECKOUT DETAIL PESANAN
-  ============================================================ -->
-  <div id="modal-checkout"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center"
-    onclick="closeCheckout(event)">
+  <div id="modal-checkout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;align-items:flex-end;justify-content:center" onclick="closeCheckout(event)">
     <div style="background:white;width:100%;max-width:480px;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;max-height:92vh;overflow-y:auto">
-
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
         <h3 style="font-weight:900;font-size:1.2rem">Detail Pesanan</h3>
-        <button onclick="document.getElementById('modal-checkout').style.display='none'"
-          style="font-size:2rem;color:#9ca3af">&times;</button>
+        <button onclick="document.getElementById('modal-checkout').style.display='none'" style="font-size:2rem;color:#9ca3af">×</button>
       </div>
-
-      <!-- Ringkasan item pesanan -->
       <div style="background:#fff7ed;border-radius:1rem;padding:1rem;margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.85rem;color:#c2410c;margin-bottom:0.5rem">Ringkasan Pesanan</p>
         <div id="co-summary" style="font-size:0.85rem"></div>
@@ -609,59 +428,39 @@
           <span id="co-subtotal" style="color:#ea580c"></span>
         </div>
       </div>
-
-      <!-- Nama pemesan -->
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nama Pemesan *</p>
-        <input id="co-nama" type="text" placeholder="Nama lengkap"
-          style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
+        <input id="co-nama" type="text" placeholder="Nama lengkap" style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
       </div>
-      <!--Nomor Whatsapp-->
-<div style="margin-bottom:1rem">
-  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">
-    Nomor WhatsApp *
-  </p>
-  <input id="co-wa" type="tel" placeholder="Contoh: 08123456789"
-    style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
-</div>
-      <!-- Metode pengiriman -->
+      <div style="margin-bottom:1rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nomor WhatsApp *</p>
+        <input id="co-wa" type="tel" placeholder="Contoh: 08123456789" style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem">
+      </div>
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-          <div id="card-pickup" onclick="selectDelivery('pickup')"
-            style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+          <div id="card-pickup" onclick="selectDelivery('pickup')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
             <p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p>
             <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p>
           </div>
-          <div id="card-delivery" onclick="selectDelivery('delivery')"
-            style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
+          <div id="card-delivery" onclick="selectDelivery('delivery')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
             <p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p>
             <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p>
           </div>
         </div>
       </div>
-
-      <!-- Alamat (hanya tampil jika pilih delivery) -->
       <div id="section-alamat" style="display:none;margin-bottom:1rem">
         <div style="margin-bottom:0.75rem">
           <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Pin Lokasi *</p>
           <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-  <button onclick="getLocation()"
-    style="flex:1;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">
-    📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span>
-  </button>
-  <button onclick="bukaMapPicker()"
-    style="flex:1;border:2px solid #ea580c;color:#ea580c;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">
-    🗺️ Pilih di Peta
-  </button>
+            <button onclick="getLocation()" style="flex:1;border:2px solid #3b82f6;color:#2563eb;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">📍 <span id="loc-btn-text">Gunakan Lokasi Saya</span></button>
+            <button onclick="bukaMapPicker()" style="flex:1;border:2px solid #ea580c;color:#ea580c;font-weight:700;padding:0.75rem;border-radius:0.75rem;background:white;cursor:pointer;font-size:0.85rem">🗺️ Pilih di Peta</button>
           </div>
           <p id="loc-result" style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;text-align:center"></p>
         </div>
         <div style="margin-bottom:0.75rem">
           <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Detail Alamat *</p>
-          <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan"
-            style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem">
-          </textarea>
+          <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan" style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem"></textarea>
         </div>
         <div style="background:#f9fafb;border-radius:0.75rem;padding:0.875rem;display:flex;justify-content:space-between;align-items:center">
           <div>
@@ -671,100 +470,47 @@
           <span id="ongkir-harga" style="font-weight:900;color:#ea580c;font-size:1.1rem">-</span>
         </div>
       </div>
-
-      <!-- Metode pembayaran -->
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pembayaran *</p>
         <div id="payment-options">
           <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
         </div>
       </div>
-      <!-- QRIS: Muncul otomatis saat pilih QRIS -->
-<div id="section-qris" style="display:none;margin-bottom:1rem">
-
-  <!-- Gambar QRIS -->
-  <div style="text-align:center;margin-bottom:0.75rem">
-    <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem;color:#ea580c">
-      📱 Scan QRIS untuk Bayar
-    </p>
-    <img src="./qrisbayar.jpg" alt="QRIS"
-      style="width:100%;max-width:280px;border-radius:1rem;border:2px solid #f3f4f6;padding:0.5rem">
-    <p style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">
-      Scan lalu bayar sesuai total di atas
-    </p>
-  </div>
-
-  <!-- Upload bukti -->
-  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">
-    Upload Bukti Transfer *
-  </p>
-  <label for="input-bukti"
-    style="display:block;width:100%;padding:0.875rem;border:2px dashed #e5e7eb;border-radius:0.75rem;text-align:center;cursor:pointer;color:#6b7280;font-size:0.875rem;margin-bottom:0.5rem">
-    📎 Tap untuk pilih foto bukti
-  </label>
-  <input type="file" id="input-bukti" accept="image/*"
-    onchange="previewBukti(this)"
-    style="display:none">
-  <img id="preview-bukti" src="" alt="Preview"
-    style="display:none;width:100%;border-radius:0.75rem;max-height:200px;object-fit:cover;margin-bottom:0.5rem">
-
-</div>
-
-<!-- Verifikasi OTP: Muncul otomatis saat pilih Cash -->
-<div id="section-otp-cash" style="display:none;margin-bottom:1rem;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:1rem;padding:1rem">
-  <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem;color:#15803d">
-    🔒 Verifikasi Nomor WhatsApp
-  </p>
-  <p style="font-size:0.78rem;color:#6b7280;margin-bottom:0.75rem">
-    Untuk pembayaran Cash, kami akan mengirim kode OTP ke nomor WhatsApp kamu untuk memastikan pesanan valid.
-  </p>
-
-  <div id="otp-cash-step1">
-    <button id="btn-kirim-otp-cash" onclick="kirimOtpCash()"
-      style="width:100%;background:#15803d;color:white;font-weight:700;padding:0.75rem;border-radius:0.75rem;border:none;font-size:0.9rem;cursor:pointer">
-      📲 Kirim OTP ke WhatsApp Saya
-    </button>
-  </div>
-
-  <div id="otp-cash-step2" style="display:none">
-    <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
-      <input id="otp-cash-input" type="text" inputmode="numeric" maxlength="6" placeholder="Masukkan 6 digit OTP"
-        style="flex:1;padding:0.75rem 1rem;border:1.5px solid #bbf7d0;border-radius:0.75rem;outline:none;font-size:1rem;text-align:center;letter-spacing:0.3em;font-weight:700"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();verifikasiOtpCash();}">
-      <button onclick="verifikasiOtpCash()" id="btn-verif-otp-cash"
-        style="background:#15803d;color:white;font-weight:700;padding:0.75rem 1.25rem;border-radius:0.75rem;border:none;font-size:0.85rem;white-space:nowrap;cursor:pointer">
-        Verifikasi
-      </button>
-    </div>
-    <button onclick="kirimOtpCash()" style="background:none;border:none;color:#15803d;font-size:0.78rem;font-weight:600;text-decoration:underline;cursor:pointer">
-      Kirim ulang OTP
-    </button>
-  </div>
-
-  <div id="otp-cash-verified" style="display:none;align-items:center;gap:0.5rem;color:#15803d;font-weight:700;font-size:0.9rem">
-    ✅ Nomor WhatsApp terverifikasi
-  </div>
-
-  <p id="otp-cash-msg" style="font-size:0.78rem;margin-top:0.5rem"></p>
-</div>
-
-      <!-- Kode Promo -->
+      <div id="section-qris" style="display:none;margin-bottom:1rem">
+        <div style="text-align:center;margin-bottom:0.75rem">
+          <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem;color:#ea580c">📱 Scan QRIS untuk Bayar</p>
+          <img src="./qrisbayar.jpg" alt="QRIS" style="width:100%;max-width:280px;border-radius:1rem;border:2px solid #f3f4f6;padding:0.5rem">
+          <p style="font-size:0.75rem;color:#6b7280;margin-top:0.5rem">Scan lalu bayar sesuai total di atas</p>
+        </div>
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Upload Bukti Transfer *</p>
+        <label for="input-bukti" style="display:block;width:100%;padding:0.875rem;border:2px dashed #e5e7eb;border-radius:0.75rem;text-align:center;cursor:pointer;color:#6b7280;font-size:0.875rem;margin-bottom:0.5rem">📎 Tap untuk pilih foto bukti</label>
+        <input type="file" id="input-bukti" accept="image/*" onchange="previewBukti(this)" style="display:none">
+        <img id="preview-bukti" src="" alt="Preview" style="display:none;width:100%;border-radius:0.75rem;max-height:200px;object-fit:cover;margin-bottom:0.5rem">
+      </div>
+      <div id="section-otp-cash" style="display:none;margin-bottom:1rem;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:1rem;padding:1rem">
+        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem;color:#15803d">🔒 Verifikasi Nomor WhatsApp</p>
+        <p style="font-size:0.78rem;color:#6b7280;margin-bottom:0.75rem">Untuk pembayaran Cash, kami akan mengirim kode OTP ke nomor WhatsApp kamu untuk memastikan pesanan valid.</p>
+        <div id="otp-cash-step1">
+          <button id="btn-kirim-otp-cash" onclick="kirimOtpCash()" style="width:100%;background:#15803d;color:white;font-weight:700;padding:0.75rem;border-radius:0.75rem;border:none;font-size:0.9rem;cursor:pointer">📲 Kirim OTP ke WhatsApp Saya</button>
+        </div>
+        <div id="otp-cash-step2" style="display:none">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
+            <input id="otp-cash-input" type="text" inputmode="numeric" maxlength="6" placeholder="Masukkan 6 digit OTP" style="width:100%;flex:1;padding:0.75rem 1rem;border:1.5px solid #bbf7d0;border-radius:0.75rem;outline:none;font-size:1rem;text-align:center;letter-spacing:0.3em;font-weight:700" onkeydown="if(event.key==='Enter'){event.preventDefault();verifikasiOtpCash();}">
+            <button onclick="verifikasiOtpCash()" id="btn-verif-otp-cash" style="background:#15803d;color:white;font-weight:700;padding:0.75rem 1.25rem;border-radius:0.75rem;border:none;font-size:0.85rem;white-space:nowrap;cursor:pointer">Verifikasi</button>
+          </div>
+          <button onclick="kirimOtpCash()" style="background:none;border:none;color:#15803d;font-size:0.78rem;font-weight:600;text-decoration:underline;cursor:pointer">Kirim ulang OTP</button>
+        </div>
+        <div id="otp-cash-verified" style="display:none;align-items:center;gap:0.5rem;color:#15803d;font-weight:700;font-size:0.9rem">✅ Nomor WhatsApp terverifikasi</div>
+        <p id="otp-cash-msg" style="font-size:0.78rem;margin-top:0.5rem"></p>
+      </div>
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Kode Promo</p>
         <div style="display:flex;gap:0.5rem">
-          <input id="co-promo-input" type="text" placeholder="Masukkan kode promo"
-            style="flex:1;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.9rem;text-transform:uppercase"
-            oninput="this.value=this.value.toUpperCase()"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();terapkanPromo();}">
-          <button id="co-promo-btn" onclick="terapkanPromo()"
-            style="background:#1f2937;color:white;font-weight:700;padding:0.75rem 1.25rem;border-radius:0.75rem;border:none;font-size:0.85rem;white-space:nowrap;cursor:pointer">
-            Terapkan
-          </button>
+          <input id="co-promo-input" type="text" placeholder="Masukkan kode promo" style="flex:1;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.9rem;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter'){event.preventDefault();terapkanPromo();}">
+          <button id="co-promo-btn" onclick="terapkanPromo()" style="background:#1f2937;color:white;font-weight:700;padding:0.75rem 1.25rem;border-radius:0.75rem;border:none;font-size:0.85rem;white-space:nowrap;cursor:pointer">Terapkan</button>
         </div>
         <p id="co-promo-msg" style="font-size:0.78rem;margin-top:0.4rem"></p>
       </div>
-
-      <!-- Ringkasan Total -->
       <div style="background:#f9fafb;border-radius:1rem;padding:1rem;margin-bottom:1rem;font-size:0.9rem">
         <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem">
           <span style="color:#6b7280">Subtotal</span>
@@ -779,222 +525,112 @@
           <span id="co-diskon-2" style="font-weight:700">- Rp 0</span>
         </div>
       </div>
-
-      <!-- Total bayar -->
       <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
         <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
       </div>
-
-      <button onclick="submitCheckout()"class="btn-3d";
-  style="width:100%;background:linear-gradient(135deg,#7c3a1c,#ea580c);color:white;font-weight:900;padding:1.25rem;border-radius:1rem;font-size:1.4rem;cursor:pointer;border:none;margin-bottom:1rem">
-  🛒 Buat Pesanan
-</button>
-<p style="text-align:center;font-size:0.78rem;color:#9ca3af;margin-bottom:1rem">
-  <i class="fab fa-whatsapp" style="color:#22c55e"></i>
-  Notifikasi pesanan dikirim melalui WhatsApp
-</p>
+      <button onclick="submitCheckout()" class="btn-3d w-full text-white font-black py-4 rounded-2xl text-xl cursor-pointer border-none mb-4" style="background:linear-gradient(135deg,#7c3a1c,#ea580c);">
+        🛒 Buat Pesanan
+      </button>
+      <p style="text-align:center;font-size:0.78rem;color:#9ca3af;margin-bottom:1rem"><i class="fab fa-whatsapp" style="color:#22c55e"></i> Notifikasi pesanan dikirim melalui WhatsApp</p>
     </div>
   </div>
 
-  <!-- Cart overlay (klik untuk tutup sidebar) -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
 
-  <!-- ============================================================
-       FLOATING CTA BUTTONS (kanan bawah)
-  ============================================================ -->
-  <div id="cta-buttons"
-    style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
-
+  <div id="cta-buttons" style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
     <div id="cta-labels" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-
-      <!-- Tombol AI Chatbot -->
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
-          Tanya Mas Aladin
-        </span>
-        <button onclick="toggleAIChat()" class="ai-chat-button">
-          <img src="./kebab-bot.png" alt="Kebab Bot">
-        </button>
+        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya Mas Aladin</span>
+        <button onclick="toggleAIChat()" class="ai-chat-button"><img src="./kebab-bot.png" alt="Kebab Bot"></button>
       </div>
-
-      <!-- Tombol WhatsApp -->
       <div style="display:flex;align-items:center;gap:0.5rem">
-        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
-          Chat WhatsApp
-        </span>
-        <a href="https://wa.me/62859106881973" target="_blank"
-          style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none">
-          <i class="fab fa-whatsapp"></i>
-        </a>
+        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span>
+        <a href="https://wa.me/6281357683151" target="_blank" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none"><i class="fab fa-whatsapp"></i></a>
       </div>
-
     </div>
   </div>
 
-  <!-- ============================================================
-       AI CHATBOT WINDOW
-  ============================================================ -->
-  <div id="ai-chat"
-    style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;width:calc(100% - 3rem);max-width:380px;background:white;border-radius:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:200;overflow:hidden;flex-direction:column">
-
-    <!-- Header chatbot -->
+  <div id="ai-chat" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;width:calc(100% - 3rem);max-width:380px;background:white;border-radius:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:200;overflow:hidden;flex-direction:column">
     <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
       <div style="display:flex;align-items:center;gap:0.75rem">
-        <div class="mini-ai-icon">
-          <img src="./kebab-bot.png" alt="Mas Aladin">
-        </div>
+        <div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
         <div>
           <p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p>
           <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
         </div>
       </div>
-      <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">&times;</button>
+      <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">×</button>
     </div>
-
-    <!-- Area pesan -->
-    <div id="chat-messages"
-      style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
-      <!-- Pesan selamat datang dari bot -->
+    <div id="chat-messages" style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
       <div style="display:flex;gap:0.5rem;align-items:flex-start">
-        <div class="mini-ai-icon">
-          <img src="./kebab-bot.png" alt="Mas Aladin">
-        </div>
+        <div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
         <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
           Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
         </div>
       </div>
     </div>
-
-    <!-- Pertanyaan cepat (quick reply) -->
-    <div id="quick-questions"
-      style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
-      <button onclick="sendQuick('Menu apa saja yang tersedia?')"
-        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
-        📋 Menu
-      </button>
-      <button onclick="sendQuick('Berapa harga kebab?')"
-        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
-        💰 Harga
-      </button>
-      <button onclick="sendQuick('Jam buka berapa?')"
-        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
-        🕐 Jam Buka
-      </button>
-      <button onclick="sendQuick('Dimana lokasinya?')"
-        style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">
-        📍 Lokasi
-      </button>
+    <div id="quick-questions" style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
+      <button onclick="sendQuick('Menu apa saja yang tersedia?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📋 Menu</button>
+      <button onclick="sendQuick('Berapa harga kebab?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">💰 Harga</button>
+      <button onclick="sendQuick('Jam buka berapa?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">🕐 Jam Buka</button>
+      <button onclick="sendQuick('Dimana lokasinya?')" style="border:1px solid #e5e7eb;border-radius:2rem;padding:0.35rem 0.875rem;font-size:0.75rem;font-weight:600;cursor:pointer;background:white;color:#374151">📍 Lokasi</button>
     </div>
-
-    <!-- Input chat -->
     <div style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;background:white">
-      <input id="chat-input" type="text" placeholder="Ketik pertanyaan..."
-        style="flex:1;padding:0.625rem 1rem;border:1.5px solid #e5e7eb;border-radius:2rem;outline:none;font-size:0.875rem"
-        onkeydown="if(event.key==='Enter') sendChat()">
-      <button onclick="sendChat()"
-        style="width:2.5rem;height:2.5rem;border-radius:50%;background:#ea580c;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <i class="fas fa-paper-plane" style="font-size:0.875rem"></i>
-      </button>
+      <input id="chat-input" type="text" placeholder="Ketik pertanyaan..." style="flex:1;padding:0.625rem 1rem;border:1.5px solid #e5e7eb;border-radius:2rem;outline:none;font-size:0.875rem" onkeydown="if(event.key==='Enter') sendChat()">
+      <button onclick="sendChat()" style="width:2.5rem;height:2.5rem;border-radius:50%;background:#ea580c;color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-paper-plane" style="font-size:0.875rem"></i></button>
     </div>
-
   </div>
 
-  <!-- Toast notifikasi global -->
   <div id="toast"></div>
 
-  <!-- ============================================================
-       COOKIE CONSENT BOX
-  ============================================================ -->
   <div id="cookieBox" class="cookie-box" style="display:none">
     <p>Kami menggunakan cookie untuk pengalaman terbaik</p>
-    <button onclick="acceptCookie()">Terima</button>
-    <button onclick="closeCookie()">Tolak</button>
+    <div class="flex gap-2">
+      <button onclick="acceptCookie()">Terima</button>
+      <button onclick="closeCookie()">Tolak</button>
+    </div>
   </div>
   
-<!-- Tombol Install PWA -->
-<div id="cta-install" style="display:none;align-items:center;gap:0.5rem">
-  <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">
-    Install App
-  </span>
-  <button onclick="installPWA()"
-    style="width:3.5rem;height:3.5rem;border-radius:50%;background:#ea580c;color:white;font-size:1.4rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.4);display:flex;align-items:center;justify-content:center">
-    📲
-  </button>
-    </div>
-  <!-- Banner notif update -->
-<div id="update-bar"
-  style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:white;padding:1rem 1.5rem;display:none;align-items:center;justify-content:space-between;gap:1rem;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,0.3)">
-  <span style="font-size:0.875rem;font-weight:600">
-    🔄 Versi baru tersedia!
-  </span>
-  <button onclick="lakukanUpdate()"
-    style="background:#ea580c;color:white;border:none;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:700;cursor:pointer;font-size:0.875rem;white-space:nowrap">
-    Update Sekarang
-  </button>
-</div>
-  <!-- Modal Map Picker -->
-<div id="modal-mappicker"
-  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:white;border-radius:1.5rem;width:100%;max-width:480px;overflow:hidden">
-
-    <div style="padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f3f4f6">
-      <p style="font-weight:900;font-size:1rem">📍 Pilih Lokasi di Peta</p>
-      <button onclick="tutupMapPicker()" style="font-size:1.75rem;color:#9ca3af;border:none;background:none">&times;</button>
-    </div>
-
-    <!-- Peta Leaflet -->
-    <div id="leaflet-map" style="height:320px;width:100%"></div>
-
-    <div style="padding:1rem">
-      <p style="font-size:0.8rem;color:#6b7280;text-align:center;margin-bottom:0.75rem">
-        Geser & zoom peta lalu tap 📍 tepat di lokasi kamu
-      </p>
-      <div id="koordinat-dipilih"
-        style="background:#f9fafb;border-radius:0.75rem;padding:0.75rem;text-align:center;font-size:0.8rem;color:#6b7280;margin-bottom:0.75rem">
-        Belum ada lokasi dipilih
-      </div>
-      <button onclick="konfirmasiMapPicker()"
-        style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
-        ✅ Konfirmasi Lokasi Ini
-      </button>
-    </div>
-
+  <div id="cta-install" style="display:none;align-items:center;gap:0.5rem">
+    <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Install App</span>
+    <button onclick="installPWA()" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#ea580c;color:white;font-size:1.4rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.4);display:flex;align-items:center;justify-content:center">📲</button>
   </div>
-</div>
-  <!-- ============================================================
-       ⚠️  HAPUS BARIS INI — Swiper library tidak dipakai sama sekali.
-       Carousel di halaman ini menggunakan kode custom (renderCarousel),
-       bukan Swiper. Memuat library ini hanya memboroskan bandwidth.
-  ============================================================ -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/swiper/11.1.0/swiper-bundle.min.js"></script> -->
+
+  <div id="update-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:white;padding:1rem 1.5rem;align-items:center;justify-content:space-between;gap:1rem;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,0.3)">
+    <span style="font-size:0.875rem;font-weight:600">🔄 Versi baru tersedia!</span>
+    <button onclick="lakukanUpdate()" style="background:#ea580c;color:white;border:none;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:700;cursor:pointer;font-size:0.875rem;white-space:nowrap">Update Sekarang</button>
+  </div>
+
+  <div id="modal-mappicker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:white;border-radius:1.5rem;width:100%;max-width:480px;overflow:hidden">
+      <div style="padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f3f4f6">
+        <p style="font-weight:900;font-size:1rem">📍 Pilih Lokasi di Peta</p>
+        <button onclick="tutupMapPicker()" style="font-size:1.75rem;color:#9ca3af;border:none;background:none">×</button>
+      </div>
+      <div id="leaflet-map" style="height:320px;width:100%"></div>
+      <div style="padding:1rem">
+        <p style="font-size:0.8rem;color:#6b7280;text-align:center;margin-bottom:0.75rem">Geser & zoom peta lalu tap 📍 tepat di lokasi kamu</p>
+        <div id="koordinat-dipilih" style="background:#f9fafb;border-radius:0.75rem;padding:0.75rem;text-align:center;font-size:0.8rem;color:#6b7280;margin-bottom:0.75rem">Belum ada lokasi dipilih</div>
+        <button onclick="konfirmasiMapPicker()" style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">✅ Konfirmasi Lokasi Ini</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // ============================================================
-    // Progresive Web App
-    // ============================================================
-      if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => {
-        reg.update(); // cek update setiap buka app
-        console.log('SW Registered');
-      })
-      .catch(err => console.log('SW Error:', err));
-      }
-    // ============================================================
-    // KONFIGURASI: URL Google Apps Script (backend)
-    // ============================================================
-    // ── FORMAT RUPIAH (pengganti toLocaleString yang tidak konsisten) ──
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => { reg.update(); console.log('SW Registered'); })
+        .catch(err => console.log('SW Error:', err));
+    }
+
     function rupiah(n) {
       return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
-    // ⚠️ Lewat Vercel Reverse Proxy — sembunyikan URL Apps Script asli & hindari CORS
     const APPS_SCRIPT_URL = '/api/proxy';
     const RCK = '6LdOGhItAAAAAHqcMLE_8gP81b_SUTGwX54b3czL';
-    // ============================================================
-    // DATA: Warna badge status pesanan
-    // ============================================================
+
     const STATUS_COLOR = {
       'Pending':  { bg: '#fef9c3', color: '#854d0e' },
       'Diproses': { bg: '#dbeafe', color: '#1d4ed8' },
@@ -1003,12 +639,8 @@
       'Batal':    { bg: '#fee2e2', color: '#b91c1c' },
     };
 
-    // ============================================================
-    // DATA: Daftar menu — dimuat dinamis dari Sheet Id_produk + Varian
-    // ============================================================
-    let menuItems = []; // diisi oleh loadMenu()
+    let menuItems = [];
 
-    // Fetch menu dari backend (?action=getMenu)
     async function loadMenu() {
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getMenu');
@@ -1021,7 +653,7 @@
           desc:   p.deskripsi || '',
           badge:  p.kategori || '',
           img:    p.foto || '',
-          varian: p.varian || {}, // {tipe: [{nama, hargaTambah}]}
+          varian: p.varian || {},
         }));
         renderMenu();
       } catch (e) {
@@ -1031,17 +663,8 @@
       }
     }
 
-    // ============================================================
-    // DATA: Gambar galeri — dimuat dinamis dari backend (Sheet Galeri)
-    // Fallback ke array statis jika backend kosong/gagal.
-    // ============================================================
-    let galleryImages = [
-      "./kebab1.jpeg",
-      "./kebab2.jpeg",
-      "./kebab3.jpg",
-    ];
-
-    let galeriItems = []; // {id, judul, gambar, urutan} — untuk promo popup & floating CTA
+    let galleryImages = ["./kebab1.jpeg", "./kebab2.jpeg", "./kebab3.jpg"];
+    let galeriItems = [];
 
     async function loadGaleri() {
       try {
@@ -1056,136 +679,83 @@
         console.error('Gagal memuat galeri, pakai default:', e);
       }
       renderCarousel();
-      setupPromoMarketing(); // popup + floating CTA dari konten galeri
+      setupPromoMarketing();
     }
 
-    // ============================================================
-    // STATE: Variabel global yang dipakai lintas fungsi
-    // ============================================================
-    let cart         = [];    // isi keranjang
-    let carouselIdx  = 0;     // slide aktif carousel
+    let cart = [];
+    let carouselIdx = 0;
+    let deliveryMode = '';
+    let selectedPayment = '';
+    let userLat = null;
+    let userLng = null;
+    let ongkir = 0;
 
-    // Variabel checkout
-    let deliveryMode    = '';   // 'pickup' | 'delivery'
-    let selectedPayment = '';   // 'cash'   | 'qris'
-    let userLat         = null;
-    let userLng         = null;
-    let ongkir          = 0;
-
-    // Koordinat restoran
     const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
-    let STORE_WA = '6281357683151'; // fallback, di-override oleh loadCustomTheme()
+    let STORE_WA = '6281357683151';
+    let promoApplied = null;
 
-    // State kode promo
-    let promoApplied = null; // { kodePromo, namaPromo, nilaiDiskon, minBelanja }
-
-    // ============================================================
-    // NAVBAR: Toggle menu mobile
-    // ============================================================
     function toggleMobileMenu() {
-    const menu = document.getElementById('mobile-menu');
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      const menu = document.getElementById('mobile-menu');
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
     }
 
-    // ============================================================
-    // CEK STATUS: Ambil status pesanan dari Google Sheets
-    // ============================================================
     function cekStatus() {
       const orderId = document.getElementById('input-orderid').value.trim();
       if (!orderId) { showToast('⚠️ Masukkan Order ID dulu!'); return; }
-
       showToast('Mengecek status...');
       fetch(APPS_SCRIPT_URL + '?orderId=' + encodeURIComponent(orderId))
         .then(r => r.json())
         .then(data => {
           if (!data.found) { showToast('❌ Order ID tidak ditemukan'); return; }
-
           document.getElementById('res-orderid').textContent = data.orderId;
           document.getElementById('res-nama').textContent    = data.nama;
           document.getElementById('res-total').textContent   = data.total;
-
           const s  = data.status;
           const sc = STATUS_COLOR[s] || { bg: '#f3f4f6', color: '#374151' };
           const el = document.getElementById('res-status');
           el.textContent      = s;
           el.style.background = sc.bg;
           el.style.color      = sc.color;
-
           document.getElementById('status-result').style.display = 'block';
         })
         .catch(() => showToast('❌ Gagal cek status. Coba lagi.'));
     }
 
-    // ============================================================
-    // MENU: Render kartu menu ke #menu-container
-    // ============================================================
     function renderMenu() {
-  document.getElementById('menu-container').innerHTML = menuItems.map(item => {
-    const badgeColor = item.badge === 'Best Value' ? 'background:#dcfce7;color:#15803d'
-                     : item.badge === 'Double'     ? 'background:#dbeafe;color:#1d4ed8'
-                     : item.badge === 'Signature'  ? 'background:#fee2e2;color:#b91c1c' : '';
-    return `
-      <div onclick="addToCart(${item.id})"
-        style="background:white;border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column"
-        onmouseenter="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.15)'"
-        onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'"
-        ontouchstart="this.style.transform='scale(0.97)';this.style.boxShadow='0 2px 10px rgba(0,0,0,0.1)'"
-        ontouchend="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'">
-
-        <!-- Foto menu -->
-        <div style="position:relative;overflow:hidden;height:180px">
-          <img src="${item.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'}" alt="${item.name}"
-            style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease"
-            onmouseenter="this.style.transform='scale(1.08)'"
-            onmouseleave="this.style.transform='scale(1)'"
-            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'">
-          <!-- Badge -->
-          ${item.badge ? `
-          <span style="position:absolute;top:0.75rem;left:0.75rem;font-size:0.7rem;font-weight:800;padding:0.3rem 0.75rem;border-radius:2rem;${badgeColor}">
-            ${item.badge}
-          </span>` : ''}
-          <!-- Overlay gelap bawah foto -->
-          <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,0.3))"></div>
-        </div>
-
-        <!-- Info menu -->
-        <div style="padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between">
-          <div>
-            <h3 style="font-weight:800;font-size:1rem;line-height:1.3;margin-bottom:0.25rem">${item.name}</h3>
-            <p style="color:#9ca3af;font-size:0.8rem">${item.desc}</p>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.875rem;padding-top:0.875rem;border-top:1px solid #f3f4f6">
-            <span style="font-weight:900;font-size:1.3rem;color:#ea580c">
-              Rp ${(item.price / 1000).toFixed(0)}rb
-            </span>
-            <button onclick="event.stopPropagation(); addToCart(${item.id})"class="btn-3d";
-              style="background:#ea580c;color:white;border:none;padding:0.5rem 1rem;border-radius:0.75rem;font-weight:700;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem">
-              <i class="fas fa-plus"></i> Tambah
-            </button>
-          </div>
-        </div>
-
-      </div>`;
-  }).join('');
+      document.getElementById('menu-container').innerHTML = menuItems.map(item => {
+        const badgeColor = item.badge === 'Best Value' ? 'background:#dcfce7;color:#15803d'
+                         : item.badge === 'Double'     ? 'background:#dbeafe;color:#1d4ed8'
+                         : item.badge === 'Signature'  ? 'background:#fee2e2;color:#b91c1c' : '';
+        return `
+          <div onclick="addToCart(${item.id})" class="bg-white rounded-3xl overflow-hidden shadow-sm cursor-pointer transition flex flex-col hover:-translate-y-1.5 hover:shadow-xl duration-200">
+            <div style="position:relative;overflow:hidden;height:180px">
+              <img src="${item.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'">
+              ${item.badge ? `<span style="position:absolute;top:0.75rem;left:0.75rem;font-size:0.7rem;font-weight:800;padding:0.3rem 0.75rem;border-radius:2rem;${badgeColor}">${item.badge}</span>` : ''}
+              <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,0.3))"></div>
+            </div>
+            <div style="padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <h3 style="font-weight:800;font-size:1rem;line-height:1.3;margin-bottom:0.25rem">${item.name}</h3>
+                <p style="color:#9ca3af;font-size:0.8rem">${item.desc}</p>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.875rem;padding-top:0.875rem;border-top:1px solid #f3f4f6">
+                <span style="font-weight:900;font-size:1.3rem;color:#ea580c">Rp ${(item.price / 1000).toFixed(0)}rb</span>
+                <button onclick="event.stopPropagation(); addToCart(${item.id})" class="btn-3d bg-[#ea580c] text-white border-none py-2 px-4 rounded-xl font-bold text-sm cursor-pointer flex items-center gap-1.5">
+                  <i class="fas fa-plus"></i> Tambah
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
     }
 
-    // ============================================================
-    // CAROUSEL: Render gambar galeri
-    // ============================================================
     function renderCarousel() {
       const track = document.getElementById('carousel-track');
       const dots  = document.getElementById('carousel-dots');
-
-      track.innerHTML = galleryImages.map(src =>
-        `<div class="carousel-slide"><img src="${src}" alt="Kebab Factory"></div>`
-      ).join('');
-
-      dots.innerHTML = galleryImages.map((_, i) =>
-        `<button onclick="goCarousel(${i})" class="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white transition" id="dot-${i}"></button>`
-      ).join('');
-
+      track.innerHTML = galleryImages.map(src => `<div class="carousel-slide"><img src="${src}" alt="Kebab Factory"></div>`).join('');
+      dots.innerHTML = galleryImages.map((_, i) => `<button onclick="goCarousel(${i})" class="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white transition" id="dot-${i}"></button>`).join('');
       updateCarousel();
-      setInterval(() => moveCarousel(1), 4000); // auto-advance setiap 4 detik
+      setInterval(() => moveCarousel(1), 4000);
     }
 
     function moveCarousel(dir) {
@@ -1206,27 +776,16 @@
       });
     }
 
-    // ============================================================
-    // CART: State & logika keranjang belanja
-    // ============================================================
     let pendingItemId  = null;
-    let selectedVarian = '';
-    let selectedDaging  = '';
-
-    // Buka modal pilih varian sebelum masuk keranjang
-    // tempVarianPilih: {tipe: {nama, hargaTambah}}
     let tempVarianPilih = {};
 
     function addToCart(id) {
       pendingItemId  = id;
       tempVarianPilih = {};
       const item = menuItems.find(m => m.id === id);
-
       document.getElementById('modal-nama').textContent  = item.name;
       document.getElementById('modal-harga').textContent = 'Rp ' + rupiah(item.price);
       document.getElementById('modal-catatan').value     = '';
-
-      // Render grup varian dinamis
       const container = document.getElementById('modal-varian-groups');
       const tipes = Object.keys(item.varian || {});
 
@@ -1238,21 +797,14 @@
           tempVarianPilih[tipe] = { nama: opts[0].nama, hargaTambah: Number(opts[0].hargaTambah)||0 };
           const btns = opts.map((o, oi) => {
             const extra = o.hargaTambah > 0 ? ` (+Rp ${rupiah(o.hargaTambah)})` : '';
-            return `<button onclick="selectVarianGrup(this,'${tipe}','${o.nama.replace(/'/g,"\\'")}',${Number(o.hargaTambah)||0})"
-              class="varian-grup-btn" data-tipe="${tipe}"
-              style="border:2px solid ${oi===0?'#ea580c':'#e5e7eb'};background:${oi===0?'#ea580c':'white'};color:${oi===0?'white':'#111'};padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">
-              ${o.nama}${extra}
-            </button>`;
+            return `<button onclick="selectVarianGrup(this,'${tipe}','${o.nama.replace(/'/g,"\\'")}',${Number(o.hargaTambah)||0})" class="varian-grup-btn" data-tipe="${tipe}" style="border:2px solid ${oi===0?'#ea580c':'#e5e7eb'};background:${oi===0?'#ea580c':'white'};color:${oi===0?'white':'#111'};padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">${o.nama}${extra}</button>`;
           }).join('');
-          return `<p style="font-weight:700;margin-bottom:0.5rem;text-transform:capitalize">Pilih ${tipe} *</p>
-            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">${btns}</div>`;
+          return `<p style="font-weight:700;margin-bottom:0.5rem;text-transform:capitalize">Pilih ${tipe} *</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">${btns}</div>`;
         }).join('');
       }
-
       document.getElementById('modal-varian').style.display = 'flex';
     }
 
-    // Highlight tombol varian dinamis yang dipilih (per grup/tipe)
     function selectVarianGrup(btn, tipe, nama, hargaTambah) {
       tempVarianPilih[tipe] = { nama, hargaTambah };
       document.querySelectorAll(`.varian-grup-btn[data-tipe="${tipe}"]`).forEach(b => {
@@ -1265,35 +817,26 @@
       btn.style.color       = 'white';
     }
 
-    // Tutup modal jika klik di luar
     function closeModal(e) {
-      if (e.target.id === 'modal-varian')
-        document.getElementById('modal-varian').style.display = 'none';
+      if (e.target.id === 'modal-varian') document.getElementById('modal-varian').style.display = 'none';
     }
 
-    // Konfirmasi: masukkan item ke keranjang
     function confirmAddToCart() {
       const item    = menuItems.find(m => m.id === pendingItemId);
       const catatan = document.getElementById('modal-catatan').value.trim();
-
       const addOn      = Object.values(tempVarianPilih).reduce((s,v)=>s+(v.hargaTambah||0), 0);
       const finalPrice = item.price + addOn;
       const varianLabel = Object.values(tempVarianPilih).map(v=>v.nama).join(' / ') || '-';
-
       const existing = cart.find(i => i.id === pendingItemId && i.varianLabel === varianLabel && i.catatan === catatan);
 
-      if (existing) {
-        existing.quantity++;
-      } else {
-        cart.push({ ...item, price: finalPrice, quantity: 1, varianLabel, catatan });
-      }
+      if (existing) { existing.quantity++; } 
+      else { cart.push({ ...item, price: finalPrice, quantity: 1, varianLabel, catatan }); }
 
       document.getElementById('modal-varian').style.display = 'none';
       renderCart();
       showToast(item.name + ' (' + varianLabel + ') ditambahkan 🛒');
     }
 
-    // Ubah jumlah item di keranjang (+ / - / hapus)
     function changeCartQty(id, delta) {
       const idx = cart.findIndex(i => i.id === id);
       if (idx === -1) return;
@@ -1302,25 +845,20 @@
       renderCart();
     }
 
-    // Render ulang tampilan keranjang
     function renderCart() {
       const count = cart.reduce((s, i) => s + i.quantity, 0);
       document.getElementById('cart-count').textContent = count;
-
       const container = document.getElementById('cart-items');
       if (!cart.length) {
         container.innerHTML = '<p style="color:#9ca3af;text-align:center;margin-top:2.5rem">Keranjang masih kosong</p>';
         document.getElementById('cart-total-price').textContent = 'Rp 0';
         return;
       }
-
       container.innerHTML = cart.map(item => `
         <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
             <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">${item.name}</p>
-            <button onclick="changeCartQty(${item.id},-${item.quantity})" style="color:#f87171;font-size:0.85rem">
-              <i class="fas fa-trash"></i>
-            </button>
+            <button onclick="changeCartQty(${item.id},-${item.quantity})" style="color:#f87171;font-size:0.85rem"><i class="fas fa-trash"></i></button>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="display:flex;align-items:center;gap:0.5rem">
@@ -1333,24 +871,17 @@
           ${item.varianLabel && item.varianLabel !== '-' ? `<p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.varianLabel}</p>` : ''}
           ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem">${item.catatan}</p>` : ''}
         </div>`).join('');
-
       const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
     }
 
-    // Buka / tutup sidebar keranjang
     function toggleCart() {
       document.getElementById('cart-sidebar').classList.toggle('open');
       document.getElementById('cart-overlay').classList.toggle('open');
     }
 
-    // ============================================================
-    // CHECKOUT: Alur pemesanan lengkap
-    // ============================================================
     function openCheckout() {
       if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
-
-      // Reset semua state checkout
       deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0;
       waVerified = false;
       document.getElementById('co-wa').disabled = false;
@@ -1379,27 +910,20 @@
       document.getElementById('payment-options').innerHTML  = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
       document.getElementById('section-qris').style.display = 'none';
       document.getElementById('preview-bukti').style.display = 'none';
-      // Isi ringkasan pesanan
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       document.getElementById('co-subtotal').textContent = 'Rp ' + rupiah(subtotal);
       document.getElementById('co-summary').innerHTML = cart.map(i =>
-        `<div style="display:flex;justify-content:space-between">
-           <span>${i.name}${i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : ''} ×${i.quantity}</span>
-           <span>Rp ${rupiah(i.price * i.quantity)}</span>
-         </div>`
+        `<div style="display:flex;justify-content:space-between"><span>${i.name}${i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : ''} ×${i.quantity}</span><span>Rp ${rupiah(i.price * i.quantity)}</span></div>`
       ).join('');
-
       updateCoTotal();
-      toggleCart(); // tutup sidebar dulu
+      toggleCart();
       document.getElementById('modal-checkout').style.display = 'flex';
     }
 
     function closeCheckout(e) {
-      if (e.target.id === 'modal-checkout')
-        document.getElementById('modal-checkout').style.display = 'none';
+      if (e.target.id === 'modal-checkout') document.getElementById('modal-checkout').style.display = 'none';
     }
 
-    // Pilih metode pengiriman
     function selectDelivery(mode) {
       deliveryMode = mode;
       document.getElementById('card-pickup').style.border      = mode === 'pickup'   ? '2px solid #ea580c' : '2px solid #e5e7eb';
@@ -1413,146 +937,112 @@
       updateCoTotal();
     }
 
-    // Render opsi pembayaran sesuai mode pengiriman
     function updatePaymentOptions() {
       const c    = document.getElementById('payment-options');
       const opts = deliveryMode === 'pickup'
         ? [{ val: 'cash', label: '💵 Cash' }, { val: 'qris', label: '📱 QRIS' }]
-        : [{ val: 'qris', label: '📱 QRIS' }]; // Delivery hanya QRIS
-
-      c.innerHTML = opts.map(o => `
-        <div id="pay-${o.val}" onclick="selectPayment('${o.val}')"
-          style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">
-          ${o.label}
-        </div>`).join('');
+        : [{ val: 'qris', label: '📱 QRIS' }];
+      c.innerHTML = opts.map(o => `<div id="pay-${o.val}" onclick="selectPayment('${o.val}')" style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">${o.label}</div>`).join('');
     }
 
     function selectPayment(val) {
-  selectedPayment = val;
-  document.querySelectorAll('#payment-options div').forEach(d => {
-    d.style.border     = '2px solid #e5e7eb';
-    d.style.background = 'white';
-  });
-  const el = document.getElementById('pay-' + val);
-  if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
-
-  // ✅ Tampilkan/sembunyikan section QRIS
-  document.getElementById('section-qris').style.display = val === 'qris' ? 'block' : 'none';
-
-  // ✅ Tampilkan/sembunyikan section OTP (wajib untuk Cash)
-  document.getElementById('section-otp-cash').style.display = val === 'cash' ? 'block' : 'none';
-
-  // Reset bukti jika ganti ke cash
-  if (val !== 'qris') {
-    document.getElementById('input-bukti').value = '';
-    document.getElementById('preview-bukti').style.display = 'none';
-  }
-}
-
-// ============================================================
-// VERIFIKASI OTP — Wajib untuk pembayaran Cash (Diperbaiki ke JSON)
-// ============================================================
-let waVerified = false;
-
-async function kirimOtpCash() {
-  const wa    = document.getElementById('co-wa').value.trim();
-  const msgEl = document.getElementById('otp-cash-msg');
-
-  if (!wa || wa.replace(/\D/g,'').length < 9) {
-    msgEl.style.color = '#ef4444';
-    msgEl.textContent = '⚠️ Isi Nomor WhatsApp yang valid di atas terlebih dahulu.';
-    return;
-  }
-
-  const btn = document.getElementById('btn-kirim-otp-cash');
-  btn.disabled = true; btn.textContent = 'Mengirim...';
-  msgEl.style.color = '#6b7280';
-  msgEl.textContent = '';
-
-  try {
-    await new Promise(r => grecaptcha.ready(r));
-    const rcToken = await grecaptcha.execute(RCK, { action: 'login' }); // Disamakan action-nya dengan backend
-
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan JSON murni
-      body: JSON.stringify({ action: 'customerRequestOTP', noWA: wa, recaptchaToken: rcToken })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      document.getElementById('otp-cash-step1').style.display = 'none';
-      document.getElementById('otp-cash-step2').style.display = 'block';
-      msgEl.style.color = '#15803d';
-      msgEl.textContent = '✅ Kode OTP telah dikirim ke WhatsApp ' + wa;
-      setTimeout(() => document.getElementById('otp-cash-input').focus(), 100);
-    } else {
-      msgEl.style.color = '#ef4444';
-      msgEl.textContent = '❌ ' + (data.error || 'Gagal mengirim OTP.');
-      btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
+      selectedPayment = val;
+      document.querySelectorAll('#payment-options div').forEach(d => {
+        d.style.border     = '2px solid #e5e7eb';
+        d.style.background = 'white';
+      });
+      const el = document.getElementById('pay-' + val);
+      if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
+      document.getElementById('section-qris').style.display = val === 'qris' ? 'block' : 'none';
+      document.getElementById('section-otp-cash').style.display = val === 'cash' ? 'block' : 'none';
+      if (val !== 'qris') {
+        document.getElementById('input-bukti').value = '';
+        document.getElementById('preview-bukti').style.display = 'none';
+      }
     }
-  } catch(e) {
-    msgEl.style.color = '#ef4444';
-    msgEl.textContent = '❌ Gagal terhubung ke server.';
-    btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
-  }
-}
 
-async function verifikasiOtpCash() {
-  const wa  = document.getElementById('co-wa').value.trim();
-  const otp = document.getElementById('otp-cash-input').value.trim();
-  const msgEl = document.getElementById('otp-cash-msg');
-
-  if (otp.length !== 6) {
-    msgEl.style.color = '#ef4444';
-    msgEl.textContent = '⚠️ Masukkan 6 digit kode OTP.';
-    return;
-  }
-
-  const btn = document.getElementById('btn-verif-otp-cash');
-  btn.disabled = true; btn.textContent = '...';
-
-  try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan JSON murni
-      body: JSON.stringify({ action: 'customerVerifyOTP', noWA: wa, otp: otp })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      waVerified = true;
-      document.getElementById('co-wa').disabled = true;
-      document.getElementById('otp-cash-step2').style.display = 'none';
-      document.getElementById('otp-cash-verified').style.display = 'flex';
-      msgEl.textContent = '';
-    } else {
-      msgEl.style.color = '#ef4444';
-      msgEl.textContent = '❌ ' + (data.error || 'OTP tidak valid.');
-      btn.disabled = false; btn.textContent = 'Verifikasi';
-      document.getElementById('otp-cash-input').value = '';
+    // FIX API ROUTING PAYLOAD: Diubah ke payload JSON murni
+    async function kirimOtpCash() {
+      const wa    = document.getElementById('co-wa').value.trim();
+      const msgEl = document.getElementById('otp-cash-msg');
+      if (!wa || wa.replace(/\D/g,'').length < 9) {
+        msgEl.style.color = '#ef4444';
+        msgEl.textContent = '⚠️ Isi Nomor WhatsApp yang valid di atas terlebih dahulu.';
+        return;
+      }
+      const btn = document.getElementById('btn-kirim-otp-cash');
+      btn.disabled = true; btn.textContent = 'Mengirim...';
+      msgEl.style.color = '#6b7280'; msgEl.textContent = '';
+      try {
+        await new Promise(r => grecaptcha.ready(r));
+        const rcToken = await grecaptcha.execute(RCK, { action: 'login' });
+        const res  = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'customerRequestOTP', noWA: wa, recaptchaToken: rcToken })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('otp-cash-step1').style.display = 'none';
+          document.getElementById('otp-cash-step2').style.display = 'block';
+          msgEl.style.color = '#15803d'; msgEl.textContent = '✅ Kode OTP telah dikirim ke WhatsApp ' + wa;
+          setTimeout(() => document.getElementById('otp-cash-input').focus(), 100);
+        } else {
+          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'Gagal mengirim OTP.');
+          btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
+        }
+      } catch(e) {
+        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal terhubung ke server.';
+        btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
+      }
     }
-  } catch(e) {
-    msgEl.style.color = '#ef4444';
-    msgEl.textContent = '❌ Gagal terhubung ke server.';
-    btn.disabled = false; btn.textContent = 'Verifikasi';
-  }
-}
-    // Hitung jarak dua koordinat (km) dengan rumus Haversine
+
+    // FIX API ROUTING PAYLOAD: Diubah ke payload JSON murni
+    async function verifikasiOtpCash() {
+      const wa  = document.getElementById('co-wa').value.trim();
+      const otp = document.getElementById('otp-cash-input').value.trim();
+      const msgEl = document.getElementById('otp-cash-msg');
+      if (otp.length !== 6) {
+        msgEl.style.color = '#ef4444'; msgEl.textContent = '⚠️ Masukkan 6 digit kode OTP.';
+        return;
+      }
+      const btn = document.getElementById('btn-verif-otp-cash');
+      btn.disabled = true; btn.textContent = '...';
+      try {
+        const res  = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'customerVerifyOTP', noWA: wa, otp: otp })
+        });
+        const data = await res.json();
+        if (data.success) {
+          waVerified = true;
+          document.getElementById('co-wa').disabled = true;
+          document.getElementById('otp-cash-step2').style.display = 'none';
+          document.getElementById('otp-cash-verified').style.display = 'flex';
+          msgEl.textContent = '';
+        } else {
+          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'OTP tidak valid.');
+          btn.disabled = false; btn.textContent = 'Verifikasi';
+          document.getElementById('otp-cash-input').value = '';
+        }
+      } catch(e) {
+        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal terhubung ke server.';
+        btn.disabled = false; btn.textContent = 'Verifikasi';
+      }
+    }
+
     function haversine(lat1, lng1, lat2, lng2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLng = (lng2 - lng1) * Math.PI / 180;
-      const a = Math.sin(dLat / 2) ** 2
-              + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // Deteksi lokasi GPS pengguna & hitung ongkir
     function getLocation() {
       if (!navigator.geolocation) { showToast('GPS tidak tersedia'); return; }
       document.getElementById('loc-btn-text').textContent = 'Mendeteksi lokasi...';
-
       navigator.geolocation.getCurrentPosition(
         pos => {
           userLat = pos.coords.latitude;
@@ -1560,7 +1050,6 @@ async function verifikasiOtpCash() {
           const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
           ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
           const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
-
           document.getElementById('loc-btn-text').textContent  = '✅ Lokasi Terdeteksi';
           document.getElementById('loc-result').textContent    = 'Jarak: ' + dist.toFixed(1) + ' km';
           document.getElementById('ongkir-info').textContent   = label;
@@ -1574,24 +1063,18 @@ async function verifikasiOtpCash() {
       );
     }
 
-    // Hitung breakdown total: subtotal, ongkir, diskon, grand total
     function hitungTotal() {
       const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
       const ongkirAktif = deliveryMode === 'delivery' ? ongkir : 0;
       let diskon = 0;
-      if (promoApplied) {
-        diskon = Math.min(promoApplied.nilaiDiskon, subtotal); // diskon tidak boleh > subtotal
-      }
+      if (promoApplied) { diskon = Math.min(promoApplied.nilaiDiskon, subtotal); }
       const total = Math.max(0, subtotal + ongkirAktif - diskon);
       return { subtotal, ongkirAktif, diskon, total };
     }
 
-    // Update tampilan total bayar (subtotal, ongkir, diskon, grand total)
     function updateCoTotal() {
       const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
-
       document.getElementById('co-subtotal-2').textContent = 'Rp ' + rupiah(subtotal);
-
       const ongkirRow = document.getElementById('co-ongkir-row');
       if (deliveryMode === 'delivery') {
         ongkirRow.style.display = 'flex';
@@ -1599,7 +1082,6 @@ async function verifikasiOtpCash() {
       } else {
         ongkirRow.style.display = 'none';
       }
-
       const diskonRow = document.getElementById('co-diskon-row');
       if (promoApplied && diskon > 0) {
         diskonRow.style.display = 'flex';
@@ -1608,54 +1090,34 @@ async function verifikasiOtpCash() {
       } else {
         diskonRow.style.display = 'none';
       }
-
-      document.getElementById('co-total').textContent = 'Rp ' + rupiah(total);
+      document.querySelectorAll('#co-total').forEach(el => el.textContent = 'Rp ' + rupiah(total));
     }
 
-    // ============================================================
-    // KODE PROMO: validasi via backend, terapkan diskon ke total
-    // ============================================================
     async function terapkanPromo() {
       const kode = document.getElementById('co-promo-input').value.trim().toUpperCase();
       const msgEl = document.getElementById('co-promo-msg');
-
       if (!kode) { msgEl.style.color = '#ef4444'; msgEl.textContent = 'Masukkan kode promo terlebih dahulu.'; return; }
-
       const { subtotal } = hitungTotal();
       const btn = document.getElementById('co-promo-btn');
       btn.disabled = true; btn.textContent = '...';
-
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=validasiPromo&kodePromo=' + encodeURIComponent(kode) + '&total=' + subtotal);
         const data = await res.json();
-
         if (data.success) {
-          promoApplied = {
-            kodePromo:   data.kodePromo,
-            namaPromo:   data.namaPromo,
-            nilaiDiskon: data.nilaiDiskon,
-            minBelanja:  data.minBelanja,
-          };
-          msgEl.style.color = '#16a34a';
-          msgEl.textContent = '✅ ' + data.pesan;
+          promoApplied = { kodePromo: data.kodePromo, namaPromo: data.namaPromo, nilaiDiskon: data.nilaiDiskon, minBelanja: data.minBelanja };
+          msgEl.style.color = '#16a34a'; msgEl.textContent = '✅ ' + data.pesan;
           document.getElementById('co-promo-input').disabled = true;
-          btn.textContent = 'Hapus';
-          btn.disabled = false;
-          btn.onclick = batalkanPromo;
+          btn.textContent = 'Hapus'; btn.disabled = false; btn.onclick = batalkanPromo;
           updateCoTotal();
         } else {
           promoApplied = null;
-          msgEl.style.color = '#ef4444';
-          msgEl.textContent = '❌ ' + (data.error || 'Kode promo tidak valid.');
-          btn.textContent = 'Terapkan';
-          btn.disabled = false;
+          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'Kode promo tidak valid.');
+          btn.textContent = 'Terapkan'; btn.disabled = false;
           updateCoTotal();
         }
       } catch (e) {
-        msgEl.style.color = '#ef4444';
-        msgEl.textContent = '❌ Gagal memeriksa promo. Cek koneksi internet.';
-        btn.textContent = 'Terapkan';
-        btn.disabled = false;
+        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal memeriksa promo. Cek koneksi internet.';
+        btn.textContent = 'Terapkan'; btn.disabled = false;
       }
     }
 
@@ -1665,324 +1127,206 @@ async function verifikasiOtpCash() {
       document.getElementById('co-promo-input').disabled = false;
       document.getElementById('co-promo-msg').textContent = '';
       const btn = document.getElementById('co-promo-btn');
-      btn.textContent = 'Terapkan';
-      btn.onclick = terapkanPromo;
+      btn.textContent = 'Terapkan'; btn.onclick = terapkanPromo;
       updateCoTotal();
     }
 
-    // Generate Order ID unik format KF-YYMMDD-XXXX
     function generateOrderId() {
       const now  = new Date();
-      const date = now.getFullYear().toString().slice(-2)
-                 + String(now.getMonth() + 1).padStart(2, '0')
-                 + String(now.getDate()).padStart(2, '0');
+      const date = now.getFullYear().toString().slice(-2) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
       const rand = Math.floor(Math.random() * 9000) + 1000;
       return 'KF-' + date + '-' + rand;
     }
 
-    // Submit checkout: validasi → kirim ke Sheet → buka WhatsApp
-    // ⚠️  DUPLIKAT DIHAPUS: Fungsi ini sebelumnya didefinisikan 2x
-    //     (baris 955 & 1020 di file asli). Kontennya 100% identik.
-    //     JavaScript hanya pakai definisi terakhir → fungsi pertama
-    //     sia-sia. Cukup satu definisi di sini.
-    
-// ============================================================
-// CHECKOUT: Submit pesanan + upload bukti QRIS
-// ============================================================
-async function submitCheckout() {
-  const nama = document.getElementById('co-nama').value.trim();
-  const wa = document.getElementById('co-wa').value.trim();
-  if (!nama)            { showToast('⚠️ Nama wajib diisi!'); return; }
-  if (!wa)              { showToast('⚠️ Nomor WA wajib diisi!'); return; }
-  if (!deliveryMode)    { showToast('⚠️ Pilih metode pengiriman!'); return; }
-  if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi!'); return; }
-  if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
-  if (!selectedPayment){ showToast('⚠️ Pilih metode pembayaran!'); return; }
-  if (selectedPayment === 'qris' && !document.getElementById('input-bukti')?.files[0]) {
-    showToast('⚠️ Upload bukti transfer dulu!'); return;
-  }
-  if (selectedPayment === 'cash' && !waVerified) {
-    showToast('⚠️ Verifikasi OTP WhatsApp dulu untuk pembayaran Cash!'); return;
-  }
+    // FIX SUBMIT CHECKOUT URL-ENCODED -> JSON SYNC BACKEND
+    async function submitCheckout() {
+      const nama = document.getElementById('co-nama').value.trim();
+      const wa = document.getElementById('co-wa').value.trim();
+      if (!nama)            { showToast('⚠️ Nama wajib diisi!'); return; }
+      if (!wa)              { showToast('⚠️ Nomor WA wajib diisi!'); return; }
+      if (!deliveryMode)    { showToast('⚠️ Pilih metode pengiriman!'); return; }
+      if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi!'); return; }
+      if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
+      if (!selectedPayment){ showToast('⚠️ Pilih metode pembayaran!'); return; }
+      if (selectedPayment === 'qris' && !document.getElementById('input-bukti')?.files[0]) { showToast('⚠️ Upload bukti transfer dulu!'); return; }
+      if (selectedPayment === 'cash' && !waVerified) { showToast('⚠️ Verifikasi OTP WhatsApp dulu untuk pembayaran Cash!'); return; }
 
-  const orderId   = generateOrderId();
-  const timestamp = new Date().toLocaleString('id-ID');
-  const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
-  const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-  let itemsText = cart.map(i => i.name + '(' + (i.varianLabel||'-') + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
-  
-  if (promoApplied && diskon > 0) {
-    itemsText += ', [PROMO:' + promoApplied.kodePromo + ']';
-  }
+      const orderId   = generateOrderId();
+      const timestamp = new Date().toLocaleString('id-ID');
+      const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
+      const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
+      let itemsText = cart.map(i => i.name + '(' + (i.varianLabel||'-') + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
+      if (promoApplied && diskon > 0) { itemsText += ', [PROMO:' + promoApplied.kodePromo + ']'; }
 
-  let linkBukti = null;
-  if (selectedPayment === 'qris') {
-    showToast('Mengupload bukti transfer...');
-    linkBukti = await uploadBuktiKeSheet(orderId);
-    if (!linkBukti) {
-      showToast('❌ Gagal upload bukti. Coba lagi.');
-      return;
-    }
-  }
-
-  // FIX: Mengirim objek JSON bersih langsung ke root doPost backend
-  const dataPesanan = {
-    orderId: orderId,
-    timestamp: timestamp,
-    nama: nama,
-    noWA: wa,
-    userLat: userLat || null,
-    userLng: userLng || null,
-    pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-    alamat: alamat,
-    ongkir: deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
-    pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-    items: itemsText,
-    total: 'Rp ' + rupiah(total),
-    linkBukti: linkBukti || '-'
-  };
-
-  showToast('Sedang mengirim pesanan...');
-
-  fetch(APPS_SCRIPT_URL, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan Content-Type JSON murni
-    body:    JSON.stringify(dataPesanan)
-  })
-  .then(res => res.json())
-  .then(result => {
-    if (!result || result.success === false) {
-      showToast('❌ Gagal: ' + (result?.error || 'Server menolak pesanan.'));
-      return;
-    }
-    
-    // Alur redirect WhatsApp (Dipertahankan sesuai rancangan asli Anda)
-    let msg = 'Halo The Kebab Factory!%0A%0A';
-    msg += '*Order ID:* '   + orderId   + '%0A';
-    msg += '*Waktu:* '      + timestamp + '%0A';
-    msg += '*Nama:* '       + nama      + '%0A';
-    msg += '*Pengiriman:* ' + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
-    if (deliveryMode === 'delivery') {
-      msg += '*Alamat:* ' + alamat + '%0A';
-      if (userLat) msg += '*Lokasi GPS:* http://maps.google.com/?q=' + userLat + ',' + userLng + '%0A';
-      msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir)) + '%0A';
-    }
-    msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
-    if (linkBukti) msg += '*Bukti Transfer:* ' + encodeURIComponent(linkBukti) + '%0A';
-    msg += '%0A*Pesanan:*%0A';
-    cart.forEach(i => {
-      msg += '- ' + i.name + (i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : '') + ' x' + i.quantity + ' = Rp ' + rupiah(i.price * i.quantity) + '%0A';
-      if (i.catatan) msg += '   Catatan: ' + i.catatan + '%0A';
-    });
-    msg += '%0A*TOTAL: Rp ' + rupiah(total) + '*%0A%0AMohon segera diproses. Terima kasih!';
-
-    window.open('https://wa.me/' + STORE_WA + '?text=' + msg, '_blank');
-    document.getElementById('modal-checkout').style.display = 'none';
-    showOrderConfirm(orderId);
-    setTimeout(() => { cart = []; promoApplied = null; renderCart(); }, 800);
-  })
-  .catch(err => {
-    showToast('❌ Gagal mengirim pesanan. Periksa koneksi.');
-    console.error(err);
-  });
-}
-// ============================================================
-// BUKTI TRANSFER: Preview & upload ke Google Drive
-// ============================================================
-function previewBukti(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const preview = document.getElementById('preview-bukti');
-    preview.src   = e.target.result;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-
-async function uploadBuktiKeSheet(orderId) {
-  const input = document.getElementById('input-bukti');
-  if (!input?.files[0]) return null;
-
-  const file   = input.files[0];
-  const reader = new FileReader();
-
-  return new Promise(resolve => {
-    reader.onload = async e => {
-      const base64 = e.target.result;
-      
-      const payload = new URLSearchParams();
-      payload.append('action',  'uploadBukti');
-      payload.append('orderId', orderId);
-      // PERBAIKAN 1: Jangan pakai encodeURIComponent lagi di sini
-      payload.append('base64', base64); 
-
-      try {
-        const res  = await fetch(APPS_SCRIPT_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body:    payload
-        });
-        
-        const data = await res.json();
-        
-        // PERBAIKAN 2: Tampilkan pesan error asli dari Google jika gagal
-        if (data.success) {
-          resolve(data.link);
-        } else {
-          alert('Gagal dari Server Google: ' + data.error); 
-          resolve(null);
-        }
-      } catch (error) {
-        // Tangkap error jika internet putus atau link Apps Script salah
-        console.error('Fetch Error:', error);
-        alert('Gagal menghubungi server Google. Cek log console Anda.');
-        resolve(null);
+      let linkBukti = null;
+      if (selectedPayment === 'qris') {
+        showToast('Mengupload bukti transfer...');
+        linkBukti = await uploadBuktiKeSheet(orderId);
+        if (!linkBukti) { showToast('❌ Gagal upload bukti. Coba lagi.'); return; }
       }
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
-    // Tampilkan popup konfirmasi dengan Order ID setelah pesan berhasil
+      const dataPesanan = {
+        orderId, timestamp, nama, noWA: wa,
+        userLat: userLat || null, userLng: userLng || null,
+        pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
+        alamat,
+        ongkir: deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
+        pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
+        items: itemsText,
+        total: 'Rp ' + rupiah(total),
+        linkBukti: linkBukti || '-'
+      };
+
+      showToast('Sedang mengirim pesanan...');
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataPesanan)
+        });
+        const result = await res.json();
+        if (!result || result.success === false) {
+          showToast('❌ Gagal: ' + (result?.error || 'Server menolak pesanan.'));
+          return;
+        }
+
+        let msg = 'Halo The Kebab Factory!%0A%0A';
+        msg += '*Order ID:* '   + orderId   + '%0A';
+        msg += '*Waktu:* '      + timestamp + '%0A';
+        msg += '*Nama:* '       + nama      + '%0A';
+        msg += '*Pengiriman:* ' + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
+        if (deliveryMode === 'delivery') {
+          msg += '*Alamat:* ' + alamat + '%0A';
+          if (userLat) msg += '*Lokasi GPS:* http://googleusercontent.com/maps.google.com/7' + userLat + ',' + userLng + '%0A';
+          msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir)) + '%0A';
+        }
+        msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
+        if (linkBukti) msg += '*Bukti Transfer:* ' + encodeURIComponent(linkBukti) + '%0A';
+        msg += '%0A*Pesanan:*%0A';
+        cart.forEach(i => {
+          msg += '- ' + i.name + (i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : '') + ' x' + i.quantity + ' = Rp ' + rupiah(i.price * i.quantity) + '%0A';
+          if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
+        });
+        msg += '%0A*TOTAL: Rp ' + rupiah(total) + '*%0A%0AMohon segera diproses. Terima kasih!';
+
+        window.open('https://wa.me/' + STORE_WA + '?text=' + msg, '_blank');
+        document.getElementById('modal-checkout').style.display = 'none';
+        showOrderConfirm(orderId);
+        setTimeout(() => { cart = []; promoApplied = null; renderCart(); }, 800);
+      } catch (err) {
+        showToast('❌ Gagal mengirim pesanan. Periksa koneksi.');
+      }
+    }
+
+    function previewBukti(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('preview-bukti');
+        preview.src   = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function uploadBuktiKeSheet(orderId) {
+      const input = document.getElementById('input-bukti');
+      if (!input?.files[0]) return null;
+      const file   = input.files[0];
+      const reader = new FileReader();
+      return new Promise(resolve => {
+        reader.onload = async e => {
+          const base64 = e.target.result;
+          try {
+            const res  = await fetch(APPS_SCRIPT_URL, {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body:    JSON.stringify({ action: 'uploadBukti', orderId, base64 })
+            });
+            const data = await res.json();
+            if (data.success) { resolve(data.link); } 
+            else { alert('Gagal dari Server Google: ' + data.error); resolve(null); }
+          } catch (error) {
+            alert('Gagal menghubungi server Google.'); resolve(null);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     function showOrderConfirm(orderId) {
       const el = document.createElement('div');
       el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-      el.innerHTML = `
-        <div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center">
-          <div style="font-size:3rem;margin-bottom:1rem">✅</div>
-          <h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3>
-          <p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p>
-          <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1.5rem">
-            <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p>
-            <p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p>
-          </div>
-          <button onclick="this.parentNode.parentNode.remove()"
-            style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">
-            OK, Mengerti
-          </button>
-        </div>`;
+      el.innerHTML = `<div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center"><div style="font-size:3rem;margin-bottom:1rem">✅</div><h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3><p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p><div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1rem"><p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p><p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p></div><button onclick="this.parentNode.parentNode.remove()" style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">OK, Mengerti</button></div>`;
       document.body.appendChild(el);
     }
 
-    // ============================================================
-    // TOAST: Notifikasi kecil di bawah layar
-    // ============================================================
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent  = msg;
-      t.style.opacity = '1';
+      t.textContent  = msg; t.style.opacity = '1';
       clearTimeout(window._tt);
       window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
     }
 
-    // ============================================================
-    // AI CHATBOT: Toggle & kirim pesan
-    // ============================================================
     let isChatOpen = false;
-
-    // ⚠️  CATATAN: chatHistory dibangun di bawah tapi TIDAK pernah
-    //     dikirim ke API (payload hanya berisi 'message' terkini).
-    //     Hapus variabel ini atau kirimkan ke backend jika ingin
-    //     chatbot punya memori percakapan.
     let chatHistory = [];
 
     function toggleAIChat() {
       isChatOpen = !isChatOpen;
-      const chat      = document.getElementById('ai-chat');
-      const ctaLabels = document.getElementById('cta-labels');
-      chat.style.display      = isChatOpen ? 'flex' : 'none';
-      ctaLabels.style.display = isChatOpen ? 'none' : 'flex';
+      document.getElementById('ai-chat').style.display = isChatOpen ? 'flex' : 'none';
+      document.getElementById('cta-labels').style.display = isChatOpen ? 'none' : 'flex';
     }
 
-    // Tambah bubble pesan (user atau bot)
     function addMessage(text, isUser) {
       const container = document.getElementById('chat-messages');
       const div = document.createElement('div');
       div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start' + (isUser ? ';flex-direction:row-reverse' : '');
       div.innerHTML = isUser
         ? `<div style="background:#ea580c;color:white;border-radius:1rem 0 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;max-width:85%;line-height:1.5">${text}</div>`
-        : `<div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
-           <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
+        : `<div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div><div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
+      container.appendChild(div); container.scrollTop = container.scrollHeight;
       return div;
     }
 
-    // Tampilkan animasi "sedang mengetik..."
     function addTyping() {
       const container = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.id = 'typing-indicator';
+      const div = document.createElement('div'); div.id = 'typing-indicator';
       div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
-      div.innerHTML = `
-        <div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
-        <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-          <span style="display:flex;gap:0.25rem">
-            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0s"></span>
-            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.2s"></span>
-            <span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.4s"></span>
-          </span>
-        </div>`;
-      container.appendChild(div);
-      container.scrollTop = container.scrollHeight;
+      div.innerHTML = `<div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div><div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)"><span style="display:flex;gap:0.25rem"><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0s"></span><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.2s"></span><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.4s"></span></span></div>`;
+      container.appendChild(div); container.scrollTop = container.scrollHeight;
     }
 
-    // Kirim pesan ke Apps Script (backend AI)
     async function sendChat() {
       const input = document.getElementById('chat-input');
       const text  = input.value.trim();
       if (!text) return;
-
       input.value = '';
       document.getElementById('quick-questions').style.display = 'none';
       addMessage(text, true);
-      chatHistory.push({ role: 'user', content: text }); // lihat catatan chatHistory di atas
       addTyping();
-
-      const payload = new URLSearchParams();
-      payload.append("action",    "chat");
-      payload.append("message",   text);
-      payload.append("sessionId", getSessionId()); // ✅ tambah ini
-
       try {
         const res  = await fetch(APPS_SCRIPT_URL, {
           method:  'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body:    payload
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ action: "chat", message: text, sessionId: getSessionId() })
         });
         const data = await res.json();
         document.getElementById('typing-indicator')?.remove();
-
-        if (data.success) {
-          addMessage(data.reply, false);
-          chatHistory.push({ role: 'assistant', content: data.reply });
-        } else {
-          addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false);
-        }
+        if (data.success) { addMessage(data.reply, false); } 
+        else { addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false); }
       } catch {
         document.getElementById('typing-indicator')?.remove();
         addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
       }
     }
-     // Generate session ID unik per kunjungan
-     function getSessionId() {
-    if (!sessionStorage.getItem('chatSessionId')) {
-    sessionStorage.setItem('chatSessionId', 'S-' + Date.now());
-    }
-    return sessionStorage.getItem('chatSessionId');
-    }
-    // Kirim pertanyaan cepat dari tombol quick reply
-    function sendQuick(text) {
-      document.getElementById('chat-input').value = text;
-      sendChat();
+
+    function getSessionId() {
+      if (!sessionStorage.getItem('chatSessionId')) { sessionStorage.setItem('chatSessionId', 'S-' + Date.now()); }
+      return sessionStorage.getItem('chatSessionId');
     }
 
-    // ============================================================
-    // BERITA & EDUKASI: dimuat dinamis dari backend (Sheet Berita)
-    // Admin kelola via dashboard (judul, gambar, ringkasan, konten)
-    // ============================================================
+    function sendQuick(text) { document.getElementById('chat-input').value = text; sendChat(); }
     let beritaList = [];
 
     async function loadBerita() {
@@ -1991,69 +1335,30 @@ async function uploadBuktiKeSheet(orderId) {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getBerita');
         const data = await res.json();
         beritaList = data.berita || [];
-
         if (!beritaList.length) {
-          container.innerHTML = `
-            <div class="col-span-full text-center py-8">
-              <p class="text-gray-400 font-medium">Belum ada berita & edukasi saat ini.</p>
-            </div>`;
+          container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400 font-medium">Belum ada berita & edukasi saat ini.</p></div>';
           return;
         }
-
-        container.innerHTML = beritaList.map(item => `
-          <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
-            <img src="${item.gambar || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}"
-                 alt="${item.judul}" class="w-full h-48 object-cover"
-                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
-            <div class="p-6 flex flex-col flex-1">
-              <h3 class="font-bold text-xl leading-tight mb-2">${item.judul}</h3>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-3">${item.ringkasan || ''}</p>
-              ${item.konten ? `<button onclick="bukaBerita('${item.id}')" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1 text-left">
-                Baca Selengkapnya <i class="fas fa-chevron-right text-xs"></i>
-              </button>` : ''}
-            </div>
-          </div>`).join('');
-
+        container.innerHTML = beritaList.map(item => `<div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col"><img src="${item.gambar || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}" alt="${item.judul}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'"><div class="p-6 flex flex-col flex-1"><h3 class="font-bold text-xl leading-tight mb-2">${item.judul}</h3><p class="text-gray-600 text-sm mb-4 line-clamp-3">${item.ringkasan || ''}</p>${item.konten ? `<button onclick="bukaBerita('${item.id}')" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1 text-left">Baca Selengkapnya <i class="fas fa-chevron-right text-xs"></i></button>` : ''}</div></div>`).join('');
       } catch (e) {
-        console.error('Gagal memuat berita:', e);
-        container.innerHTML = `
-          <div class="col-span-full text-center py-8">
-            <p class="text-gray-400 font-medium">Gagal memuat berita. Coba refresh halaman.</p>
-          </div>`;
+        container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400 font-medium">Gagal memuat berita. Coba refresh halaman.</p></div>';
       }
     }
 
-    // Modal baca berita lengkap
     function bukaBerita(id) {
       const item = beritaList.find(b => b.id === id);
       if (!item) return;
-      const modal = document.getElementById('modal-berita');
       document.getElementById('berita-judul').textContent  = item.judul;
       document.getElementById('berita-gambar').src         = item.gambar || '';
       document.getElementById('berita-gambar').style.display = item.gambar ? 'block' : 'none';
       document.getElementById('berita-konten').innerHTML   = (item.konten || '').replace(/\n/g, '<br>');
-      modal.style.display = 'flex';
+      document.getElementById('modal-berita').style.display = 'flex';
     }
-    function tutupBerita(e) {
-      if (!e || e.target.id === 'modal-berita')
-        document.getElementById('modal-berita').style.display = 'none';
-    }
+    function tutupBerita(e) { if (!e || e.target.id === 'modal-berita') document.getElementById('modal-berita').style.display = 'none'; }
 
-    // ============================================================
-    // COOKIE CONSENT
-    // ============================================================
-    function acceptCookie() {
-      localStorage.setItem('cookieAccepted', 'yes');
-      document.getElementById('cookieBox').style.display = 'none';
-    }
+    function acceptCookie() { localStorage.setItem('cookieAccepted', 'yes'); document.getElementById('cookieBox').style.display = 'none'; }
+    function closeCookie() { document.getElementById('cookieBox').style.display = 'none'; }
 
-    function closeCookie() {
-      document.getElementById('cookieBox').style.display = 'none';
-    }
-
-    // ============================================================
-    // SEARCH GLOBAL: Menu, Berita & Edukasi, Section halaman
-    // ============================================================
     const searchableSections = [
       { id: 'menu',   label: 'Menu Kami',        icon: 'fas fa-utensils',     desc: 'Lihat semua menu kebab & harga' },
       { id: 'galeri', label: 'Galeri',           icon: 'fas fa-images',       desc: 'Foto-foto produk kami' },
@@ -2061,475 +1366,186 @@ async function uploadBuktiKeSheet(orderId) {
       { id: 'lokasi', label: 'Lokasi & Kontak',  icon: 'fas fa-map-marker-alt', desc: 'Alamat toko dan jam operasional' },
     ];
 
-    function bukaSearch() {
-      document.getElementById('modal-search').style.display = 'flex';
-      setTimeout(() => document.getElementById('search-input').focus(), 100);
-    }
+    function bukaSearch() { document.getElementById('modal-search').style.display = 'flex'; setTimeout(() => document.getElementById('search-input').focus(), 100); }
     function tutupSearch(e) {
       if (!e || e.target.id === 'modal-search') {
         document.getElementById('modal-search').style.display = 'none';
         document.getElementById('search-input').value = '';
-        document.getElementById('search-results').innerHTML =
-          '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>';
+        document.getElementById('search-results').innerHTML = '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>';
       }
     }
 
     function doSearch(query) {
-      const q = query.trim().toLowerCase();
-      const results = document.getElementById('search-results');
-
-      if (!q) {
-        results.innerHTML = '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>';
-        return;
-      }
-
+      const q = query.trim().toLowerCase(); const results = document.getElementById('search-results');
+      if (!q) { results.innerHTML = '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>'; return; }
       let html = '';
 
-      // ── Cari di Menu ──────────────────────────────────────────
-      const menuMatch = menuItems.filter(m =>
-        m.name.toLowerCase().includes(q) || (m.desc||'').toLowerCase().includes(q) || (m.badge||'').toLowerCase().includes(q)
-      );
+      const menuMatch = menuItems.filter(m => m.name.toLowerCase().includes(q) || (m.desc||'').toLowerCase().includes(q));
       if (menuMatch.length) {
         html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Menu</p>`;
-        html += menuMatch.slice(0, 6).map(m => `
-          <div onclick="searchGoMenu(${m.id})" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
-            <img src="${m.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'}" style="width:42px;height:42px;border-radius:0.6rem;object-fit:cover;flex-shrink:0" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'">
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.name}</div>
-              <div style="font-size:0.78rem;color:#ea580c;font-weight:700">Rp ${rupiah(m.price)}</div>
-            </div>
-            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-          </div>`).join('');
+        html += menuMatch.slice(0, 6).map(m => `<div onclick="searchGoMenu(${m.id})" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><img src="${m.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'}" style="width:42px;height:42px;border-radius:0.6rem;object-fit:cover;flex-shrink:0" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.name}</div><div style="font-size:0.78rem;color:#ea580c;font-weight:700">Rp ${rupiah(m.price)}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
       }
 
-      // ── Cari di Berita ────────────────────────────────────────
-      const beritaMatch = (beritaList||[]).filter(b =>
-        b.judul.toLowerCase().includes(q) || (b.ringkasan||'').toLowerCase().includes(q)
-      );
+      const beritaMatch = (beritaList||[]).filter(b => b.judul.toLowerCase().includes(q) || (b.ringkasan||'').toLowerCase().includes(q));
       if (beritaMatch.length) {
         html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Berita & Edukasi</p>`;
-        html += beritaMatch.slice(0, 4).map(b => `
-          <div onclick="searchGoBerita('${b.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
-            <div style="width:42px;height:42px;border-radius:0.6rem;background:#fff7ed;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <i class="fas fa-newspaper text-orange-500"></i>
-            </div>
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.judul}</div>
-              <div style="font-size:0.78rem;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.ringkasan||''}</div>
-            </div>
-            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-          </div>`).join('');
+        html += beritaMatch.slice(0, 4).map(b => `<div onclick="searchGoBerita('${b.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><div style="width:42px;height:42px;border-radius:0.6rem;background:#fff7ed;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-newspaper text-orange-500"></i></div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.judul}</div><div style="font-size:0.78rem;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.ringkasan||''}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
       }
 
-      // ── Cari di Section halaman ─────────────────────────────────
-      const sectionMatch = searchableSections.filter(s =>
-        s.label.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)
-      );
+      const sectionMatch = searchableSections.filter(s => s.label.toLowerCase().includes(q));
       if (sectionMatch.length) {
         html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Halaman</p>`;
-        html += sectionMatch.map(s => `
-          <div onclick="searchGoSection('${s.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
-            <div style="width:42px;height:42px;border-radius:0.6rem;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <i class="${s.icon} text-gray-500"></i>
-            </div>
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:0.9rem">${s.label}</div>
-              <div style="font-size:0.78rem;color:#9ca3af">${s.desc}</div>
-            </div>
-            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-          </div>`).join('');
+        html += sectionMatch.map(s => `<div onclick="searchGoSection('${s.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><div style="width:42px;height:42px;border-radius:0.6rem;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${s.icon} text-gray-500"></i></div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem">${s.label}</div><div style="font-size:0.78rem;color:#9ca3af">${s.desc}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
       }
-
-      if (!html) {
-        html = `<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1.5rem 0"><i class="fas fa-search-minus mb-2 block text-2xl"></i>Tidak ada hasil untuk "${query}"</p>`;
-      }
-
+      if (!html) { html = `<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1.5rem 0"><i class="fas fa-search-minus mb-2 block text-2xl"></i>Tidak ada hasil untuk "${query}"</p>`; }
       results.innerHTML = html;
     }
 
-    function searchGoMenu(id) {
-      tutupSearch();
-      document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => addToCart(id), 400);
-    }
-    function searchGoBerita(id) {
-      tutupSearch();
-      document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => bukaBerita(id), 400);
-    }
-    function searchGoSection(id) {
-      tutupSearch();
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-    }
+    function searchGoMenu(id) { tutupSearch(); document.getElementById('menu').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => addToCart(id), 400); }
+    function searchGoBerita(id) { tutupSearch(); document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => bukaBerita(id), 400); }
+    function searchGoSection(id) { tutupSearch(); document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
 
-    // Shortcut: Ctrl+K / Cmd+K untuk buka search, ESC untuk tutup
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); bukaSearch(); }
       if (e.key === 'Escape') { tutupSearch({target:{id:'modal-search'}}); tutupBerita({target:{id:'modal-berita'}}); }
     });
 
-    // ============================================================
-    // PROMO MARKETING: Popup (sekali per sesi) + Floating CTA carousel
-    // Konten diambil dari Galeri (admin/konten.html → tab Galeri)
-    // ============================================================
     function setupPromoMarketing() {
       if (!galeriItems.length) return;
-
-      // ── Floating CTA: isi carousel dengan semua foto galeri ──
       const track = document.getElementById('floating-cta-track');
-      track.innerHTML = galeriItems.map((g, i) => `
-        <div onclick="ctaItemClick(${i})" style="flex:0 0 100%;scroll-snap-align:start;cursor:pointer;position:relative">
-          <img src="${g.gambar}" alt="${g.judul||'Promo'}"
-            style="width:100%;height:120px;object-fit:cover;display:block"
-            onerror="this.style.display='none'">
-          ${g.judul ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));color:white;font-size:0.72rem;font-weight:700;padding:0.5rem 0.6rem">${g.judul}</div>` : ''}
-        </div>`).join('');
+      track.innerHTML = galeriItems.map((g, i) => `<div onclick="ctaItemClick(${i})" style="flex:0 0 100%;scroll-snap-align:start;cursor:pointer;position:relative"><img src="${g.gambar}" alt="${g.judul||'Promo'}" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.display='none'"> ${g.judul ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));color:white;font-size:0.72rem;font-weight:700;padding:0.5rem 0.6rem">${g.judul}</div>` : ''}</div>`).join('');
 
-      // ── Popup: tampil sekali per sesi, pakai item pertama ────
       const alreadyShown = sessionStorage.getItem('kf_promo_popup_shown');
       if (!alreadyShown) {
         const item = galeriItems[0];
-        document.getElementById('promo-popup-img').src     = item.gambar;
-        document.getElementById('promo-popup-judul').textContent =
-          item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙';
-
-        setTimeout(() => {
-          document.getElementById('modal-promo-popup').style.display = 'flex';
-          sessionStorage.setItem('kf_promo_popup_shown', '1');
-        }, 1200); // beri jeda agar tidak langsung muncul saat load
-      } else {
-        // Popup sudah pernah tampil → langsung tunjukkan floating CTA
-        showFloatingCta();
-      }
+        document.getElementById('promo-popup-img').src = item.gambar;
+        document.getElementById('promo-popup-judul').textContent = item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙';
+        setTimeout(() => { document.getElementById('modal-promo-popup').style.display = 'flex'; sessionStorage.setItem('kf_promo_popup_shown', '1'); }, 1200);
+      } else { showFloatingCta(); }
     }
 
     function tutupPromoPopup(e) {
       if (e && e.target.id !== 'modal-promo-popup' && e.type === 'click') return;
-      document.getElementById('modal-promo-popup').style.display = 'none';
-      showFloatingCta();
+      document.getElementById('modal-promo-popup').style.display = 'none'; showFloatingCta();
     }
 
-    function tujuPromo() {
-      document.getElementById('modal-promo-popup').style.display = 'none';
-      sessionStorage.setItem('kf_promo_popup_shown', '1');
-      document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
-    }
+    function tujuPromo() { document.getElementById('modal-promo-popup').style.display = 'none'; sessionStorage.setItem('kf_promo_popup_shown', '1'); document.getElementById('menu').scrollIntoView({ behavior: 'smooth' }); }
+    function showFloatingCta() { if (!galeriItems.length || sessionStorage.getItem('kf_floating_cta_closed')) return; document.getElementById('floating-promo-cta').style.display = 'block'; }
+    function tutupFloatingCta() { document.getElementById('floating-promo-cta').style.display = 'none'; sessionStorage.setItem('kf_floating_cta_closed', '1'); }
+    function ctaItemClick(idx) { const item = galeriItems[idx]; if (!item) return; document.getElementById('promo-popup-img').src = item.gambar; document.getElementById('promo-popup-judul').textContent = item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙'; document.getElementById('modal-promo-popup').style.display = 'flex'; }
 
-    function showFloatingCta() {
-      if (!galeriItems.length) return;
-      if (sessionStorage.getItem('kf_floating_cta_closed')) return;
-      document.getElementById('floating-promo-cta').style.display = 'block';
-    }
-
-    function tutupFloatingCta() {
-      document.getElementById('floating-promo-cta').style.display = 'none';
-      sessionStorage.setItem('kf_floating_cta_closed', '1');
-    }
-
-    function ctaItemClick(idx) {
-      const item = galeriItems[idx];
-      if (!item) return;
-      document.getElementById('promo-popup-img').src = item.gambar;
-      document.getElementById('promo-popup-judul').textContent =
-        item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙';
-      document.getElementById('modal-promo-popup').style.display = 'flex';
-    }
-
-    // ============================================================
-    // INIT: Jalankan semua fungsi saat halaman selesai dimuat
-    // ============================================================
-    // ============================================================
-    // PENGUMUMAN (News Bar): dimuat dinamis dari Sheet Pengumuman
-    // ============================================================
     async function loadPengumuman() {
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getPengumuman');
         const data = await res.json();
         const list = data.pengumuman || [];
-
-        const bar   = document.getElementById('news-bar');
-        const track = document.getElementById('news-bar-track');
-
+        const bar   = document.getElementById('news-bar'); const track = document.getElementById('news-bar-track');
         if (!list.length) { bar.style.display = 'none'; return; }
-
-        const items = list.map(p => {
-          const teks = p.link
-            ? `<a href="${p.link}" target="_blank">${p.teks}</a>`
-            : p.teks;
-          return `<span class="news-bar-item"><i class="fas fa-bullhorn"></i> ${teks}</span>`;
-        }).join('');
-
-        // Duplikasi konten agar animasi scroll terlihat looping mulus
-        track.innerHTML = items + items;
-        bar.style.display = 'block';
-      } catch (e) {
-        console.error('Gagal memuat pengumuman:', e);
-      }
+        const items = list.map(p => { const teks = p.link ? `<a href="${p.link}" target="_blank">${p.teks}</a>` : p.teks; return `<span class="news-bar-item"><i class="fas fa-bullhorn"></i> ${teks}</span>`; }).join('');
+        track.innerHTML = items + items; bar.style.display = 'block';
+      } catch (e) { console.error('Gagal memuat pengumuman:', e); }
     }
 
-    // ============================================================
-    // CUSTOM CSS (Tema): inject CSS dari Admin Setting
-    // Mengikuti pola "Custom CSS" WordPress/Blogspot — admin
-    // menulis CSS via editor CodeMirror di admin/setting.html,
-    // disimpan ke Sheet Setting (key: customCSS), lalu di-inject
-    // ke <head> halaman ini sebagai <style> tambahan.
-    // ============================================================
     async function loadCustomTheme() {
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getThemeSetting');
-        const data = await res.json();
-        const setting = data.setting || {};
-
+        const data = await res.json(); const setting = data.setting || {};
         if (setting.noWAAdmin) STORE_WA = String(setting.noWAAdmin).replace(/\D/g,'');
-
-        const css = setting.customCSS || '';
-        if (!css.trim()) return;
-
-        const styleTag = document.createElement('style');
-        styleTag.id = 'custom-theme-css';
-        styleTag.textContent = css;
-        document.head.appendChild(styleTag);
-      } catch (e) {
-        console.error('Gagal memuat tema custom:', e);
-      }
+        const css = setting.customCSS || ''; if (!css.trim()) return;
+        const styleTag = document.createElement('style'); styleTag.id = 'custom-theme-css'; styleTag.textContent = css; document.head.appendChild(styleTag);
+      } catch (e) { console.error('Gagal memuat tema custom:', e); }
     }
 
     window.addEventListener('load', function () {
-      loadMenu();
-      loadGaleri();
-      loadBerita();
-      loadPengumuman();
-      loadCustomTheme();
-      renderCart();
-
-        
+      loadMenu(); loadGaleri(); loadBerita(); loadPengumuman(); loadCustomTheme(); renderCart();
     });
-  const sudahTerima = localStorage.getItem('cookieAccepted') === 'yes';
-  const modePWA     = window.matchMedia('(display-mode: standalone)').matches;
-  const modeIOS     = navigator.standalone === true;
 
-  if (!sudahTerima && !modePWA && !modeIOS) {
-    document.getElementById('cookieBox').style.display = 'flex';
-  }
-    // ============================================================
-    // PWA INSTALL PROMPT
-    // ============================================================
+    const sudahTerima = localStorage.getItem('cookieAccepted') === 'yes';
+    const modePWA     = window.matchMedia('(display-mode: standalone)').matches;
+    const modeIOS     = navigator.standalone === true;
+    if (!sudahTerima && !modePWA && !modeIOS) { document.getElementById('cookieBox').style.display = 'flex'; }
+
     let installPrompt = null;
+    window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; document.getElementById('cta-install').style.display = 'flex'; });
+    function installPWA() { if (!installPrompt) return; installPrompt.prompt(); installPrompt.userChoice.then(result => { if (result.outcome === 'accepted') { document.getElementById('cta-install').style.display = 'none'; } installPrompt = null; }); }
+    window.addEventListener('appinstalled', () => { document.getElementById('cta-install').style.display = 'none'; installPrompt = null; });
 
-    // Tangkap event install dari browser
-    window.addEventListener('beforeinstallprompt', event => {
-    event.preventDefault();
-    installPrompt = event;
-
-    // Tampilkan tombol install
-  document.getElementById('cta-install').style.display = 'flex';
-});
-
-function installPWA() {
-  if (!installPrompt) return;
-  installPrompt.prompt();
-
-  installPrompt.userChoice.then(result => {
-    if (result.outcome === 'accepted') {
-      // User klik install — sembunyikan tombol
-      document.getElementById('cta-install').style.display = 'none';
-    }
-    installPrompt = null;
-  });
-}
-
-// Sembunyikan tombol jika sudah terinstall
-window.addEventListener('appinstalled', () => {
-  document.getElementById('cta-install').style.display = 'none';
-  installPrompt = null;
-});
-// ============================================================
-// PWA AUTO UPDATE NOTIFICATION
-// ============================================================
-let newWorker = null;
-
-navigator.serviceWorker.register('/service-worker.js')
-  .then(reg => {
-    reg.update();
-
-    // Deteksi kalau ada service worker baru menunggu
-    reg.addEventListener('updatefound', () => {
-      newWorker = reg.installing;
-
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // Ada versi baru — tampilkan banner
-          document.getElementById('update-bar').style.display = 'flex';
-        }
+    let newWorker = null;
+    navigator.serviceWorker.register('/service-worker.js').then(reg => {
+      reg.update();
+      reg.addEventListener('updatefound', () => {
+        newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => { if (newWorker.state === 'installed' && navigator.serviceWorker.controller) { document.getElementById('update-bar').style.display = 'flex'; } });
       });
     });
-  });
-
-function lakukanUpdate() {
-  if (newWorker) {
-    // Perintahkan SW baru untuk langsung aktif
-    newWorker.postMessage({ action: 'skipWaiting' });
-  }
-  // Reload halaman untuk pakai versi baru
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    window.location.reload();
-  });
-    }
-
-    // ============================================================
-    // ⚠️  KODE MATI — TIDAK AKTIF (untuk referensi saja)
-    //
-    //  1. initCarousel()
-    //     Sisa kode lama yang menggunakan library Swiper.
-    //     Tidak pernah dipanggil. Menggunakan variabel `images`
-    //     (tidak ada) dan getElementById('swiper-wrapper')
-    //     (tidak ada di HTML). AMAN UNTUK DIHAPUS.
-    //
-    //  2. checkoutCart()
-    //     Hanya membungkus openCheckout(). Tidak dipanggil
-    //     dari mana pun. AMAN UNTUK DIHAPUS.
-    //
-    //  3. submitOrder() + updateFormTotal() + changeFormQty()
-    //     Referensi ke elemen form: #f-nama, #f-wa, #f-menu,
-    //     #f-jumlah, #f-alamat, #f-catatan, #f-delivery, #f-total
-    //     — TIDAK ADA DI HTML. Form lama sudah dihapus dari
-    //     markup tapi fungsi JSnya tertinggal. AMAN UNTUK DIHAPUS.
-    // ============================================================
-
+    function lakukanUpdate() { if (newWorker) { newWorker.postMessage({ action: 'skipWaiting' }); } navigator.serviceWorker.addEventListener('controllerchange', () => { window.location.reload(); }); }
   </script>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  // ============================================================
-// MAP PICKER — Leaflet.js + OpenStreetMap
-// ============================================================
-let leafletMap    = null;
-let leafletMarker = null;
-let pickedLat     = null;
-let pickedLng     = null;
+  <script>
+    let leafletMap    = null;
+    let leafletMarker = null;
+    let pickedLat     = null;
+    let pickedLng     = null;
 
-function bukaMapPicker() {
-  document.getElementById('modal-mappicker').style.display = 'flex';
+    function bukaMapPicker() {
+      document.getElementById('modal-mappicker').style.display = 'flex';
+      setTimeout(() => {
+        if (leafletMap) { leafletMap.invalidateSize(); return; }
+        leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
+        L.marker([RESTO_LAT, RESTO_LNG]).addTo(leafletMap).bindPopup('🏪 The Kebab Factory').openPopup();
+        leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], { draggable: true, title: 'Lokasi Kamu' }).addTo(leafletMap);
 
-  // Inisialisasi peta hanya sekali
-  setTimeout(() => {
-    if (leafletMap) {
-      leafletMap.invalidateSize();
-      return;
+        leafletMarker.on('dragend', function () {
+          const pos = leafletMarker.getLatLng(); pickedLat = pos.lat; pickedLng = pos.lng; tampilkanKoordinat(pickedLat, pickedLng);
+        });
+        leafletMap.on('click', function (e) {
+          pickedLat = e.latlng.lat; pickedLng = e.latlng.lng; leafletMarker.setLatLng([pickedLat, pickedLng]); tampilkanKoordinat(pickedLat, pickedLng);
+        });
+      }, 300);
     }
 
-    // Pusat peta = lokasi restoran
-    leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
+    let _geocodeTimer = null;
+    async function tampilkanKoordinat(lat, lng) {
+      const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
+      const ongkir2     = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
+      const ongkirLabel = ongkir2 === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir2);
+      const box   = document.getElementById('koordinat-dipilih');
 
-    // Tile OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(leafletMap);
+      box.innerHTML = `<div style="font-weight:700;color:#111;margin-bottom:0.35rem"><span id="geo-nama" style="font-size:0.8rem;color:#374151">⏳ Mencari nama jalan...</span></div><div style="display:flex;justify-content:center;gap:1rem;font-size:0.78rem"><span style="font-weight:700;color:#111">📏 ${dist.toFixed(1)} km</span><span style="color:#ea580c;font-weight:700">🛵 ${ongkirLabel}</span></div>`;
 
-    // Marker restoran sebagai patokan
-    L.marker([RESTO_LAT, RESTO_LNG])
-      .addTo(leafletMap)
-      .bindPopup('🏪 The Kebab Factory')
-      .openPopup();
-
-    // Marker lokasi user (bisa digeser)
-    leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], {
-      draggable: true,
-      title: 'Lokasi Kamu'
-    }).addTo(leafletMap);
-
-    // Update koordinat setiap marker digeser
-    leafletMarker.on('dragend', function () {
-      const pos = leafletMarker.getLatLng();
-      pickedLat  = pos.lat;
-      pickedLng  = pos.lng;
-      tampilkanKoordinat(pickedLat, pickedLng);
-    });
-
-    // Tap peta untuk pindahkan marker
-    leafletMap.on('click', function (e) {
-      pickedLat  = e.latlng.lat;
-      pickedLng  = e.latlng.lng;
-      leafletMarker.setLatLng([pickedLat, pickedLng]);
-      tampilkanKoordinat(pickedLat, pickedLng);
-    });
-
-  }, 300);
-}
-
-// Cache geocode agar tidak spam API saat marker digeser cepat
-let _geocodeTimer = null;
-
-async function tampilkanKoordinat(lat, lng) {
-  const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
-  const ongkir2     = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
-  const ongkirLabel = ongkir2 === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir2);
-  const box   = document.getElementById('koordinat-dipilih');
-
-  // Tampilkan jarak dulu sambil tunggu geocode
-  box.innerHTML =
-    `<div style="font-weight:700;color:#111;margin-bottom:0.35rem">
-       <span id="geo-nama" style="font-size:0.8rem;color:#374151">⏳ Mencari nama jalan...</span>
-     </div>
-     <div style="display:flex;justify-content:center;gap:1rem;font-size:0.78rem">
-       <span style="font-weight:700;color:#111">📏 ${dist.toFixed(1)} km</span>
-       <span style="color:#ea580c;font-weight:700">🛵 ${ongkirLabel}</span>
-     </div>`;
-
-  // Debounce: tunggu 600ms setelah berhenti geser baru panggil API
-  clearTimeout(_geocodeTimer);
-  _geocodeTimer = setTimeout(async () => {
-    try {
-      const res  = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-        { headers: { 'Accept-Language': 'id' } }
-      );
-      const data = await res.json();
-      const a    = data.address || {};
-
-      // Ambil komponen alamat dari kasar ke halus
-      const jalan   = a.road || a.pedestrian || a.footway || '';
-      const kampung = a.village || a.suburb || a.neighbourhood || a.hamlet || '';
-      const kota    = a.city || a.town || a.county || '';
-
-      // Susun label: "Jl. Mlarak - Jabung, Gandu, Ponorogo"
-      const parts = [jalan, kampung, kota].filter(Boolean);
-      const namaLokasi = parts.length ? parts.join(', ') : data.display_name || 'Lokasi dipilih';
-
-      const el = document.getElementById('geo-nama');
-      if (el) el.textContent = '📍 ' + namaLokasi;
-
-    } catch(e) {
-      const el = document.getElementById('geo-nama');
-      if (el) el.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      clearTimeout(_geocodeTimer);
+      _geocodeTimer = setTimeout(async () => {
+        try {
+          const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`, { headers: { 'Accept-Language': 'id' } });
+          const data = await res.json(); const a = data.address || {};
+          const jalan = a.road || a.pedestrian || a.footway || '';
+          const kampung = a.village || a.suburb || a.neighbourhood || a.hamlet || '';
+          const kota = a.city || a.town || a.county || '';
+          const parts = [jalan, kampung, kota].filter(Boolean);
+          const namaLokasi = parts.length ? parts.join(', ') : data.display_name || 'Lokasi dipilih';
+          const el = document.getElementById('geo-nama'); if (el) el.textContent = '📍 ' + namaLokasi;
+        } catch(e) {
+          const el = document.getElementById('geo-nama'); if (el) el.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        }
+      }, 600);
     }
-  }, 600);
-}
 
-function tutupMapPicker() {
-  document.getElementById('modal-mappicker').style.display = 'none';
-}
+    function tutupMapPicker() { document.getElementById('modal-mappicker').style.display = 'none'; }
 
-function konfirmasiMapPicker() {
-  if (!pickedLat || !pickedLng) {
-    showToast('⚠️ Tap peta dulu untuk pilih lokasi!');
-    return;
-  }
-
-  userLat = pickedLat;
-  userLng = pickedLng;
-
-  const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-  ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
-  const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
-
-  document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
-  document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
-  document.getElementById('ongkir-info').textContent  = label;
-  document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
-
-  updateCoTotal();
-  tutupMapPicker();
-  showToast('✅ Lokasi berhasil dikonfirmasi!');
-  }</script>
+    function konfirmasiMapPicker() {
+      if (!pickedLat || !pickedLng) { showToast('⚠️ Tap peta dulu untuk pilih lokasi!'); return; }
+      userLat = pickedLat; userLng = pickedLng;
+      const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
+      ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
+      const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
+      document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
+      document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
+      document.getElementById('ongkir-info').textContent  = label;
+      document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
+      updateCoTotal(); tutupMapPicker(); showToast('✅ Lokasi berhasil dikonfirmasi!');
+    }
+  </script>
 </body>
 </html>
