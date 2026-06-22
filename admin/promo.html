@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Kelola Promo — The Kebab Factory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg:#F8FAFC;--surface:#FFFFFF;--surface-hover:#F1F5F9;
+      --border:#E2E8F0;--text:#0F172A;--text2:#475569;--muted:#94A3B8;
+      --accent:#FF6B00;--accent-d:#E05E00;--accent-s:#FFF4ED;
+      --ok:#10B981;--ok-s:#ECFDF5;--err:#EF4444;--err-s:#FEF2F2;
+      --warn:#F59E0B;--warn-s:#FFFBEB;--info:#3B82F6;--info-s:#EFF6FF;
+      --sidebar-w:260px;--topbar-h:64px;--r:16px;--r-sm:10px;
+      --sh:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+      --sh-md:0 4px 16px rgba(0,0,0,0.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+
+    /* ── Sidebar (shared) ── */
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform 0.3s;}
+    .sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sidebar-logo{width:36px;height:36px;object-fit:contain;background:var(--accent);border-radius:10px;padding:4px;flex-shrink:0;}
+    .sidebar-brand h2{font-size:0.95rem;font-weight:800;letter-spacing:-0.3px;}
+    .sidebar-brand p{font-size:0.65rem;color:var(--muted);font-weight:500;}
+    .sidebar-user{margin:12px;padding:12px;background:var(--bg);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px;}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FFB347);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:0.9rem;flex-shrink:0;}
+    .user-info .name{font-size:0.82rem;font-weight:700;}
+    .user-info .role{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+    .nav-section{padding:8px 12px 4px;font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.15s;font-size:0.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
+    .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item.active i,.nav-item:hover i{color:inherit;}
+    .nav-item i{width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background 0.15s;}
+    .btn-logout:hover{background:var(--err-s);}
+
+    /* ── Main ── */
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
+    .topbar-title{font-size:1rem;font-weight:700;}
+    .topbar-sub{font-size:0.78rem;color:var(--muted);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .content{padding:28px;}
+
+    /* ── Buttons ── */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:none;border-radius:var(--r-sm);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .btn-primary{background:var(--accent);color:white;}
+    .btn-primary:hover{background:var(--accent-d);box-shadow:0 4px 12px rgba(255,107,0,0.25);}
+    .btn-secondary{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+    .btn-secondary:hover{background:var(--surface-hover);}
+    .btn-danger{background:var(--err-s);color:var(--err);border:1px solid #FECACA;}
+    .btn-danger:hover{background:#FEE2E2;}
+    .btn-sm{padding:6px 12px;font-size:0.75rem;}
+    .btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:8px;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+    /* ── KPI Cards ── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;}
+    .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);}
+    .kpi-card.accent{border-left:4px solid var(--accent);}
+    .kpi-card.ok{border-left:4px solid var(--ok);}
+    .kpi-card.warn{border-left:4px solid var(--warn);}
+    .kpi-card.info{border-left:4px solid var(--info);}
+    .kpi-label{font-size:0.72rem;font-weight:600;color:var(--text2);margin-bottom:8px;}
+    .kpi-value{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;}
+    .kpi-sub{font-size:0.7rem;color:var(--muted);margin-top:4px;}
+
+    /* ── Card ── */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+    .card-title{font-size:0.9rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+
+    /* ── Toolbar ── */
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .search-wrap{position:relative;flex:1;min-width:200px;}
+    .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;}
+    .search-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.84rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:all 0.2s;}
+    .search-input:focus{border-color:var(--accent);background:white;}
+    select.filter{padding:9px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:0.82rem;font-family:'Inter',sans-serif;color:var(--text2);outline:none;cursor:pointer;}
+
+    /* ── Table ── */
+    .table-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--border);text-align:left;background:var(--bg);white-space:nowrap;}
+    tbody tr{transition:background 0.1s;}
+    tbody tr:hover{background:var(--surface-hover);}
+    tbody td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:0.84rem;vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}
+
+    /* ── Promo Card (grid view) ── */
+    .promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:20px;}
+    .promo-card{
+      background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);
+      overflow:hidden;transition:all 0.2s;position:relative;
+    }
+    .promo-card:hover{box-shadow:var(--sh-md);border-color:var(--accent);}
+    .promo-card.expired{opacity:0.6;}
+    .promo-card-header{
+      background:linear-gradient(135deg,var(--accent) 0%,#FF8A3C 100%);
+      padding:20px;color:white;position:relative;overflow:hidden;
+    }
+    .promo-card-header::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.1);border-radius:50%;}
+    .promo-card.nonaktif .promo-card-header{background:linear-gradient(135deg,#94A3B8,#64748B);}
+    .promo-kode{font-size:1.3rem;font-weight:800;letter-spacing:2px;font-family:monospace;}
+    .promo-nama{font-size:0.82rem;opacity:0.9;margin-top:4px;}
+    .promo-diskon{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.2);border-radius:10px;padding:6px 12px;font-size:1rem;font-weight:800;}
+    .promo-card-body{padding:16px;}
+    .promo-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+    .promo-tag{font-size:0.7rem;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--border);color:var(--text2);}
+    .promo-tag.ok{background:var(--ok-s);color:var(--ok);border-color:#A7F3D0;}
+    .promo-tag.err{background:var(--err-s);color:var(--err);border-color:#FECACA;}
+    .promo-tag.warn{background:var(--warn-s);color:var(--warn);border-color:#FDE68A;}
+    .promo-desc{font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:12px;}
+    .promo-validity{font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+    .promo-actions{display:flex;gap:8px;}
+
+    /* ── Badge ── */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;}
+    .badge-active{background:var(--ok-s);color:var(--ok);}
+    .badge-inactive{background:var(--bg);color:var(--muted);border:1px solid var(--border);}
+    .badge-expired{background:var(--err-s);color:var(--err);}
+
+    /* ── View Toggle ── */
+    .view-toggle{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;}
+    .view-btn{padding:7px 12px;border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:0.85rem;transition:all 0.15s;}
+    .view-btn.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+
+    /* ── Modal ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--surface);border-radius:var(--r);width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,0.2);margin:auto;}
+    .modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);border-radius:var(--r) var(--r) 0 0;z-index:1;}
+    .modal-title{font-size:1rem;font-weight:700;}
+    .modal-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:4px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .modal-close:hover{background:var(--surface-hover);color:var(--text);}
+    .modal-body{padding:24px;}
+    .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+    /* ── Form ── */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .field{margin-bottom:0;}
+    .field.span2{grid-column:1/-1;}
+    label.flabel{display:block;font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+    .req{color:var(--err);}
+    input[type=text],input[type=number],input[type=datetime-local],textarea,select.finput{
+      width:100%;padding:10px 14px;background:var(--bg);border:1.5px solid var(--border);
+      border-radius:var(--r-sm);font-size:0.88rem;font-family:'Inter',sans-serif;
+      color:var(--text);outline:none;transition:all 0.2s;
+    }
+    input:focus,textarea:focus,select.finput:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(255,107,0,0.08);}
+    .field-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
+
+    /* ── Promo Preview ── */
+    .promo-preview{
+      background:linear-gradient(135deg,var(--accent),#FF8A3C);
+      border-radius:var(--r-sm);padding:16px;color:white;margin-top:16px;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .preview-left .preview-kode{font-size:1.1rem;font-weight:800;letter-spacing:2px;font-family:monospace;}
+    .preview-left .preview-nama{font-size:0.75rem;opacity:0.85;margin-top:2px;}
+    .preview-right .preview-diskon{font-size:1.4rem;font-weight:800;}
+    .preview-right .preview-min{font-size:0.7rem;opacity:0.85;}
+
+    /* ── Countdown ── */
+    .countdown{font-size:0.72rem;font-weight:600;padding:3px 8px;border-radius:6px;}
+    .countdown.active{background:var(--ok-s);color:var(--ok);}
+    .countdown.ended{background:var(--err-s);color:var(--err);}
+    .countdown.soon{background:var(--warn-s);color:var(--warn);}
+
+    /* ── Toast ── */
+    #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;box-shadow:var(--sh-md);font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.3s ease;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .toast.success i{color:var(--ok);}
+    .toast.error i{color:var(--err);}
+    .toast.info i{color:var(--accent);}
+
+    /* ── Confirm ── */
+    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;align-items:center;justify-content:center;}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:var(--surface);border-radius:var(--r);padding:28px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
+    .confirm-icon{font-size:2.5rem;margin-bottom:12px;}
+    .confirm-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+    .confirm-msg{font-size:0.84rem;color:var(--text2);margin-bottom:24px;line-height:1.5;}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+
+    /* ── Empty ── */
+    .empty{text-align:center;padding:48px 20px;color:var(--muted);}
+    .empty i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.35;}
+    .empty p{font-size:0.84rem;}
+
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%);}
+      .sidebar.open{transform:translateX(0);}
+      .main{margin-left:0;}
+      .form-grid{grid-template-columns:1fr;}
+      .content{padding:16px;}
+      .promo-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div class="user-info"><div class="name" id="user-name">Administrator</div><div class="role">Admin</div></div>
+  </div>
+  <div class="nav-section">Utama</div>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+  <a class="nav-item" href="dashboard.html"><i class="fas fa-receipt"></i> Semua Order</a>
+  <div class="nav-section">Kelola</div>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item active" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="konten.html"><i class="fas fa-photo-film"></i> Konten Web</a>
+  <a class="nav-item" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Keluar</button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button style="display:none;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text2)" id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div>
+        <div class="topbar-title">Kelola Promo</div>
+        <div class="topbar-sub">Buat dan kelola kode diskon untuk customer</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" onclick="openPromoModal()">
+        <i class="fas fa-plus"></i> Buat Promo
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Total Promo</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-sub">Semua promo</div>
+      </div>
+      <div class="kpi-card ok">
+        <div class="kpi-label">Aktif</div>
+        <div class="kpi-value" id="kpi-aktif">—</div>
+        <div class="kpi-sub">Sedang berjalan</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-label">Akan Berakhir</div>
+        <div class="kpi-value" id="kpi-soon">—</div>
+        <div class="kpi-sub">Dalam 3 hari</div>
+      </div>
+      <div class="kpi-card info">
+        <div class="kpi-label">Nonaktif/Expired</div>
+        <div class="kpi-value" id="kpi-expired">—</div>
+        <div class="kpi-sub">Sudah berakhir</div>
+      </div>
+    </div>
+
+    <!-- Filter + View Toggle -->
+    <div class="card">
+      <div class="card-header">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="search-promo" placeholder="Cari kode atau nama promo..." oninput="filterPromo()"/>
+          </div>
+          <select class="filter" id="filter-status" onchange="filterPromo()">
+            <option value="">Semua Status</option>
+            <option value="aktif">Aktif</option>
+            <option value="nonaktif">Nonaktif</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="view-card-btn" onclick="setView('card',this)" title="Card View"><i class="fas fa-grip"></i></button>
+          <button class="view-btn" id="view-table-btn" onclick="setView('table',this)" title="Table View"><i class="fas fa-list"></i></button>
+        </div>
+      </div>
+
+      <!-- Card View -->
+      <div id="view-card">
+        <div class="promo-grid" id="promo-grid">
+          <div class="empty"><i class="fas fa-spinner fa-spin"></i><p>Memuat promo...</p></div>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div id="view-table" style="display:none;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kode Promo</th><th>Nama</th><th>Diskon</th><th>Min. Belanja</th>
+                <th>Mulai</th><th>Berakhir</th><th>Status</th><th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="promo-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: PROMO ───────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-promo">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Buat Promo Baru</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="p-kode-old"/>
+      <div class="form-grid">
+        <!-- Kode Promo -->
+        <div class="field">
+          <label class="flabel">Kode Promo <span class="req">*</span></label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="p-kode" placeholder="cth: KEBAB10" oninput="this.value=this.value.toUpperCase();updatePreview()" style="flex:1;text-transform:uppercase;font-family:monospace;font-weight:700;letter-spacing:1px;"/>
+            <button class="btn btn-secondary btn-sm" onclick="generateKode()" title="Generate otomatis" style="white-space:nowrap"><i class="fas fa-dice"></i></button>
+          </div>
+          <div class="field-hint">Huruf kapital, angka, tanpa spasi</div>
+        </div>
+
+        <!-- Nama Promo -->
+        <div class="field">
+          <label class="flabel">Nama Promo <span class="req">*</span></label>
+          <input type="text" id="p-nama" placeholder="cth: Diskon 10rb" oninput="updatePreview()"/>
+        </div>
+
+        <!-- Nilai Diskon -->
+        <div class="field">
+          <label class="flabel">Nilai Diskon (Rp) <span class="req">*</span></label>
+          <input type="number" id="p-diskon" placeholder="cth: 10000" min="0" oninput="updatePreview()"/>
+          <div class="field-hint">Nominal potongan harga dalam Rupiah</div>
+        </div>
+
+        <!-- Min Belanja -->
+        <div class="field">
+          <label class="flabel">Minimum Belanja (Rp)</label>
+          <input type="number" id="p-min" placeholder="cth: 25000" min="0" oninput="updatePreview()"/>
+          <div class="field-hint">0 = tidak ada minimum belanja</div>
+        </div>
+
+        <!-- Waktu Mulai -->
+        <div class="field">
+          <label class="flabel">Waktu Mulai</label>
+          <input type="datetime-local" id="p-mulai"/>
+          <div class="field-hint">Kosongkan = berlaku sekarang</div>
+        </div>
+
+        <!-- Waktu Berakhir -->
+        <div class="field">
+          <label class="flabel">Waktu Berakhir</label>
+          <input type="datetime-local" id="p-berakhir"/>
+          <div class="field-hint">Kosongkan = berlaku selamanya</div>
+        </div>
+
+        <!-- Status -->
+        <div class="field">
+          <label class="flabel">Status</label>
+          <select class="finput" id="p-status">
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+        </div>
+
+        <!-- Deskripsi -->
+        <div class="field span2">
+          <label class="flabel">Deskripsi</label>
+          <textarea id="p-deskripsi" placeholder="Keterangan promo untuk internal (opsional)" style="min-height:70px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="promo-preview" id="promo-preview" style="display:none;">
+        <div class="preview-left">
+          <div class="preview-kode" id="prev-kode">KODE</div>
+          <div class="preview-nama" id="prev-nama">Nama Promo</div>
+        </div>
+        <div class="preview-right">
+          <div class="preview-diskon" id="prev-diskon">Rp 0</div>
+          <div class="preview-min" id="prev-min">Min. Rp 0</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      <button class="btn btn-primary" id="btn-save" onclick="savePromo()">
+        <i class="fas fa-check"></i> Simpan Promo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Konfirmasi</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = '/api/proxy';
+let session   = null;
+let promoList = [];
+let viewMode  = 'card';
+
+// ── AUTH ─────────────────────────────────────────────────────
+function checkAuth() {
+  try {
+    const raw = localStorage.getItem('kf_session');
+    if (!raw) return redirect();
+    session = JSON.parse(raw);
+    if (!session?.sessionToken || session.role !== 'admin') return redirect();
+    document.getElementById('user-avatar').textContent = (session.nama||'A')[0].toUpperCase();
+    document.getElementById('user-name').textContent   = session.nama||'Admin';
+  } catch(e) { redirect(); }
+}
+function redirect() { localStorage.removeItem('kf_session'); window.location.href='../login.html'; }
+function doLogout() { if(!confirm('Yakin keluar?')) return; localStorage.removeItem('kf_session'); window.location.href='../login.html'; }
+
+// ── API ──────────────────────────────────────────────────────
+async function apiPost(action, extra={}) {
+  const res = await fetch(API, {
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({ action, sessionToken:session.sessionToken, ...extra })
+  });
+  return res.json();
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function toast(msg, type='info') {
+  const icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+// ── HELPERS ──────────────────────────────────────────────────
+const fRp = n => 'Rp '+(Number(n)||0).toLocaleString('id-ID');
+
+function getPromoStatus(p) {
+  if (p.status==='Nonaktif') return 'nonaktif';
+  const now = new Date();
+  if (p.waktuBerakhir && new Date(p.waktuBerakhir) < now) return 'expired';
+  if (p.waktuMulai    && new Date(p.waktuMulai)    > now) return 'belum';
+  return 'aktif';
+}
+
+function getCountdown(p) {
+  const berakhir = p.waktuBerakhir ? new Date(p.waktuBerakhir) : null;
+  if (!berakhir) return null;
+  const diff = berakhir - new Date();
+  if (diff < 0) return { label:'Expired', cls:'ended' };
+  const hari = Math.floor(diff/86400000);
+  const jam  = Math.floor((diff%86400000)/3600000);
+  if (hari > 3) return { label:`Berakhir ${hari} hari lagi`, cls:'active' };
+  if (hari > 0) return { label:`⚠️ ${hari}h ${jam}j lagi`, cls:'soon' };
+  return { label:`⚠️ ${jam} jam lagi`, cls:'soon' };
+}
+
+function fDateTime(str) {
+  if (!str) return '—';
+  try { return new Date(str).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { return str; }
+}
+
+// ── LOAD PROMO ───────────────────────────────────────────────
+async function loadPromo() {
+  try {
+    const d = await apiPost('getPromoList');
+    if (!d.success) throw new Error(d.error);
+    promoList = d.promo||[];
+    renderKPIs();
+    renderPromo(promoList);
+  } catch(e) {
+    toast('Gagal memuat promo: '+e.message,'error');
+  }
+}
+
+function renderKPIs() {
+  const now   = new Date();
+  const aktif = promoList.filter(p=>getPromoStatus(p)==='aktif').length;
+  const exp   = promoList.filter(p=>['expired','nonaktif'].includes(getPromoStatus(p))).length;
+  const soon  = promoList.filter(p=>{
+    if(getPromoStatus(p)!=='aktif') return false;
+    if(!p.waktuBerakhir) return false;
+    return (new Date(p.waktuBerakhir)-now) < 3*86400000;
+  }).length;
+  document.getElementById('kpi-total').textContent   = promoList.length;
+  document.getElementById('kpi-aktif').textContent   = aktif;
+  document.getElementById('kpi-soon').textContent    = soon;
+  document.getElementById('kpi-expired').textContent = exp;
+}
+
+function filterPromo() {
+  const q   = document.getElementById('search-promo').value.toLowerCase();
+  const sta = document.getElementById('filter-status').value;
+  const f   = promoList.filter(p=>{
+    const s = getPromoStatus(p);
+    const matchQ   = !q || p.kodePromo.toLowerCase().includes(q) || p.namaPromo.toLowerCase().includes(q);
+    const matchSta = !sta || s === sta;
+    return matchQ && matchSta;
+  });
+  renderPromo(f);
+}
+
+function renderPromo(list) {
+  if(viewMode==='card') renderCardView(list);
+  else renderTableView(list);
+}
+
+// ── CARD VIEW ────────────────────────────────────────────────
+function renderCardView(list) {
+  const grid = document.getElementById('promo-grid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-tag"></i><p>Belum ada promo. Klik "+ Buat Promo" untuk memulai.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => {
+    const status    = getPromoStatus(p);
+    const countdown = getCountdown(p);
+    const statusBadge = status==='aktif'
+      ? '<span class="promo-tag ok"><i class="fas fa-circle-check"></i> Aktif</span>'
+      : status==='expired'
+      ? '<span class="promo-tag err"><i class="fas fa-clock"></i> Expired</span>'
+      : status==='belum'
+      ? '<span class="promo-tag warn"><i class="fas fa-hourglass-start"></i> Belum Mulai</span>'
+      : '<span class="promo-tag"><i class="fas fa-pause"></i> Nonaktif</span>';
+
+    return `
+    <div class="promo-card ${status==='aktif'?'':'nonaktif'}">
+      <div class="promo-card-header">
+        <div class="promo-kode">${p.kodePromo}</div>
+        <div class="promo-nama">${p.namaPromo}</div>
+        <div class="promo-diskon">${fRp(p.nilaiDiskon)}</div>
+      </div>
+      <div class="promo-card-body">
+        <div class="promo-meta">
+          ${statusBadge}
+          ${p.minBelanja>0?`<span class="promo-tag">Min. ${fRp(p.minBelanja)}</span>`:'<span class="promo-tag ok">No Min.</span>'}
+          ${countdown?`<span class="countdown ${countdown.cls}">${countdown.label}</span>`:''}
+        </div>
+        ${p.deskripsi?`<div class="promo-desc">${p.deskripsi}</div>`:''}
+        <div class="promo-validity">
+          <i class="fas fa-calendar-days"></i>
+          ${p.waktuMulai?fDateTime(p.waktuMulai):'Sekarang'}
+          <i class="fas fa-arrow-right" style="font-size:0.6rem"></i>
+          ${p.waktuBerakhir?fDateTime(p.waktuBerakhir):'Tidak terbatas'}
+        </div>
+        <div class="promo-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editPromo('${p.kodePromo}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn ${status==='aktif'?'btn-secondary':'btn-primary'} btn-sm" onclick="togglePromoStatus('${p.kodePromo}','${p.status}')">
+            <i class="fas fa-${status==='aktif'?'pause':'play'}"></i> ${status==='aktif'?'Nonaktifkan':'Aktifkan'}
+          </button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="hapusPromo('${p.kodePromo}')" title="Hapus"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── TABLE VIEW ───────────────────────────────────────────────
+function renderTableView(list) {
+  const tbody = document.getElementById('promo-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty"><i class="fas fa-tag"></i><p>Tidak ada promo.</p></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p => {
+    const status = getPromoStatus(p);
+    const badgeCls = status==='aktif'?'badge-active':status==='expired'?'badge-expired':'badge-inactive';
+    const badgeTxt = status==='aktif'?'Aktif':status==='expired'?'Expired':status==='belum'?'Belum Mulai':'Nonaktif';
+    return `<tr>
+      <td><span style="font-family:monospace;font-weight:800;color:var(--accent);font-size:0.9rem">${p.kodePromo}</span></td>
+      <td style="font-weight:600">${p.namaPromo}</td>
+      <td style="font-weight:700;color:var(--ok)">${fRp(p.nilaiDiskon)}</td>
+      <td>${p.minBelanja>0?fRp(p.minBelanja):'<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-size:0.78rem;color:var(--text2)">${p.waktuMulai?fDateTime(p.waktuMulai):'—'}</td>
+      <td style="font-size:0.78rem;color:var(--text2)">${p.waktuBerakhir?fDateTime(p.waktuBerakhir):'—'}</td>
+      <td><span class="badge ${badgeCls}">${badgeTxt}</span></td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="editPromo('${p.kodePromo}')" title="Edit"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="hapusPromo('${p.kodePromo}')" title="Hapus"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── VIEW TOGGLE ──────────────────────────────────────────────
+function setView(mode, el) {
+  viewMode = mode;
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-card').style.display  = mode==='card' ?'block':'none';
+  document.getElementById('view-table').style.display = mode==='table'?'block':'none';
+  renderPromo(promoList);
+}
+
+// ── MODAL ────────────────────────────────────────────────────
+function openPromoModal(data=null) {
+  document.getElementById('modal-title').textContent = data ? 'Edit Promo' : 'Buat Promo Baru';
+  document.getElementById('p-kode-old').value  = data?.kodePromo||'';
+  document.getElementById('p-kode').value      = data?.kodePromo||'';
+  document.getElementById('p-nama').value      = data?.namaPromo||'';
+  document.getElementById('p-diskon').value    = data?.nilaiDiskon||'';
+  document.getElementById('p-min').value       = data?.minBelanja||'';
+  document.getElementById('p-status').value    = data?.status||'Aktif';
+  document.getElementById('p-deskripsi').value = data?.deskripsi||'';
+
+  // Format datetime-local
+  const toLocal = str => {
+    if (!str) return '';
+    try { return new Date(str).toISOString().slice(0,16); } catch(e) { return ''; }
+  };
+  document.getElementById('p-mulai').value    = toLocal(data?.waktuMulai);
+  document.getElementById('p-berakhir').value = toLocal(data?.waktuBerakhir);
+
+  // Disable kode input saat edit
+  document.getElementById('p-kode').readOnly = !!data;
+
+  updatePreview();
+  document.getElementById('modal-promo').classList.add('open');
+  setTimeout(()=>document.getElementById(data?'p-nama':'p-kode').focus(), 100);
+}
+
+function editPromo(kode) {
+  const p = promoList.find(x=>x.kodePromo===kode);
+  if(p) openPromoModal(p);
+}
+
+function closeModal() { document.getElementById('modal-promo').classList.remove('open'); }
+
+// ── PREVIEW ──────────────────────────────────────────────────
+function updatePreview() {
+  const kode   = document.getElementById('p-kode').value||'KODE';
+  const nama   = document.getElementById('p-nama').value||'Nama Promo';
+  const diskon = Number(document.getElementById('p-diskon').value)||0;
+  const min    = Number(document.getElementById('p-min').value)||0;
+
+  const prev = document.getElementById('promo-preview');
+  prev.style.display = (kode||nama||diskon) ? 'flex' : 'none';
+
+  document.getElementById('prev-kode').textContent   = kode;
+  document.getElementById('prev-nama').textContent   = nama;
+  document.getElementById('prev-diskon').textContent = fRp(diskon);
+  document.getElementById('prev-min').textContent    = min>0 ? 'Min. '+fRp(min) : 'Tanpa min. belanja';
+}
+
+// ── GENERATE KODE ────────────────────────────────────────────
+function generateKode() {
+  const prefix  = ['KEBAB','KF','HEMAT','DISKON','PROMO','SPESIAL'];
+  const p       = prefix[Math.floor(Math.random()*prefix.length)];
+  const num     = Math.floor(Math.random()*90+10);
+  document.getElementById('p-kode').value = p+num;
+  updatePreview();
+}
+
+// ── SAVE PROMO ───────────────────────────────────────────────
+async function savePromo() {
+  const kode   = document.getElementById('p-kode').value.trim().toUpperCase();
+  const nama   = document.getElementById('p-nama').value.trim();
+  const diskon = Number(document.getElementById('p-diskon').value);
+
+  if (!kode||!nama||!diskon) {
+    toast('Kode, nama, dan nilai diskon wajib diisi.','error'); return;
+  }
+  if (!/^[A-Z0-9]+$/.test(kode)) {
+    toast('Kode promo hanya boleh huruf kapital dan angka, tanpa spasi.','error'); return;
+  }
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const d = await apiPost('savePromo', {
+      data: JSON.stringify({
+        kodePromo:     kode,
+        namaPromo:     nama,
+        nilaiDiskon:   diskon,
+        minBelanja:    Number(document.getElementById('p-min').value)||0,
+        waktuMulai:    document.getElementById('p-mulai').value    ? new Date(document.getElementById('p-mulai').value).toISOString()    : '',
+        waktuBerakhir: document.getElementById('p-berakhir').value ? new Date(document.getElementById('p-berakhir').value).toISOString() : '',
+        status:        document.getElementById('p-status').value,
+        deskripsi:     document.getElementById('p-deskripsi').value.trim(),
+      })
+    });
+    if(d.success) {
+      toast(`Promo ${kode} berhasil disimpan!`,'success');
+      closeModal();
+      loadPromo();
+    } else {
+      toast(d.error||'Gagal menyimpan.','error');
+    }
+  } catch(e) { toast('Error: '+e.message,'error'); }
+  finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> Simpan Promo'; }
+}
+
+// ── TOGGLE STATUS ────────────────────────────────────────────
+async function togglePromoStatus(kode, current) {
+  const newStatus = current==='Aktif'?'Nonaktif':'Aktif';
+  try {
+    const p = promoList.find(x=>x.kodePromo===kode);
+    if (!p) return;
+    const d = await apiPost('savePromo', { data: JSON.stringify({ ...p, kodePromo:kode, status:newStatus }) });
+    if(d.success) { toast(`Promo ${newStatus==='Aktif'?'diaktifkan':'dinonaktifkan'}.`,'success'); loadPromo(); }
+    else toast(d.error,'error');
+  } catch(e) { toast('Gagal.','error'); }
+}
+
+// ── HAPUS PROMO ──────────────────────────────────────────────
+function hapusPromo(kode) {
+  showConfirm('🗑️',`Hapus promo "${kode}"?`,'Promo akan dihapus permanen.',async()=>{
+    try {
+      const d = await apiPost('deletePromo',{kodePromo:kode});
+      if(d.success){toast('Promo dihapus.','success');loadPromo();}
+      else toast(d.error,'error');
+    }catch(e){toast('Gagal.','error');}
+  });
+}
+
+// ── CONFIRM ──────────────────────────────────────────────────
+function showConfirm(icon,title,msg,cb){
+  document.getElementById('confirm-icon').textContent=icon;
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-overlay').classList.add('open');
+  document.getElementById('confirm-ok').onclick=async()=>{closeConfirm();await cb();};
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');}
+
+// ── MOBILE ───────────────────────────────────────────────────
+function checkMobile(){
+  document.getElementById('menu-toggle').style.display=window.innerWidth<=768?'block':'none';
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('resize',checkMobile);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeConfirm();}
+});
+document.getElementById('modal-promo').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modal-promo'))closeModal();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  checkAuth();checkMobile();loadPromo();
+});
+</script>
+</body>
+</html>
