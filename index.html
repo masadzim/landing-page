@@ -578,10 +578,10 @@
         </div>
         <!-- ✅ BUG DIPERBAIKI: Aslinya ada tanda kutip ganda ekstra → onclick="openCheckout()"" -->
         <button onclick="openCheckout()"
-  class="w-full text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-3"
-  style="background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 8px 24px rgba(234,88,12,0.4);class="btn-3d"">
+  class="w-full text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-3 btn-3d"
+  style="background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 8px 24px rgba(234,88,12,0.4);">
   <i class="fas fa-shopping-cart text-xl"></i> Checkout
-        </button>
+</button>
       </div>
     </div>
   </div>
@@ -1450,7 +1450,7 @@
 }
 
 // ============================================================
-// VERIFIKASI OTP — wajib untuk pembayaran Cash
+// VERIFIKASI OTP — Wajib untuk pembayaran Cash (Diperbaiki ke JSON)
 // ============================================================
 let waVerified = false;
 
@@ -1470,14 +1470,13 @@ async function kirimOtpCash() {
   msgEl.textContent = '';
 
   try {
-    // Ambil reCAPTCHA token sebelum kirim
     await new Promise(r => grecaptcha.ready(r));
-    const rcToken = await grecaptcha.execute(RCK, { action: 'customer_otp' });
+    const rcToken = await grecaptcha.execute(RCK, { action: 'login' }); // Disamakan action-nya dengan backend
 
-    const res  = await fetch(APPS_SCRIPT_URL, {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ action: 'customerRequestOTP', noWA: wa, recaptchaToken: rcToken })
+      headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan JSON murni
+      body: JSON.stringify({ action: 'customerRequestOTP', noWA: wa, recaptchaToken: rcToken })
     });
     const data = await res.json();
 
@@ -1514,10 +1513,10 @@ async function verifikasiOtpCash() {
   btn.disabled = true; btn.textContent = '...';
 
   try {
-    const res  = await fetch(APPS_SCRIPT_URL, {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ action: 'customerVerifyOTP', noWA: wa, otp })
+      headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan JSON murni
+      body: JSON.stringify({ action: 'customerVerifyOTP', noWA: wa, otp: otp })
     });
     const data = await res.json();
 
@@ -1539,7 +1538,6 @@ async function verifikasiOtpCash() {
     btn.disabled = false; btn.textContent = 'Verifikasi';
   }
 }
-
     // Hitung jarak dua koordinat (km) dengan rumus Haversine
     function haversine(lat1, lng1, lat2, lng2) {
       const R = 6371;
@@ -1694,12 +1692,12 @@ async function verifikasiOtpCash() {
 async function submitCheckout() {
   const nama = document.getElementById('co-nama').value.trim();
   const wa = document.getElementById('co-wa').value.trim();
-  if (!nama)           { showToast('⚠️ Nama wajib diisi!'); return; }
-  if (!wa) { showToast('⚠️ Nomor WA wajib diisi!'); return; }
-  if (!deliveryMode)   { showToast('⚠️ Pilih metode pengiriman!');               return; }
+  if (!nama)            { showToast('⚠️ Nama wajib diisi!'); return; }
+  if (!wa)              { showToast('⚠️ Nomor WA wajib diisi!'); return; }
+  if (!deliveryMode)    { showToast('⚠️ Pilih metode pengiriman!'); return; }
   if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi!'); return; }
   if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
-  if (!selectedPayment){ showToast('⚠️ Pilih metode pembayaran!');               return; }
+  if (!selectedPayment){ showToast('⚠️ Pilih metode pembayaran!'); return; }
   if (selectedPayment === 'qris' && !document.getElementById('input-bukti')?.files[0]) {
     showToast('⚠️ Upload bukti transfer dulu!'); return;
   }
@@ -1712,12 +1710,11 @@ async function submitCheckout() {
   const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
   const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
   let itemsText = cart.map(i => i.name + '(' + (i.varianLabel||'-') + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
-  // Sisipkan kode promo agar laporan promo (admin) bisa tracking penggunaan
+  
   if (promoApplied && diskon > 0) {
     itemsText += ', [PROMO:' + promoApplied.kodePromo + ']';
   }
 
-  // Upload bukti transfer dulu jika QRIS
   let linkBukti = null;
   if (selectedPayment === 'qris') {
     showToast('Mengupload bukti transfer...');
@@ -1728,30 +1725,29 @@ async function submitCheckout() {
     }
   }
 
-  // Susun payload untuk Google Sheets
-  const dataPesanan = JSON.stringify({
-    orderId, timestamp, nama,
-    noWA: document.getElementById('co-wa').value.trim(), // ✅ tambah input WA
-    userLat: userLat || null,  // ✅ tambah
-    userLng: userLng || null,  // ✅ tambah
+  // FIX: Mengirim objek JSON bersih langsung ke root doPost backend
+  const dataPesanan = {
+    orderId: orderId,
+    timestamp: timestamp,
+    nama: nama,
+    noWA: wa,
+    userLat: userLat || null,
+    userLng: userLng || null,
     pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-    alamat,
-    ongkir:     deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
+    alamat: alamat,
+    ongkir: deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
     pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-    items:      itemsText,
-    total:      'Rp ' + rupiah(total),
-    linkBukti:  linkBukti || '-'
-  });
-
-  const payload = new URLSearchParams();
-  payload.append('data', dataPesanan);
+    items: itemsText,
+    total: 'Rp ' + rupiah(total),
+    linkBukti: linkBukti || '-'
+  };
 
   showToast('Sedang mengirim pesanan...');
 
   fetch(APPS_SCRIPT_URL, {
     method:  'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    payload
+    headers: { 'Content-Type': 'application/json' }, // FIX: Menggunakan Content-Type JSON murni
+    body:    JSON.stringify(dataPesanan)
   })
   .then(res => res.json())
   .then(result => {
@@ -1759,7 +1755,8 @@ async function submitCheckout() {
       showToast('❌ Gagal: ' + (result?.error || 'Server menolak pesanan.'));
       return;
     }
-    // Susun pesan WhatsApp
+    
+    // Alur redirect WhatsApp (Dipertahankan sesuai rancangan asli Anda)
     let msg = 'Halo The Kebab Factory!%0A%0A';
     msg += '*Order ID:* '   + orderId   + '%0A';
     msg += '*Waktu:* '      + timestamp + '%0A';
@@ -1767,7 +1764,7 @@ async function submitCheckout() {
     msg += '*Pengiriman:* ' + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
     if (deliveryMode === 'delivery') {
       msg += '*Alamat:* ' + alamat + '%0A';
-      if (userLat) msg += '*Lokasi GPS:* https://maps.google.com?q=' + userLat + ',' + userLng + '%0A';
+      if (userLat) msg += '*Lokasi GPS:* http://maps.google.com/?q=' + userLat + ',' + userLng + '%0A';
       msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir)) + '%0A';
     }
     msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
@@ -1775,7 +1772,7 @@ async function submitCheckout() {
     msg += '%0A*Pesanan:*%0A';
     cart.forEach(i => {
       msg += '- ' + i.name + (i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : '') + ' x' + i.quantity + ' = Rp ' + rupiah(i.price * i.quantity) + '%0A';
-      if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
+      if (i.catatan) msg += '   Catatan: ' + i.catatan + '%0A';
     });
     msg += '%0A*TOTAL: Rp ' + rupiah(total) + '*%0A%0AMohon segera diproses. Terima kasih!';
 
@@ -1789,7 +1786,6 @@ async function submitCheckout() {
     console.error(err);
   });
 }
-
 // ============================================================
 // BUKTI TRANSFER: Preview & upload ke Google Drive
 // ============================================================
