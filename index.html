@@ -735,20 +735,41 @@
       renderCart();
     }
 
-    function renderCart() {
-      const count = cart.reduce((s, i) => s + i.quantity, 0); document.getElementById('cart-count').textContent = count;
-      const container = document.getElementById('cart-items');
-      if (!cart.length) { container.innerHTML = '<p style="color:#9ca3af;text-align:center;">Keranjang kosong</p>'; document.getElementById('cart-total-price').textContent = 'Rp 0'; return; }
-      container.innerHTML = cart.map(item => `
-        <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
-          <div style="display:flex;justify-content:space-between;"><strong>${item.name}</strong><button onclick="changeCartQty(${item.id},-${item.quantity})"><i class="fas fa-trash text-red-400"></i></button></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
-            <div class="flex gap-2"><button onclick="changeCartQty(${item.id},-1)" class="px-2 bg-gray-200 rounded">-</button><span>${item.quantity}</span><button onclick="changeCartQty(${item.id},1)" class="px-2 bg-gray-200 rounded">+</button></div>
-            <span class="text-orange-600 font-bold">Rp ${rupiah(item.price * item.quantity)}</span>
-          </div>
-        </div>`).join('');
-      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0); document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
-    }
+   function renderCart() {
+  const count = cart.reduce((s, i) => s + i.quantity, 0); 
+  document.getElementById('cart-count').textContent = count;
+  const container = document.getElementById('cart-items');
+  
+  if (!cart.length) { 
+    container.innerHTML = '<p style="color:#9ca3af;text-align:center;margin-top:2.5rem">Keranjang masih kosong</p>'; 
+    document.getElementById('cart-total-price').textContent = 'Rp 0'; 
+    return; 
+  }
+  
+  container.innerHTML = cart.map(item => `
+    <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
+        <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">${item.name}</p>
+        
+        <button onclick="changeCartQty('${item.id}', -${item.quantity})" style="border:none; background:none; cursor:pointer;" title="Hapus Semua">
+          <i class="fas fa-trash text-red-500 hover:text-red-700 transition"></i>
+        </button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:0.5rem">
+          <button onclick="changeCartQty('${item.id}', -1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold;background:white;cursor:pointer;">-</button>
+          <span style="width:1.5rem;text-align:center;font-weight:700">${item.quantity}</span>
+          <button onclick="changeCartQty('${item.id}', 1)"  style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold;background:white;cursor:pointer;">+</button>
+        </div>
+        <span style="font-weight:900;color:#ea580c">Rp ${rupiah(item.price * item.quantity)}</span>
+      </div>
+      ${item.varianLabel && item.varianLabel !== '-' ? `<p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.varianLabel}</p>` : ''}
+      ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem;margin-top:0.25rem">📝 ${item.catatan}</p>` : ''}
+    </div>`).join('');
+    
+  const total = cart.reduce((s, i) => s + i.price * i.quantity, 0); 
+  document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
+}
     function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); document.getElementById('cart-overlay').classList.toggle('open'); }
 
     function openCheckout() {
