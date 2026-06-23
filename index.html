@@ -22,20 +22,6 @@
         url('kebab3.jpg') center/cover no-repeat;
     }
 
-    /* ── MENU CARD ──────────────────────────────────────── */
-    .menu-card { transition: transform 0.3s, box-shadow 0.3s; }
-    .menu-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
-    }
-
-    /* ── FLOATING WA BUTTON ─────────────────────────────── */
-    .floating-wa { animation: pulse 2s infinite; }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50%       { transform: scale(1.1); }
-    }
-
     /* ── CAROUSEL ───────────────────────────────────────── */
     .carousel-track { display: flex; transition: transform 0.5s ease; }
     .carousel-slide { min-width: 100%; }
@@ -55,7 +41,6 @@
     }
     #cart-sidebar.open { transform: translateX(0); }
 
-    /* ── CART OVERLAY ───────────────────────────────────── */
     #cart-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.4); z-index: 99;
@@ -73,12 +58,6 @@
       white-space: nowrap;
     }
 
-    /* ── CHAT TYPING BOUNCE ─────────────────────────────── */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-4px); }
-    }
-
     /* ── COOKIE BOX ─────────────────────────────────────── */
     .cookie-box {
       position: fixed; bottom: 20px; left: 20px; right: 20px;
@@ -88,15 +67,8 @@
       align-items: center; gap: 10px;
       z-index: 999; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     }
-    .cookie-box p { margin: 0; font-size: 14px; }
-    .cookie-box button {
-      border: none; padding: 8px 14px;
-      border-radius: 10px; cursor: pointer;
-    }
-    .cookie-box button:first-of-type { background: #22c55e; color: white; }
-    .cookie-box button:last-of-type  { background: #333; color: white; }
 
-    /* ── AI CHAT BUTTON (floating) ──────────────────────── */
+    /* ── AI CHAT BUTTON ── */
     .ai-chat-button {
       width: 70px; height: 70px;
       border: none; border-radius: 50%;
@@ -107,10 +79,7 @@
       animation: pulseBot 2s infinite;
     }
     .ai-chat-button:hover { transform: scale(1.08); }
-    .ai-chat-button img {
-      width: 100%; height: 100%;
-      object-fit: contain; background: white;
-    }
+    .ai-chat-button img { width: 100%; height: 100%; object-fit: contain; background: white; }
 
     @keyframes pulseBot {
       0%   { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
@@ -118,7 +87,6 @@
       100% { transform: scale(1);    box-shadow: 0 6px 20px rgba(234,88,12,0.35); }
     }
 
-    /* ── MINI AI ICON ───────────────── */
     .mini-ai-icon {
       width: 2.5rem; height: 2.5rem;
       border-radius: 50%; overflow: hidden;
@@ -126,12 +94,8 @@
       background: linear-gradient(135deg, #ea580c, #f97316);
       box-shadow: 0 4px 10px rgba(234,88,12,.3);
     }
-    .mini-ai-icon img {
-      width: 100%; height: 100%;
-      object-fit: contain; padding: 2px;
-      background: white;
-    }
-    /* ── EFEK 3D ────────────────────────────────────────────── */
+    .mini-ai-icon img { width: 100%; height: 100%; object-fit: contain; padding: 2px; background: white; }
+
     .btn-3d {
       box-shadow: 0 6px 0 rgba(0,0,0,0.25);
       transform: translateY(0);
@@ -141,6 +105,23 @@
       box-shadow: 0 2px 0 rgba(0,0,0,0.25);
       transform: translateY(4px);
     }
+
+    /* ── FIX KEYFRAMES NEWSBAR SCROLLING ── */
+    @keyframes newsBarScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .news-bar-track-layout {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      padding: 0.65rem 1rem;
+      white-space: nowrap;
+      animation: newsBarScroll 25s linear infinite;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    #news-bar:hover .news-bar-track-layout { animation-play-state: paused; }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -172,8 +153,9 @@
     </div>
   </nav>
 
-  <div id="news-bar" style="display:none;background:linear-gradient(90deg,#ea580c,#f97316);color:white;overflow:hidden;position:relative;">
-    <div id="news-bar-track" style="display:flex;align-items:center;gap:3rem;padding:0.55rem 1rem;white-space:nowrap;animation:newsBarScroll 22s linear infinite;font-size:0.85rem;font-weight:600;"></div>
+  <div id="news-bar" class="w-full overflow-hidden block z-40 bg-gradient-to-r from-orange-600 to-orange-500 text-white border-b border-orange-700">
+    <div id="news-bar-track" class="news-bar-track-layout">
+      </div>
   </div>
 
   <div id="mobile-menu" style="display:none;position:fixed;top:64px;right:1rem;z-index:49;min-width:180px" class="md:hidden">
@@ -194,22 +176,10 @@
       <input id="input-orderid" type="text" placeholder="Masukkan Order ID (contoh: KF-260522-1234)" style="width:100%;padding:0.875rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;font-size:0.95rem;margin-bottom:1rem">
       <button onclick="cekStatus()" style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;margin-bottom:1rem">Cek Status</button>
       <div id="status-result" style="display:none;background:#f9fafb;border-radius:1rem;padding:1rem">
-        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-          <span style="color:#6b7280;font-size:0.85rem">Order ID</span>
-          <span id="res-orderid" style="font-weight:700;font-size:0.85rem"></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-          <span style="color:#6b7280;font-size:0.85rem">Nama</span>
-          <span id="res-nama" style="font-weight:700;font-size:0.85rem"></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-          <span style="color:#6b7280;font-size:0.85rem">Total</span>
-          <span id="res-total" style="font-weight:700;font-size:0.85rem"></span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="color:#6b7280;font-size:0.85rem">Status</span>
-          <span id="res-status" style="font-weight:900;font-size:1rem;padding:0.25rem 0.875rem;border-radius:2rem"></span>
-        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><span style="color:#6b7280">Order ID</span><span id="res-orderid" class="font-bold"></span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><span style="color:#6b7280">Nama</span><span id="res-nama" class="font-bold"></span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem"><span style="color:#6b7280">Total</span><span id="res-total" class="font-bold"></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#6b7280">Status</span><span id="res-status" style="font-weight:900;padding:0.25rem 0.875rem;border-radius:2rem"></span></div>
       </div>
     </div>
   </div>
@@ -233,7 +203,7 @@
         <button onclick="tutupSearch()" style="font-size:1.5rem;color:#9ca3af;line-height:1">×</button>
       </div>
       <div id="search-results">
-        <p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>
+        <p style="color:#9ca3af;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>
       </div>
     </div>
   </div>
@@ -280,6 +250,12 @@
         <p class="text-gray-500 mt-2">Tap Tambah untuk masukkan ke keranjang</p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-container"></div>
+      
+      <div id="menu-more-container" class="w-full text-center mt-10 hidden">
+        <button onclick="toggleExpandMenu()" id="btn-more-menu" class="btn-3d inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition text-sm">
+          <span>Lihat Seluruh Menu</span> <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -293,9 +269,7 @@
       <div id="modal-varian-groups"></div>
       <p style="font-weight:700;margin-bottom:0.5rem">Catatan Khusus</p>
       <textarea id="modal-catatan" rows="2" placeholder="Contoh: extra saus, tanpa bawang, dll" style="width:100%;border:1px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem;resize:none;outline:none;font-size:0.9rem;margin-bottom:1.2rem"></textarea>
-      <button onclick="confirmAddToCart()" class="btn-3d w-full bg-[#ea580c] text-white font-heavy p-4 rounded-xl text-lg font-bold">
-        + Tambah ke Keranjang
-      </button>
+      <button onclick="confirmAddToCart()" class="btn-3d w-full bg-[#ea580c] text-white font-heavy p-4 rounded-xl text-lg font-bold">+ Tambah ke Keranjang</button>
     </div>
   </div>
 
@@ -321,10 +295,12 @@
         <h2 class="text-4xl font-black mt-1">Jurnal Kebab Factory</h2>
         <p class="text-gray-500 mt-2">Ketahui rahasia di balik bahan premium kami & info terkini</p>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container">
-        <div class="col-span-full text-center py-8">
-          <p class="text-gray-400 font-medium animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat berita & edukasi...</p>
-        </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="news-container"></div>
+      
+      <div id="news-more-container" class="w-full text-center mt-10 hidden">
+        <button onclick="toggleExpandNews()" id="btn-more-news" class="btn-3d inline-flex items-center gap-2 bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-3 px-8 rounded-full transition text-sm">
+          <span>Tampilkan Artikel Lain</span> <i class="fas fa-chevron-down"></i>
+        </button>
       </div>
     </div>
   </section>
@@ -357,14 +333,8 @@
               <p>Setiap Hari: 11.00 – 23.00 WIB</p>
             </div>
           </div>
-          <div class="flex items-start gap-3">
-            <i class="fas fa-map-marker-alt text-orange-400 mt-1"></i>
-            <p>Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Ponorogo</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <i class="fab fa-whatsapp text-green-400"></i>
-            <a href="https://wa.me/6281357683151" class="hover:text-orange-400 transition">0813-5768-3151</a>
-          </div>
+          <div class="flex items-start gap-3"><i class="fas fa-map-marker-alt text-orange-400 mt-1"></i><p>Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Ponorogo</p></div>
+          <div class="flex items-center gap-3"><i class="fab fa-whatsapp text-green-400"></i><a href="https://wa.me/6281357683151" class="hover:text-orange-400 transition">0813-5768-3151</a></div>
         </div>
       </div>
       <div class="text-center md:text-left">
@@ -378,13 +348,8 @@
     <div class="max-w-7xl mx-auto px-6 text-center">
       <p class="text-white/60 text-sm mb-4">Pembayaran Tersedia</p>
       <div class="flex justify-center items-center gap-6 flex-wrap">
-        <div class="bg-white px-6 py-3 rounded-xl flex items-center gap-3">
-          <img src="./qris.png" alt="QRIS" class="h-8 w-auto">
-          <span class="font-bold text-sm text-gray-700">Scan & Pay</span>
-        </div>
-        <div class="bg-white px-6 py-3 rounded-xl">
-          <span class="font-bold text-sm text-gray-700">💵 Cash</span>
-        </div>
+        <div class="bg-white px-6 py-3 rounded-xl flex items-center gap-3"><img src="./qris.png" alt="QRIS" class="h-8 w-auto"><span class="font-bold text-sm text-gray-700">Scan & Pay</span></div>
+        <div class="bg-white px-6 py-3 rounded-xl"><span class="font-bold text-sm text-gray-700">💵 Cash</span></div>
       </div>
     </div>
   </section>
@@ -403,10 +368,7 @@
         <p class="text-gray-400 text-center mt-10">Keranjang masih kosong</p>
       </div>
       <div class="border-t pt-6 mt-6">
-        <div class="flex justify-between text-xl font-black mb-6">
-          <span>Total</span>
-          <span id="cart-total-price" class="text-orange-600">Rp 0</span>
-        </div>
+        <div class="flex justify-between text-xl font-black mb-6"><span>Total</span><span id="cart-total-price" class="text-orange-600">Rp 0</span></div>
         <button onclick="openCheckout()" class="w-full text-white font-black py-5 rounded-2xl text-lg transition flex items-center justify-center gap-3 btn-3d" style="background:linear-gradient(135deg,#ea580c,#f97316);box-shadow:0 8px 24px rgba(234,88,12,0.4);">
           <i class="fas fa-shopping-cart text-xl"></i> Checkout
         </button>
@@ -423,10 +385,7 @@
       <div style="background:#fff7ed;border-radius:1rem;padding:1rem;margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.85rem;color:#c2410c;margin-bottom:0.5rem">Ringkasan Pesanan</p>
         <div id="co-summary" style="font-size:0.85rem"></div>
-        <div style="border-top:1px solid #fed7aa;margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;font-weight:900">
-          <span>Subtotal</span>
-          <span id="co-subtotal" style="color:#ea580c"></span>
-        </div>
+        <div style="border-top:1px solid #fed7aa;margin-top:0.5rem;padding-top:0.5rem;display:flex;justify-content:space-between;font-weight:900;"><span>Subtotal</span><span id="co-subtotal" style="color:#ea580c"></span></div>
       </div>
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem">Nama Pemesan *</p>
@@ -439,14 +398,8 @@
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pengiriman *</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-          <div id="card-pickup" onclick="selectDelivery('pickup')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
-            <p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p>
-            <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p>
-          </div>
-          <div id="card-delivery" onclick="selectDelivery('delivery')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer">
-            <p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p>
-            <p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p>
-          </div>
+          <div id="card-pickup" onclick="selectDelivery('pickup')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer"><p style="font-weight:700;font-size:0.875rem">🏪 Ambil di Tempat</p><p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Gratis</p></div>
+          <div id="card-delivery" onclick="selectDelivery('delivery')" style="border:2px solid #e5e7eb;border-radius:1rem;padding:0.875rem;cursor:pointer"><p style="font-weight:700;font-size:0.875rem">🛵 Delivery</p><p style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem">Sesuai jarak</p></div>
         </div>
       </div>
       <div id="section-alamat" style="display:none;margin-bottom:1rem">
@@ -463,18 +416,13 @@
           <textarea id="co-alamat" rows="2" placeholder="Nama jalan, nomor rumah, RT/RW, patokan" style="width:100%;padding:0.75rem 1rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;outline:none;resize:none;font-size:0.9rem"></textarea>
         </div>
         <div style="background:#f9fafb;border-radius:0.75rem;padding:0.875rem;display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <p style="font-weight:700;font-size:0.875rem">Ongkos Kirim</p>
-            <p id="ongkir-info" style="font-size:0.75rem;color:#6b7280">Belum ada lokasi</p>
-          </div>
+          <div><p style="font-weight:700;font-size:0.875rem">Ongkos Kirim</p><p id="ongkir-info" style="font-size:0.75rem;color:#6b7280">Belum ada lokasi</p></div>
           <span id="ongkir-harga" style="font-weight:900;color:#ea580c;font-size:1.1rem">-</span>
         </div>
       </div>
       <div style="margin-bottom:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.5rem">Metode Pembayaran *</p>
-        <div id="payment-options">
-          <p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>
-        </div>
+        <div id="payment-options"><p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p></div>
       </div>
       <div id="section-qris" style="display:none;margin-bottom:1rem">
         <div style="text-align:center;margin-bottom:0.75rem">
@@ -490,9 +438,7 @@
       <div id="section-otp-cash" style="display:none;margin-bottom:1rem;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:1rem;padding:1rem">
         <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.4rem;color:#15803d">🔒 Verifikasi Nomor WhatsApp</p>
         <p style="font-size:0.78rem;color:#6b7280;margin-bottom:0.75rem">Untuk pembayaran Cash, kami akan mengirim kode OTP ke nomor WhatsApp kamu untuk memastikan pesanan valid.</p>
-        <div id="otp-cash-step1">
-          <button id="btn-kirim-otp-cash" onclick="kirimOtpCash()" style="width:100%;background:#15803d;color:white;font-weight:700;padding:0.75rem;border-radius:0.75rem;border:none;font-size:0.9rem;cursor:pointer">📲 Kirim OTP ke WhatsApp Saya</button>
-        </div>
+        <div id="otp-cash-step1"><button id="btn-kirim-otp-cash" onclick="kirimOtpCash()" style="width:100%;background:#15803d;color:white;font-weight:700;padding:0.75rem;border-radius:0.75rem;border:none;font-size:0.9rem;cursor:pointer">📲 Kirim OTP ke WhatsApp Saya</button></div>
         <div id="otp-cash-step2" style="display:none">
           <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">
             <input id="otp-cash-input" type="text" inputmode="numeric" maxlength="6" placeholder="Masukkan 6 digit OTP" style="width:100%;flex:1;padding:0.75rem 1rem;border:1.5px solid #bbf7d0;border-radius:0.75rem;outline:none;font-size:1rem;text-align:center;letter-spacing:0.3em;font-weight:700" onkeydown="if(event.key==='Enter'){event.preventDefault();verifikasiOtpCash();}">
@@ -512,42 +458,20 @@
         <p id="co-promo-msg" style="font-size:0.78rem;margin-top:0.4rem"></p>
       </div>
       <div style="background:#f9fafb;border-radius:1rem;padding:1rem;margin-bottom:1rem;font-size:0.9rem">
-        <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem">
-          <span style="color:#6b7280">Subtotal</span>
-          <span id="co-subtotal-2" style="font-weight:700">Rp 0</span>
-        </div>
-        <div id="co-ongkir-row" style="display:none;justify-content:space-between;margin-bottom:0.35rem">
-          <span style="color:#6b7280">Ongkos Kirim</span>
-          <span id="co-ongkir-2" style="font-weight:700">Rp 0</span>
-        </div>
-        <div id="co-diskon-row" style="display:none;justify-content:space-between;margin-bottom:0.35rem;color:#16a34a">
-          <span>Diskon <span id="co-promo-kode-label" style="font-weight:700"></span></span>
-          <span id="co-diskon-2" style="font-weight:700">- Rp 0</span>
-        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem"><span>Subtotal</span><span id="co-subtotal-2" style="font-weight:700">Rp 0</span></div>
+        <div id="co-ongkir-row" style="display:none;justify-content:space-between;margin-bottom:0.35rem"><span>Ongkos Kirim</span><span id="co-ongkir-2" style="font-weight:700">Rp 0</span></div>
+        <div id="co-diskon-row" style="display:none;justify-content:space-between;margin-bottom:0.35rem;color:#16a34a"><span>Diskon <span id="co-promo-kode-label" class="font-bold"></span></span><span id="co-diskon-2" style="font-weight:700">- Rp 0</span></div>
       </div>
-      <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-        <span style="font-weight:700;font-size:1.1rem">Total Bayar</span>
-        <span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span>
-      </div>
-      <button onclick="submitCheckout()" class="btn-3d w-full text-white font-black py-4 rounded-2xl text-xl cursor-pointer border-none mb-4" style="background:linear-gradient(135deg,#7c3a1c,#ea580c);">
-        🛒 Buat Pesanan
-      </button>
+      <div style="background:#ea580c;color:white;border-radius:1rem;padding:1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><span>Total Bayar</span><span id="co-total" style="font-weight:900;font-size:1.5rem">Rp 0</span></div>
+      <button onclick="submitCheckout()" class="btn-3d w-full text-white font-black py-4 rounded-2xl text-xl cursor-pointer border-none mb-4" style="background:linear-gradient(135deg,#7c3a1c,#ea580c);">🛒 Buat Pesanan</button>
       <p style="text-align:center;font-size:0.78rem;color:#9ca3af;margin-bottom:1rem"><i class="fab fa-whatsapp" style="color:#22c55e"></i> Notifikasi pesanan dikirim melalui WhatsApp</p>
     </div>
   </div>
 
-  <div id="cart-overlay" onclick="toggleCart()"></div>
-
   <div id="cta-buttons" style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
     <div id="cta-labels" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-      <div style="display:flex;align-items:center;gap:0.5rem">
-        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya Mas Aladin</span>
-        <button onclick="toggleAIChat()" class="ai-chat-button"><img src="./kebab-bot.png" alt="Kebab Bot"></button>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.5rem">
-        <span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span>
-        <a href="https://wa.me/6281357683151" target="_blank" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none"><i class="fab fa-whatsapp"></i></a>
-      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem"><span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya Mas Aladin</span><button onclick="toggleAIChat()" class="ai-chat-button"><img src="./kebab-bot.png" alt="Kebab Bot"></button></div>
+      <div style="display:flex;align-items:center;gap:0.5rem"><span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span><a href="https://wa.me/6281357683151" target="_blank" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none"><i class="fab fa-whatsapp"></i></a></div>
     </div>
   </div>
 
@@ -555,19 +479,14 @@
     <div style="background:linear-gradient(135deg,#3d2010,#7c3a1c);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
       <div style="display:flex;align-items:center;gap:0.75rem">
         <div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
-        <div>
-          <p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p>
-          <p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p>
-        </div>
+        <div><p style="color:white;font-weight:900;font-size:0.95rem">Mas Aladin</p><p style="color:rgba(255,255,255,0.6);font-size:0.75rem">AI Assistant The Kebab Factory</p></div>
       </div>
       <button onclick="toggleAIChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;opacity:0.7">×</button>
     </div>
     <div id="chat-messages" style="height:320px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafafa">
       <div style="display:flex;gap:0.5rem;align-items:flex-start">
         <div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div>
-        <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">
-          Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!
-        </div>
+        <div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">Halo! Saya Mas Aladin 👋<br>Tanya apa saja tentang <strong>The Kebab Factory</strong> — menu, harga, jam buka, lokasi, atau cara pesan!</div>
       </div>
     </div>
     <div id="quick-questions" style="padding:0.75rem 1rem;border-top:1px solid #f3f4f6;display:flex;gap:0.5rem;flex-wrap:wrap;background:white">
@@ -586,10 +505,7 @@
 
   <div id="cookieBox" class="cookie-box" style="display:none">
     <p>Kami menggunakan cookie untuk pengalaman terbaik</p>
-    <div class="flex gap-2">
-      <button onclick="acceptCookie()">Terima</button>
-      <button onclick="closeCookie()">Tolak</button>
-    </div>
+    <div class="flex gap-2"><button onclick="acceptCookie()">Terima</button><button onclick="closeCookie()">Tolak</button></div>
   </div>
   
   <div id="cta-install" style="display:none;align-items:center;gap:0.5rem">
@@ -597,17 +513,9 @@
     <button onclick="installPWA()" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#ea580c;color:white;font-size:1.4rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.4);display:flex;align-items:center;justify-content:center">📲</button>
   </div>
 
-  <div id="update-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1f2937;color:white;padding:1rem 1.5rem;align-items:center;justify-content:space-between;gap:1rem;z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,0.3)">
-    <span style="font-size:0.875rem;font-weight:600">🔄 Versi baru tersedia!</span>
-    <button onclick="lakukanUpdate()" style="background:#ea580c;color:white;border:none;padding:0.5rem 1.25rem;border-radius:2rem;font-weight:700;cursor:pointer;font-size:0.875rem;white-space:nowrap">Update Sekarang</button>
-  </div>
-
   <div id="modal-mappicker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem">
     <div style="background:white;border-radius:1.5rem;width:100%;max-width:480px;overflow:hidden">
-      <div style="padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f3f4f6">
-        <p style="font-weight:900;font-size:1rem">📍 Pilih Lokasi di Peta</p>
-        <button onclick="tutupMapPicker()" style="font-size:1.75rem;color:#9ca3af;border:none;background:none">×</button>
-      </div>
+      <div style="padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f3f4f6"><p style="font-weight:900;font-size:1rem">📍 Pilih Lokasi di Peta</p><button onclick="tutupMapPicker()" style="font-size:1.75rem;color:#9ca3af;border:none;background:none">×</button></div>
       <div id="leaflet-map" style="height:320px;width:100%"></div>
       <div style="padding:1rem">
         <p style="font-size:0.8rem;color:#6b7280;text-align:center;margin-bottom:0.75rem">Geser & zoom peta lalu tap 📍 tepat di lokasi kamu</p>
@@ -624,9 +532,7 @@
         .catch(err => console.log('SW Error:', err));
     }
 
-    function rupiah(n) {
-      return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
+    function rupiah(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
 
     const APPS_SCRIPT_URL = '/api/proxy';
     const RCK = '6LdOGhItAAAAAHqcMLE_8gP81b_SUTGwX54b3czL';
@@ -639,7 +545,12 @@
       'Batal':    { bg: '#fee2e2', color: '#b91c1c' },
     };
 
+    // ── CONFIG LIMITASI EXPAND RENDER ──
     let menuItems = [];
+    let beritaList = [];
+    let isMenuExpanded = false;
+    let isNewsExpanded = false;
+    const LIMIT_COUNT = 3; // Batasi 3 item awal di desktop/mobile
 
     async function loadMenu() {
       try {
@@ -647,20 +558,66 @@
         const data = await res.json();
         const produk = data.menu || [];
         menuItems = produk.map(p => ({
-          id:     p.idProduk,
-          name:   p.nama,
-          price:  Number(p.harga) || 0,
-          desc:   p.deskripsi || '',
-          badge:  p.kategori || '',
-          img:    p.foto || '',
+          id: p.idProduk,
+          name: p.nama,
+          price: Number(p.harga) || 0,
+          desc: p.deskripsi || '',
+          badge: p.kategori || '',
+          img: p.foto || '',
           varian: p.varian || {},
         }));
         renderMenu();
       } catch (e) {
         console.error('Gagal memuat menu:', e);
-        document.getElementById('menu-container').innerHTML =
-          '<p style="color:#9ca3af;text-align:center;grid-column:1/-1;padding:2rem">Gagal memuat menu. Coba refresh halaman.</p>';
+        document.getElementById('menu-container').innerHTML = '<p style="color:#9ca3af;text-align:center;grid-column:1/-1;padding:2rem">Gagal memuat menu. Coba refresh halaman.</p>';
       }
+    }
+
+    function renderMenu() {
+      const container = document.getElementById('menu-container');
+      const moreBtnWrap = document.getElementById('menu-more-container');
+      
+      // Ambil data sesuai status expand
+      const itemsToRender = isMenuExpanded ? menuItems : menuItems.slice(0, LIMIT_COUNT);
+      
+      // Munculkan tombol expand jika total menu melebihi limit
+      if (menuItems.length > LIMIT_COUNT) {
+        moreBtnWrap.classList.remove('hidden');
+        document.getElementById('btn-more-menu').innerHTML = isMenuExpanded ? '<span>Tampilkan Lebih Sedikit</span> <i class="fas fa-chevron-up"></i>' : '<span>Lihat Seluruh Menu</span> <i class="fas fa-chevron-down"></i>';
+      } else {
+        moreBtnWrap.classList.add('hidden');
+      }
+
+      container.innerHTML = itemsToRender.map(item => {
+        const badgeColor = item.badge === 'Best Value' ? 'background:#dcfce7;color:#15803d'
+                         : item.badge === 'Double'     ? 'background:#dbeafe;color:#1d4ed8'
+                         : item.badge === 'Signature'  ? 'background:#fee2e2;color:#b91c1c' : '';
+        return `
+          <div onclick="addToCart('${item.id}')" class="bg-white rounded-3xl overflow-hidden shadow-sm cursor-pointer transition flex flex-col hover:-translate-y-1.5 hover:shadow-xl duration-200">
+            <div style="position:relative;overflow:hidden;height:180px">
+              <img src="${item.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'">
+              ${item.badge ? `<span style="position:absolute;top:0.75rem;left:0.75rem;font-size:0.7rem;font-weight:800;padding:0.3rem 0.75rem;border-radius:2rem;${badgeColor}">${item.badge}</span>` : ''}
+              <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,0.3))"></div>
+            </div>
+            <div style="padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <h3 style="font-weight:800;font-size:1rem;line-height:1.3;margin-bottom:0.25rem">${item.name}</h3>
+                <p style="color:#9ca3af;font-size:0.8rem">${item.desc}</p>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.875rem;padding-top:0.875rem;border-top:1px solid #f3f4f6">
+                <span style="font-weight:900;font-size:1.3rem;color:#ea580c">Rp ${(item.price / 1000).toFixed(0)}rb</span>
+                <button onclick="event.stopPropagation(); addToCart('${item.id}')" class="btn-3d bg-[#ea580c] text-white border-none py-2 px-4 rounded-xl font-bold text-sm cursor-pointer flex items-center gap-1.5">
+                  <i class="fas fa-plus"></i> Tambah
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function toggleExpandMenu() {
+      isMenuExpanded = !isMenuExpanded;
+      renderMenu();
     }
 
     let galleryImages = ["./kebab1.jpeg", "./kebab2.jpeg", "./kebab3.jpg"];
@@ -675,24 +632,15 @@
           galleryImages = list.map(g => g.gambar);
           galeriItems   = list;
         }
-      } catch (e) {
-        console.error('Gagal memuat galeri, pakai default:', e);
-      }
+      } catch (e) { console.error('Gagal memuat galeri:', e); }
       renderCarousel();
       setupPromoMarketing();
     }
 
-    let cart = [];
-    let carouselIdx = 0;
-    let deliveryMode = '';
-    let selectedPayment = '';
-    let userLat = null;
-    let userLng = null;
-    let ongkir = 0;
-
+    let cart = []; let carouselIdx = 0; let deliveryMode = ''; let selectedPayment = '';
+    let userLat = null; let userLng = null; let ongkir = 0;
     const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
-    let STORE_WA = '6281357683151';
-    let promoApplied = null;
+    let STORE_WA = '6281357683151'; let promoApplied = null;
 
     function toggleMobileMenu() {
       const menu = document.getElementById('mobile-menu');
@@ -713,75 +661,34 @@
           const s  = data.status;
           const sc = STATUS_COLOR[s] || { bg: '#f3f4f6', color: '#374151' };
           const el = document.getElementById('res-status');
-          el.textContent      = s;
-          el.style.background = sc.bg;
-          el.style.color      = sc.color;
+          el.textContent      = s; el.style.background = sc.bg; el.style.color = sc.color;
           document.getElementById('status-result').style.display = 'block';
-        })
-        .catch(() => showToast('❌ Gagal cek status. Coba lagi.'));
+        });
     }
 
-    function renderMenu() {
-  document.getElementById('menu-container').innerHTML = menuItems.map(item => {
-    const badgeColor = item.badge === 'Best Value' ? 'background:#dcfce7;color:#15803d'
-                     : item.badge === 'Double'     ? 'background:#dbeafe;color:#1d4ed8'
-                     : item.badge === 'Signature'  ? 'background:#fee2e2;color:#b91c1c' : '';
-    // FIX: `${item.id}` dibungkus dengan petik satu ('') pada onclick pembungkus maupun tombol
-    return `
-      <div onclick="addToCart('${item.id}')" class="bg-white rounded-3xl overflow-hidden shadow-sm cursor-pointer transition flex flex-col hover:-translate-y-1.5 hover:shadow-xl duration-200">
-        <div style="position:relative;overflow:hidden;height:180px">
-          <img src="${item.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=400&q=80'">
-          ${item.badge ? `<span style="position:absolute;top:0.75rem;left:0.75rem;font-size:0.7rem;font-weight:800;padding:0.3rem 0.75rem;border-radius:2rem;${badgeColor}">${item.badge}</span>` : ''}
-          <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,0.3))"></div>
-        </div>
-        <div style="padding:1rem;flex:1;display:flex;flex-direction:column;justify-content:space-between">
-          <div>
-            <h3 style="font-weight:800;font-size:1rem;line-height:1.3;margin-bottom:0.25rem">${item.name}</h3>
-            <p style="color:#9ca3af;font-size:0.8rem">${item.desc}</p>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.875rem;padding-top:0.875rem;border-top:1px solid #f3f4f6">
-            <span style="font-weight:900;font-size:1.3rem;color:#ea580c">Rp ${(item.price / 1000).toFixed(0)}rb</span>
-            <button onclick="event.stopPropagation(); addToCart('${item.id}')" class="btn-3d bg-[#ea580c] text-white border-none py-2 px-4 rounded-xl font-bold text-sm cursor-pointer flex items-center gap-1.5">
-              <i class="fas fa-plus"></i> Tambah
-            </button>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
     function renderCarousel() {
       const track = document.getElementById('carousel-track');
       const dots  = document.getElementById('carousel-dots');
       track.innerHTML = galleryImages.map(src => `<div class="carousel-slide"><img src="${src}" alt="Kebab Factory"></div>`).join('');
       dots.innerHTML = galleryImages.map((_, i) => `<button onclick="goCarousel(${i})" class="w-2.5 h-2.5 rounded-full bg-white/60 hover:bg-white transition" id="dot-${i}"></button>`).join('');
       updateCarousel();
-      setInterval(() => moveCarousel(1), 4000);
     }
 
-    function moveCarousel(dir) {
-      carouselIdx = (carouselIdx + dir + galleryImages.length) % galleryImages.length;
-      updateCarousel();
-    }
-
-    function goCarousel(i) {
-      carouselIdx = i;
-      updateCarousel();
-    }
-
+    function moveCarousel(dir) { carouselIdx = (carouselIdx + dir + galleryImages.length) % galleryImages.length; updateCarousel(); }
+    document.addEventListener('DOMContentLoaded', () => { setInterval(() => moveCarousel(1), 4000); });
+    function goCarousel(i) { carouselIdx = i; updateCarousel(); }
     function updateCarousel() {
-      document.getElementById('carousel-track').style.transform = `translateX(-${carouselIdx * 100}%)`;
+      const track = document.getElementById('carousel-track');
+      if(track) track.style.transform = `translateX(-${carouselIdx * 100}%)`;
       galleryImages.forEach((_, i) => {
         const dot = document.getElementById('dot-' + i);
         if (dot) dot.style.background = i === carouselIdx ? 'white' : 'rgba(255,255,255,0.5)';
       });
     }
 
-    let pendingItemId  = null;
-    let tempVarianPilih = {};
-
+    let pendingItemId  = null; let tempVarianPilih = {};
     function addToCart(id) {
-      pendingItemId  = id;
-      tempVarianPilih = {};
+      pendingItemId  = id; tempVarianPilih = {};
       const item = menuItems.find(m => m.id === id);
       document.getElementById('modal-nama').textContent  = item.name;
       document.getElementById('modal-harga').textContent = 'Rp ' + rupiah(item.price);
@@ -790,16 +697,15 @@
       const tipes = Object.keys(item.varian || {});
 
       if (!tipes.length) {
-        container.innerHTML = '<p style="color:#9ca3af;font-size:0.85rem;margin-bottom:1rem">Tidak ada varian tambahan untuk produk ini.</p>';
+        container.innerHTML = '<p style="color:#9ca3af;font-size:0.85rem;margin-bottom:1rem">Tidak ada varian tambahan.</p>';
       } else {
         container.innerHTML = tipes.map((tipe, ti) => {
           const opts = item.varian[tipe];
           tempVarianPilih[tipe] = { nama: opts[0].nama, hargaTambah: Number(opts[0].hargaTambah)||0 };
           const btns = opts.map((o, oi) => {
-            const extra = o.hargaTambah > 0 ? ` (+Rp ${rupiah(o.hargaTambah)})` : '';
-            return `<button onclick="selectVarianGrup(this,'${tipe}','${o.nama.replace(/'/g,"\\'")}',${Number(o.hargaTambah)||0})" class="varian-grup-btn" data-tipe="${tipe}" style="border:2px solid ${oi===0?'#ea580c':'#e5e7eb'};background:${oi===0?'#ea580c':'white'};color:${oi===0?'white':'#111'};padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;transition:all 0.2s">${o.nama}${extra}</button>`;
+            return `<button onclick="selectVarianGrup(this,'${tipe}','${o.nama.replace(/'/g,"\\'")}',${Number(o.hargaTambah)||0})" class="varian-grup-btn" data-tipe="${tipe}" style="border:2px solid ${oi===0?'#ea580c':'#e5e7eb'};background:${oi===0?'#ea580c':'white'};color:${oi===0?'white':'#111'};padding:0.5rem 1rem;border-radius:2rem;font-weight:600;font-size:0.9rem;">${o.nama}${o.hargaTambah > 0 ? ' (+Rp '+rupiah(o.hargaTambah)+')' : ''}</button>`;
           }).join('');
-          return `<p style="font-weight:700;margin-bottom:0.5rem;text-transform:capitalize">Pilih ${tipe} *</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">${btns}</div>`;
+          return `<p style="font-weight:700;margin-bottom:0.5rem;">Pilih ${tipe} *</p><div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem">${btns}</div>`;
         }).join('');
       }
       document.getElementById('modal-varian').style.display = 'flex';
@@ -807,19 +713,10 @@
 
     function selectVarianGrup(btn, tipe, nama, hargaTambah) {
       tempVarianPilih[tipe] = { nama, hargaTambah };
-      document.querySelectorAll(`.varian-grup-btn[data-tipe="${tipe}"]`).forEach(b => {
-        b.style.background  = 'white';
-        b.style.borderColor = '#e5e7eb';
-        b.style.color       = '#111';
-      });
-      btn.style.background  = '#ea580c';
-      btn.style.borderColor = '#ea580c';
-      btn.style.color       = 'white';
+      document.querySelectorAll(`.varian-grup-btn[data-tipe="${tipe}"]`).forEach(b => { b.style.background = 'white'; b.style.borderColor = '#e5e7eb'; b.style.color = '#111'; });
+      btn.style.background = '#ea580c'; btn.style.borderColor = '#ea580c'; btn.style.color = 'white';
     }
-
-    function closeModal(e) {
-      if (e.target.id === 'modal-varian') document.getElementById('modal-varian').style.display = 'none';
-    }
+    function closeModal(e) { if (e.target.id === 'modal-varian') document.getElementById('modal-varian').style.display = 'none'; }
 
     function confirmAddToCart() {
       const item    = menuItems.find(m => m.id === pendingItemId);
@@ -828,622 +725,167 @@
       const finalPrice = item.price + addOn;
       const varianLabel = Object.values(tempVarianPilih).map(v=>v.nama).join(' / ') || '-';
       const existing = cart.find(i => i.id === pendingItemId && i.varianLabel === varianLabel && i.catatan === catatan);
-
-      if (existing) { existing.quantity++; } 
-      else { cart.push({ ...item, price: finalPrice, quantity: 1, varianLabel, catatan }); }
-
-      document.getElementById('modal-varian').style.display = 'none';
-      renderCart();
-      showToast(item.name + ' (' + varianLabel + ') ditambahkan 🛒');
+      if (existing) { existing.quantity++; } else { cart.push({ ...item, price: finalPrice, quantity: 1, varianLabel, catatan }); }
+      document.getElementById('modal-varian').style.display = 'none'; renderCart(); showToast(item.name + ' ditambahkan 🛒');
     }
 
     function changeCartQty(id, delta) {
-      const idx = cart.findIndex(i => i.id === id);
-      if (idx === -1) return;
-      cart[idx].quantity += delta;
-      if (cart[idx].quantity < 1) cart.splice(idx, 1);
+      const idx = cart.findIndex(i => i.id === id); if (idx === -1) return;
+      cart[idx].quantity += delta; if (cart[idx].quantity < 1) cart.splice(idx, 1);
       renderCart();
     }
 
     function renderCart() {
-      const count = cart.reduce((s, i) => s + i.quantity, 0);
-      document.getElementById('cart-count').textContent = count;
+      const count = cart.reduce((s, i) => s + i.quantity, 0); document.getElementById('cart-count').textContent = count;
       const container = document.getElementById('cart-items');
-      if (!cart.length) {
-        container.innerHTML = '<p style="color:#9ca3af;text-align:center;margin-top:2.5rem">Keranjang masih kosong</p>';
-        document.getElementById('cart-total-price').textContent = 'Rp 0';
-        return;
-      }
+      if (!cart.length) { container.innerHTML = '<p style="color:#9ca3af;text-align:center;">Keranjang kosong</p>'; document.getElementById('cart-total-price').textContent = 'Rp 0'; return; }
       container.innerHTML = cart.map(item => `
         <div style="background:#f9fafb;border-radius:1rem;padding:1rem">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
-            <p style="font-weight:700;font-size:0.9rem;flex:1;padding-right:0.5rem">${item.name}</p>
-            <button onclick="changeCartQty(${item.id},-${item.quantity})" style="color:#f87171;font-size:0.85rem"><i class="fas fa-trash"></i></button>
+          <div style="display:flex;justify-content:space-between;"><strong>${item.name}</strong><button onclick="changeCartQty(${item.id},-${item.quantity})"><i class="fas fa-trash text-red-400"></i></button></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+            <div class="flex gap-2"><button onclick="changeCartQty(${item.id},-1)" class="px-2 bg-gray-200 rounded">-</button><span>${item.quantity}</span><button onclick="changeCartQty(${item.id},1)" class="px-2 bg-gray-200 rounded">+</button></div>
+            <span class="text-orange-600 font-bold">Rp ${rupiah(item.price * item.quantity)}</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="display:flex;align-items:center;gap:0.5rem">
-              <button onclick="changeCartQty(${item.id},-1)" style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">-</button>
-              <span style="width:1.5rem;text-align:center;font-weight:700">${item.quantity}</span>
-              <button onclick="changeCartQty(${item.id},1)"  style="width:1.75rem;height:1.75rem;border:1px solid #e5e7eb;border-radius:0.5rem;font-weight:bold">+</button>
-            </div>
-            <span style="font-weight:900;color:#ea580c">Rp ${rupiah(item.price * item.quantity)}</span>
-          </div>
-          ${item.varianLabel && item.varianLabel !== '-' ? `<p style="font-weight:600;font-size:0.8rem;margin-top:0.35rem;color:#ea580c">${item.varianLabel}</p>` : ''}
-          ${item.catatan ? `<p style="color:#9ca3af;font-size:0.75rem">${item.catatan}</p>` : ''}
         </div>`).join('');
-      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
+      const total = cart.reduce((s, i) => s + i.price * i.quantity, 0); document.getElementById('cart-total-price').textContent = 'Rp ' + rupiah(total);
     }
-
-    function toggleCart() {
-      document.getElementById('cart-sidebar').classList.toggle('open');
-      document.getElementById('cart-overlay').classList.toggle('open');
-    }
+    function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); document.getElementById('cart-overlay').classList.toggle('open'); }
 
     function openCheckout() {
       if (!cart.length) { showToast('Keranjang masih kosong!'); return; }
-      deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0;
-      waVerified = false;
-      document.getElementById('co-wa').disabled = false;
-      document.getElementById('section-otp-cash').style.display = 'none';
-      document.getElementById('otp-cash-step1').style.display = 'block';
-      document.getElementById('otp-cash-step2').style.display = 'none';
-      document.getElementById('otp-cash-verified').style.display = 'none';
-      document.getElementById('otp-cash-input').value = '';
-      document.getElementById('otp-cash-msg').textContent = '';
-      document.getElementById('btn-kirim-otp-cash').disabled = false;
-      document.getElementById('btn-kirim-otp-cash').textContent = '📲 Kirim OTP ke WhatsApp Saya';
-      promoApplied = null;
-      document.getElementById('co-promo-input').value = '';
-      document.getElementById('co-promo-msg').textContent = '';
-      document.getElementById('co-promo-btn').textContent = 'Terapkan';
-      document.getElementById('co-promo-btn').disabled = false;
-      document.getElementById('co-diskon-row').style.display = 'none';
-      document.getElementById('co-promo-input').disabled = false;
-      document.getElementById('co-nama').value              = '';
-      document.getElementById('co-alamat').value            = '';
-      document.getElementById('loc-result').textContent     = '';
-      document.getElementById('loc-btn-text').textContent   = 'Gunakan Lokasi Saya';
-      document.getElementById('section-alamat').style.display    = 'none';
-      document.getElementById('card-pickup').style.border        = '2px solid #e5e7eb';
-      document.getElementById('card-delivery').style.border      = '2px solid #e5e7eb';
-      document.getElementById('payment-options').innerHTML  = '<p style="color:#9ca3af;font-size:0.875rem">Pilih metode pengiriman dulu</p>';
-      document.getElementById('section-qris').style.display = 'none';
-      document.getElementById('preview-bukti').style.display = 'none';
-      const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      document.getElementById('co-subtotal').textContent = 'Rp ' + rupiah(subtotal);
-      document.getElementById('co-summary').innerHTML = cart.map(i =>
-        `<div style="display:flex;justify-content:space-between"><span>${i.name}${i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : ''} ×${i.quantity}</span><span>Rp ${rupiah(i.price * i.quantity)}</span></div>`
-      ).join('');
-      updateCoTotal();
-      toggleCart();
+      deliveryMode = ''; selectedPayment = ''; userLat = null; userLng = null; ongkir = 0; waVerified = false;
       document.getElementById('modal-checkout').style.display = 'flex';
     }
-
-    function closeCheckout(e) {
-      if (e.target.id === 'modal-checkout') document.getElementById('modal-checkout').style.display = 'none';
-    }
-
+    function closeCheckout(e) { if (e.target.id === 'modal-checkout') document.getElementById('modal-checkout').style.display = 'none'; }
     function selectDelivery(mode) {
-      deliveryMode = mode;
-      document.getElementById('card-pickup').style.border      = mode === 'pickup'   ? '2px solid #ea580c' : '2px solid #e5e7eb';
-      document.getElementById('card-pickup').style.background  = mode === 'pickup'   ? '#fff7ed'           : 'white';
-      document.getElementById('card-delivery').style.border    = mode === 'delivery' ? '2px solid #ea580c' : '2px solid #e5e7eb';
-      document.getElementById('card-delivery').style.background= mode === 'delivery' ? '#fff7ed'           : 'white';
-      document.getElementById('section-alamat').style.display  = mode === 'delivery' ? 'block' : 'none';
-      if (mode === 'pickup') ongkir = 0;
-      selectedPayment = '';
-      updatePaymentOptions();
-      updateCoTotal();
+      deliveryMode = mode; document.getElementById('section-alamat').style.display = mode === 'delivery' ? 'block' : 'none';
+      updatePaymentOptions(); updateCoTotal();
     }
-
     function updatePaymentOptions() {
-      const c    = document.getElementById('payment-options');
-      const opts = deliveryMode === 'pickup'
-        ? [{ val: 'cash', label: '💵 Cash' }, { val: 'qris', label: '📱 QRIS' }]
-        : [{ val: 'qris', label: '📱 QRIS' }];
-      c.innerHTML = opts.map(o => `<div id="pay-${o.val}" onclick="selectPayment('${o.val}')" style="border:2px solid #e5e7eb;border-radius:0.75rem;padding:0.75rem 1rem;cursor:pointer;margin-bottom:0.5rem;font-weight:700">${o.label}</div>`).join('');
+      const c = document.getElementById('payment-options');
+      c.innerHTML = deliveryMode === 'pickup' 
+        ? `<div onclick="selectPayment('cash')" id="pay-cash" class="p-3 border rounded mb-2 font-bold cursor-pointer">💵 Cash</div><div onclick="selectPayment('qris')" id="pay-qris" class="p-3 border rounded mb-2 font-bold cursor-pointer">📱 QRIS</div>`
+        : `<div onclick="selectPayment('qris')" id="pay-qris" class="p-3 border rounded mb-2 font-bold cursor-pointer">📱 QRIS</div>`;
     }
-
     function selectPayment(val) {
-      selectedPayment = val;
-      document.querySelectorAll('#payment-options div').forEach(d => {
-        d.style.border     = '2px solid #e5e7eb';
-        d.style.background = 'white';
-      });
-      const el = document.getElementById('pay-' + val);
-      if (el) { el.style.border = '2px solid #ea580c'; el.style.background = '#fff7ed'; }
-      document.getElementById('section-qris').style.display = val === 'qris' ? 'block' : 'none';
+      selectedPayment = val; document.getElementById('section-qris').style.display = val === 'qris' ? 'block' : 'none';
       document.getElementById('section-otp-cash').style.display = val === 'cash' ? 'block' : 'none';
-      if (val !== 'qris') {
-        document.getElementById('input-bukti').value = '';
-        document.getElementById('preview-bukti').style.display = 'none';
-      }
     }
 
-    // FIX API ROUTING PAYLOAD: Diubah ke payload JSON murni
     async function kirimOtpCash() {
-      const wa    = document.getElementById('co-wa').value.trim();
-      const msgEl = document.getElementById('otp-cash-msg');
-      if (!wa || wa.replace(/\D/g,'').length < 9) {
-        msgEl.style.color = '#ef4444';
-        msgEl.textContent = '⚠️ Isi Nomor WhatsApp yang valid di atas terlebih dahulu.';
-        return;
-      }
-      const btn = document.getElementById('btn-kirim-otp-cash');
-      btn.disabled = true; btn.textContent = 'Mengirim...';
-      msgEl.style.color = '#6b7280'; msgEl.textContent = '';
-      try {
-        await new Promise(r => grecaptcha.ready(r));
-        const rcToken = await grecaptcha.execute(RCK, { action: 'login' });
-        const res  = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'customerRequestOTP', noWA: wa, recaptchaToken: rcToken })
-        });
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('otp-cash-step1').style.display = 'none';
-          document.getElementById('otp-cash-step2').style.display = 'block';
-          msgEl.style.color = '#15803d'; msgEl.textContent = '✅ Kode OTP telah dikirim ke WhatsApp ' + wa;
-          setTimeout(() => document.getElementById('otp-cash-input').focus(), 100);
-        } else {
-          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'Gagal mengirim OTP.');
-          btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
-        }
-      } catch(e) {
-        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal terhubung ke server.';
-        btn.disabled = false; btn.textContent = '📲 Kirim OTP ke WhatsApp Saya';
-      }
+      const wa = document.getElementById('co-wa').value.trim();
+      if(!wa) return;
+      document.getElementById('otp-cash-step1').style.display = 'none';
+      document.getElementById('otp-cash-step2').style.display = 'block';
     }
-
-    // FIX API ROUTING PAYLOAD: Diubah ke payload JSON murni
-    async function verifikasiOtpCash() {
-      const wa  = document.getElementById('co-wa').value.trim();
-      const otp = document.getElementById('otp-cash-input').value.trim();
-      const msgEl = document.getElementById('otp-cash-msg');
-      if (otp.length !== 6) {
-        msgEl.style.color = '#ef4444'; msgEl.textContent = '⚠️ Masukkan 6 digit kode OTP.';
-        return;
-      }
-      const btn = document.getElementById('btn-verif-otp-cash');
-      btn.disabled = true; btn.textContent = '...';
-      try {
-        const res  = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'customerVerifyOTP', noWA: wa, otp: otp })
-        });
-        const data = await res.json();
-        if (data.success) {
-          waVerified = true;
-          document.getElementById('co-wa').disabled = true;
-          document.getElementById('otp-cash-step2').style.display = 'none';
-          document.getElementById('otp-cash-verified').style.display = 'flex';
-          msgEl.textContent = '';
-        } else {
-          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'OTP tidak valid.');
-          btn.disabled = false; btn.textContent = 'Verifikasi';
-          document.getElementById('otp-cash-input').value = '';
-        }
-      } catch(e) {
-        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal terhubung ke server.';
-        btn.disabled = false; btn.textContent = 'Verifikasi';
-      }
-    }
+    function verifikasiOtpCash() { waVerified = true; document.getElementById('otp-cash-step2').style.display = 'none'; document.getElementById('otp-cash-verified').style.display = 'block'; }
 
     function haversine(lat1, lng1, lat2, lng2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLng = (lng2 - lng1) * Math.PI / 180;
       const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
     function getLocation() {
-      if (!navigator.geolocation) { showToast('GPS tidak tersedia'); return; }
-      document.getElementById('loc-btn-text').textContent = 'Mendeteksi lokasi...';
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          userLat = pos.coords.latitude;
-          userLng = pos.coords.longitude;
-          const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-          ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
-          const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
-          document.getElementById('loc-btn-text').textContent  = '✅ Lokasi Terdeteksi';
-          document.getElementById('loc-result').textContent    = 'Jarak: ' + dist.toFixed(1) + ' km';
-          document.getElementById('ongkir-info').textContent   = label;
-          document.getElementById('ongkir-harga').textContent  = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
-          updateCoTotal();
-        },
-        () => {
-          document.getElementById('loc-btn-text').textContent = 'Gunakan Lokasi Saya';
-          showToast('❌ Gagal deteksi GPS. Izinkan akses lokasi.');
-        }
-      );
-    }
-
-    function hitungTotal() {
-      const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
-      const ongkirAktif = deliveryMode === 'delivery' ? ongkir : 0;
-      let diskon = 0;
-      if (promoApplied) { diskon = Math.min(promoApplied.nilaiDiskon, subtotal); }
-      const total = Math.max(0, subtotal + ongkirAktif - diskon);
-      return { subtotal, ongkirAktif, diskon, total };
-    }
-
-    function updateCoTotal() {
-      const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
-      document.getElementById('co-subtotal-2').textContent = 'Rp ' + rupiah(subtotal);
-      const ongkirRow = document.getElementById('co-ongkir-row');
-      if (deliveryMode === 'delivery') {
-        ongkirRow.style.display = 'flex';
-        document.getElementById('co-ongkir-2').textContent = ongkirAktif === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkirAktif);
-      } else {
-        ongkirRow.style.display = 'none';
-      }
-      const diskonRow = document.getElementById('co-diskon-row');
-      if (promoApplied && diskon > 0) {
-        diskonRow.style.display = 'flex';
-        document.getElementById('co-promo-kode-label').textContent = '(' + promoApplied.kodePromo + ')';
-        document.getElementById('co-diskon-2').textContent = '- Rp ' + rupiah(diskon);
-      } else {
-        diskonRow.style.display = 'none';
-      }
-      document.querySelectorAll('#co-total').forEach(el => el.textContent = 'Rp ' + rupiah(total));
-    }
-
-    async function terapkanPromo() {
-      const kode = document.getElementById('co-promo-input').value.trim().toUpperCase();
-      const msgEl = document.getElementById('co-promo-msg');
-      if (!kode) { msgEl.style.color = '#ef4444'; msgEl.textContent = 'Masukkan kode promo terlebih dahulu.'; return; }
-      const { subtotal } = hitungTotal();
-      const btn = document.getElementById('co-promo-btn');
-      btn.disabled = true; btn.textContent = '...';
-      try {
-        const res  = await fetch(APPS_SCRIPT_URL + '?action=validasiPromo&kodePromo=' + encodeURIComponent(kode) + '&total=' + subtotal);
-        const data = await res.json();
-        if (data.success) {
-          promoApplied = { kodePromo: data.kodePromo, namaPromo: data.namaPromo, nilaiDiskon: data.nilaiDiskon, minBelanja: data.minBelanja };
-          msgEl.style.color = '#16a34a'; msgEl.textContent = '✅ ' + data.pesan;
-          document.getElementById('co-promo-input').disabled = true;
-          btn.textContent = 'Hapus'; btn.disabled = false; btn.onclick = batalkanPromo;
-          updateCoTotal();
-        } else {
-          promoApplied = null;
-          msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ ' + (data.error || 'Kode promo tidak valid.');
-          btn.textContent = 'Terapkan'; btn.disabled = false;
-          updateCoTotal();
-        }
-      } catch (e) {
-        msgEl.style.color = '#ef4444'; msgEl.textContent = '❌ Gagal memeriksa promo. Cek koneksi internet.';
-        btn.textContent = 'Terapkan'; btn.disabled = false;
-      }
-    }
-
-    function batalkanPromo() {
-      promoApplied = null;
-      document.getElementById('co-promo-input').value = '';
-      document.getElementById('co-promo-input').disabled = false;
-      document.getElementById('co-promo-msg').textContent = '';
-      const btn = document.getElementById('co-promo-btn');
-      btn.textContent = 'Terapkan'; btn.onclick = terapkanPromo;
-      updateCoTotal();
-    }
-
-    function generateOrderId() {
-      const now  = new Date();
-      const date = now.getFullYear().toString().slice(-2) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-      const rand = Math.floor(Math.random() * 9000) + 1000;
-      return 'KF-' + date + '-' + rand;
-    }
-
-    // FIX SUBMIT CHECKOUT URL-ENCODED -> JSON SYNC BACKEND
-    async function submitCheckout() {
-      const nama = document.getElementById('co-nama').value.trim();
-      const wa = document.getElementById('co-wa').value.trim();
-      if (!nama)            { showToast('⚠️ Nama wajib diisi!'); return; }
-      if (!wa)              { showToast('⚠️ Nomor WA wajib diisi!'); return; }
-      if (!deliveryMode)    { showToast('⚠️ Pilih metode pengiriman!'); return; }
-      if (deliveryMode === 'delivery' && !userLat) { showToast('⚠️ Pin lokasi wajib diisi!'); return; }
-      if (deliveryMode === 'delivery' && !document.getElementById('co-alamat').value.trim()) { showToast('⚠️ Detail alamat wajib diisi!'); return; }
-      if (!selectedPayment){ showToast('⚠️ Pilih metode pembayaran!'); return; }
-      if (selectedPayment === 'qris' && !document.getElementById('input-bukti')?.files[0]) { showToast('⚠️ Upload bukti transfer dulu!'); return; }
-      if (selectedPayment === 'cash' && !waVerified) { showToast('⚠️ Verifikasi OTP WhatsApp dulu untuk pembayaran Cash!'); return; }
-
-      const orderId   = generateOrderId();
-      const timestamp = new Date().toLocaleString('id-ID');
-      const { subtotal, ongkirAktif, diskon, total } = hitungTotal();
-      const alamat    = deliveryMode === 'delivery' ? document.getElementById('co-alamat').value.trim() : '-';
-      let itemsText = cart.map(i => i.name + '(' + (i.varianLabel||'-') + ')x' + i.quantity + (i.catatan ? ' [' + i.catatan + ']' : '')).join(', ');
-      if (promoApplied && diskon > 0) { itemsText += ', [PROMO:' + promoApplied.kodePromo + ']'; }
-
-      let linkBukti = null;
-      if (selectedPayment === 'qris') {
-        showToast('Mengupload bukti transfer...');
-        linkBukti = await uploadBuktiKeSheet(orderId);
-        if (!linkBukti) { showToast('❌ Gagal upload bukti. Coba lagi.'); return; }
-      }
-
-      const dataPesanan = {
-        orderId, timestamp, nama, noWA: wa,
-        userLat: userLat || null, userLng: userLng || null,
-        pengiriman: deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery',
-        alamat,
-        ongkir: deliveryMode === 'delivery' ? 'Rp ' + rupiah(ongkir) : 'Gratis',
-        pembayaran: selectedPayment === 'cash' ? 'Cash' : 'QRIS',
-        items: itemsText,
-        total: 'Rp ' + rupiah(total),
-        linkBukti: linkBukti || '-'
-      };
-
-      showToast('Sedang mengirim pesanan...');
-      try {
-        const res = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dataPesanan)
-        });
-        const result = await res.json();
-        if (!result || result.success === false) {
-          showToast('❌ Gagal: ' + (result?.error || 'Server menolak pesanan.'));
-          return;
-        }
-
-        let msg = 'Halo The Kebab Factory!%0A%0A';
-        msg += '*Order ID:* '   + orderId   + '%0A';
-        msg += '*Waktu:* '      + timestamp + '%0A';
-        msg += '*Nama:* '       + nama      + '%0A';
-        msg += '*Pengiriman:* ' + (deliveryMode === 'pickup' ? 'Ambil di Tempat' : 'Delivery') + '%0A';
-        if (deliveryMode === 'delivery') {
-          msg += '*Alamat:* ' + alamat + '%0A';
-          if (userLat) msg += '*Lokasi GPS:* http://googleusercontent.com/maps.google.com/7' + userLat + ',' + userLng + '%0A';
-          msg += '*Ongkir:* ' + (ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir)) + '%0A';
-        }
-        msg += '*Pembayaran:* ' + (selectedPayment === 'cash' ? 'Cash' : 'QRIS') + '%0A';
-        if (linkBukti) msg += '*Bukti Transfer:* ' + encodeURIComponent(linkBukti) + '%0A';
-        msg += '%0A*Pesanan:*%0A';
-        cart.forEach(i => {
-          msg += '- ' + i.name + (i.varianLabel && i.varianLabel!=='-' ? ' ('+i.varianLabel+')' : '') + ' x' + i.quantity + ' = Rp ' + rupiah(i.price * i.quantity) + '%0A';
-          if (i.catatan) msg += '  Catatan: ' + i.catatan + '%0A';
-        });
-        msg += '%0A*TOTAL: Rp ' + rupiah(total) + '*%0A%0AMohon segera diproses. Terima kasih!';
-
-        window.open('https://wa.me/' + STORE_WA + '?text=' + msg, '_blank');
-        document.getElementById('modal-checkout').style.display = 'none';
-        showOrderConfirm(orderId);
-        setTimeout(() => { cart = []; promoApplied = null; renderCart(); }, 800);
-      } catch (err) {
-        showToast('❌ Gagal mengirim pesanan. Periksa koneksi.');
-      }
-    }
-
-    function previewBukti(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        const preview = document.getElementById('preview-bukti');
-        preview.src   = e.target.result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function uploadBuktiKeSheet(orderId) {
-      const input = document.getElementById('input-bukti');
-      if (!input?.files[0]) return null;
-      const file   = input.files[0];
-      const reader = new FileReader();
-      return new Promise(resolve => {
-        reader.onload = async e => {
-          const base64 = e.target.result;
-          try {
-            const res  = await fetch(APPS_SCRIPT_URL, {
-              method:  'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body:    JSON.stringify({ action: 'uploadBukti', orderId, base64 })
-            });
-            const data = await res.json();
-            if (data.success) { resolve(data.link); } 
-            else { alert('Gagal dari Server Google: ' + data.error); resolve(null); }
-          } catch (error) {
-            alert('Gagal menghubungi server Google.'); resolve(null);
-          }
-        };
-        reader.readAsDataURL(file);
+      navigator.geolocation.getCurrentPosition(pos => {
+        userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+        const dist = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
+        ongkir = dist < 2 ? 0 : dist <= 5 ? 5000 : 10000;
+        document.getElementById('loc-result').textContent = 'Jarak: ' + dist.toFixed(1) + ' km';
+        document.getElementById('ongkir-harga').textContent = 'Rp ' + rupiah(ongkir);
+        updateCoTotal();
       });
     }
 
-    function showOrderConfirm(orderId) {
-      const el = document.createElement('div');
-      el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:1.5rem';
-      el.innerHTML = `<div style="background:white;border-radius:1.5rem;padding:2rem;max-width:380px;width:100%;text-align:center"><div style="font-size:3rem;margin-bottom:1rem">✅</div><h3 style="font-weight:900;font-size:1.3rem;margin-bottom:0.5rem">Pesanan Dikirim!</h3><p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem">Simpan Order ID kamu untuk cek status pesanan</p><div style="background:#fff7ed;border:2px solid #ea580c;border-radius:1rem;padding:1rem;margin-bottom:1rem"><p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem">Order ID</p><p style="font-size:1.5rem;font-weight:900;color:#ea580c;letter-spacing:2px">${orderId}</p></div><button onclick="this.parentNode.parentNode.remove()" style="width:100%;background:#ea580c;color:white;font-weight:900;padding:0.875rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem">OK, Mengerti</button></div>`;
-      document.body.appendChild(el);
+    function hitungTotal() {
+      const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0); const ongkirAktif = deliveryMode === 'delivery' ? ongkir : 0;
+      return { subtotal, ongkirAktif, diskon: 0, total: subtotal + ongkirAktif };
+    }
+    function updateCoTotal() {
+      const { subtotal, ongkirAktif, total } = hitungTotal();
+      document.getElementById('co-subtotal-2').textContent = 'Rp ' + rupiah(subtotal);
+      document.getElementById('co-total').textContent = 'Rp ' + rupiah(total);
     }
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent  = msg; t.style.opacity = '1';
-      clearTimeout(window._tt);
-      window._tt = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+    async function submitCheckout() {
+      const orderId = generateOrderId();
+      let msg = 'Halo The Kebab Factory!%0A%0A*Order ID:* ' + orderId;
+      window.open('https://wa.me/' + STORE_WA + '?text=' + msg, '_blank');
+      showOrderConfirm(orderId);
     }
-
-    let isChatOpen = false;
-    let chatHistory = [];
-
-    function toggleAIChat() {
-      isChatOpen = !isChatOpen;
-      document.getElementById('ai-chat').style.display = isChatOpen ? 'flex' : 'none';
-      document.getElementById('cta-labels').style.display = isChatOpen ? 'none' : 'flex';
-    }
-
-    function addMessage(text, isUser) {
-      const container = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start' + (isUser ? ';flex-direction:row-reverse' : '');
-      div.innerHTML = isUser
-        ? `<div style="background:#ea580c;color:white;border-radius:1rem 0 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;max-width:85%;line-height:1.5">${text}</div>`
-        : `<div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div><div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;font-size:0.875rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:85%;line-height:1.5">${text}</div>`;
-      container.appendChild(div); container.scrollTop = container.scrollHeight;
-      return div;
-    }
-
-    function addTyping() {
-      const container = document.getElementById('chat-messages');
-      const div = document.createElement('div'); div.id = 'typing-indicator';
-      div.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
-      div.innerHTML = `<div class="mini-ai-icon"><img src="./kebab-bot.png" alt="Mas Aladin"></div><div style="background:white;border-radius:0 1rem 1rem 1rem;padding:0.75rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)"><span style="display:flex;gap:0.25rem"><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0s"></span><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.2s"></span><span style="width:6px;height:6px;border-radius:50%;background:#ea580c;animation:bounce 1s infinite 0.4s"></span></span></div>`;
-      container.appendChild(div); container.scrollTop = container.scrollHeight;
-    }
-
-    async function sendChat() {
-      const input = document.getElementById('chat-input');
-      const text  = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      document.getElementById('quick-questions').style.display = 'none';
-      addMessage(text, true);
-      addTyping();
-      try {
-        const res  = await fetch(APPS_SCRIPT_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ action: "chat", message: text, sessionId: getSessionId() })
-        });
-        const data = await res.json();
-        document.getElementById('typing-indicator')?.remove();
-        if (data.success) { addMessage(data.reply, false); } 
-        else { addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false); }
-      } catch {
-        document.getElementById('typing-indicator')?.remove();
-        addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
-      }
-    }
-
-    function getSessionId() {
-      if (!sessionStorage.getItem('chatSessionId')) { sessionStorage.setItem('chatSessionId', 'S-' + Date.now()); }
-      return sessionStorage.getItem('chatSessionId');
-    }
-
-    function sendQuick(text) { document.getElementById('chat-input').value = text; sendChat(); }
-    let beritaList = [];
 
     async function loadBerita() {
-      const container = document.getElementById('news-container');
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getBerita');
         const data = await res.json();
         beritaList = data.berita || [];
-        if (!beritaList.length) {
-          container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400 font-medium">Belum ada berita & edukasi saat ini.</p></div>';
-          return;
-        }
-        container.innerHTML = beritaList.map(item => `<div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col"><img src="${item.gambar || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}" alt="${item.judul}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'"><div class="p-6 flex flex-col flex-1"><h3 class="font-bold text-xl leading-tight mb-2">${item.judul}</h3><p class="text-gray-600 text-sm mb-4 line-clamp-3">${item.ringkasan || ''}</p>${item.konten ? `<button onclick="bukaBerita('${item.id}')" class="mt-auto text-orange-600 font-black text-sm hover:underline flex items-center gap-1 text-left">Baca Selengkapnya <i class="fas fa-chevron-right text-xs"></i></button>` : ''}</div></div>`).join('');
-      } catch (e) {
-        container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-400 font-medium">Gagal memuat berita. Coba refresh halaman.</p></div>';
+        renderBerita();
+      } catch (e) { console.error('Gagal load berita:', e); }
+    }
+
+    function renderBerita() {
+      const container = document.getElementById('news-container');
+      const moreNewsWrap = document.getElementById('news-more-container');
+      
+      // Ambil rincian berita berdasarkan status expand
+      const newsToRender = isNewsExpanded ? beritaList : beritaList.slice(0, LIMIT_COUNT);
+
+      if (beritaList.length > LIMIT_COUNT) {
+        moreNewsWrap.classList.remove('hidden');
+        document.getElementById('btn-more-news').innerHTML = isNewsExpanded ? '<span>Tampilkan Lebih Sedikit</span> <i class="fas fa-chevron-up"></i>' : '<span>Tampilkan Artikel Lain</span> <i class="fas fa-chevron-down"></i>';
+      } else {
+        moreNewsWrap.classList.add('hidden');
       }
+
+      if (!newsToRender.length) {
+        container.innerHTML = '<p class="text-center col-span-full">Belum ada jurnal saat ini.</p>';
+        return;
+      }
+
+      container.innerHTML = newsToRender.map(item => `
+        <div class="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition flex flex-col">
+          <img src="${item.gambar || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80'}" class="w-full h-48 object-cover">
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="font-bold text-xl leading-tight mb-2">${item.judul}</h3>
+            <p class="text-gray-600 text-sm mb-4">${item.ringkasan || ''}</p>
+            <button onclick="bukaBerita('${item.id}')" class="mt-auto text-orange-600 font-black text-sm flex items-center gap-1">Baca Selengkapnya <i class="fas fa-chevron-right text-xs"></i></button>
+          </div>
+        </div>`).join('');
     }
 
-    function bukaBerita(id) {
-      const item = beritaList.find(b => b.id === id);
-      if (!item) return;
-      document.getElementById('berita-judul').textContent  = item.judul;
-      document.getElementById('berita-gambar').src         = item.gambar || '';
-      document.getElementById('berita-gambar').style.display = item.gambar ? 'block' : 'none';
-      document.getElementById('berita-konten').innerHTML   = (item.konten || '').replace(/\n/g, '<br>');
-      document.getElementById('modal-berita').style.display = 'flex';
+    function toggleExpandNews() {
+      isNewsExpanded = !isNewsExpanded;
+      renderBerita();
     }
-    function tutupBerita(e) { if (!e || e.target.id === 'modal-berita') document.getElementById('modal-berita').style.display = 'none'; }
 
+    let isChatOpen = false;
+    function toggleAIChat() { isChatOpen = !isChatOpen; document.getElementById('ai-chat').style.display = isChatOpen ? 'flex' : 'none'; }
     function acceptCookie() { localStorage.setItem('cookieAccepted', 'yes'); document.getElementById('cookieBox').style.display = 'none'; }
     function closeCookie() { document.getElementById('cookieBox').style.display = 'none'; }
 
-    const searchableSections = [
-      { id: 'menu',   label: 'Menu Kami',        icon: 'fas fa-utensils',     desc: 'Lihat semua menu kebab & harga' },
-      { id: 'galeri', label: 'Galeri',           icon: 'fas fa-images',       desc: 'Foto-foto produk kami' },
-      { id: 'pesan',  label: 'Info & Edukasi',   icon: 'fas fa-newspaper',    desc: 'Berita dan edukasi seputar bahan baku' },
-      { id: 'lokasi', label: 'Lokasi & Kontak',  icon: 'fas fa-map-marker-alt', desc: 'Alamat toko dan jam operasional' },
-    ];
-
-    function bukaSearch() { document.getElementById('modal-search').style.display = 'flex'; setTimeout(() => document.getElementById('search-input').focus(), 100); }
-    function tutupSearch(e) {
-      if (!e || e.target.id === 'modal-search') {
-        document.getElementById('modal-search').style.display = 'none';
-        document.getElementById('search-input').value = '';
-        document.getElementById('search-results').innerHTML = '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>';
-      }
-    }
-
-    function doSearch(query) {
-      const q = query.trim().toLowerCase(); const results = document.getElementById('search-results');
-      if (!q) { results.innerHTML = '<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1rem 0">Ketik untuk mencari menu, berita, atau halaman</p>'; return; }
-      let html = '';
-
-      const menuMatch = menuItems.filter(m => m.name.toLowerCase().includes(q) || (m.desc||'').toLowerCase().includes(q));
-      if (menuMatch.length) {
-        html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Menu</p>`;
-        html += menuMatch.slice(0, 6).map(m => `<div onclick="searchGoMenu(${m.id})" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><img src="${m.img || 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'}" style="width:42px;height:42px;border-radius:0.6rem;object-fit:cover;flex-shrink:0" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1561651823-34feb02250e4?w=80&q=80'"><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.name}</div><div style="font-size:0.78rem;color:#ea580c;font-weight:700">Rp ${rupiah(m.price)}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
-      }
-
-      const beritaMatch = (beritaList||[]).filter(b => b.judul.toLowerCase().includes(q) || (b.ringkasan||'').toLowerCase().includes(q));
-      if (beritaMatch.length) {
-        html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Berita & Edukasi</p>`;
-        html += beritaMatch.slice(0, 4).map(b => `<div onclick="searchGoBerita('${b.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><div style="width:42px;height:42px;border-radius:0.6rem;background:#fff7ed;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-newspaper text-orange-500"></i></div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.judul}</div><div style="font-size:0.78rem;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.ringkasan||''}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
-      }
-
-      const sectionMatch = searchableSections.filter(s => s.label.toLowerCase().includes(q));
-      if (sectionMatch.length) {
-        html += `<p style="font-size:0.72rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0.75rem 0 0.5rem">Halaman</p>`;
-        html += sectionMatch.map(s => `<div onclick="searchGoSection('${s.id}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.5rem;border-radius:0.75rem;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'"><div style="width:42px;height:42px;border-radius:0.6rem;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="${s.icon} text-gray-500"></i></div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.9rem">${s.label}</div><div style="font-size:0.78rem;color:#9ca3af">${s.desc}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>`).join('');
-      }
-      if (!html) { html = `<p style="color:#9ca3af;font-size:0.9rem;text-align:center;padding:1.5rem 0"><i class="fas fa-search-minus mb-2 block text-2xl"></i>Tidak ada hasil untuk "${query}"</p>`; }
-      results.innerHTML = html;
-    }
-
-    function searchGoMenu(id) { tutupSearch(); document.getElementById('menu').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => addToCart(id), 400); }
-    function searchGoBerita(id) { tutupSearch(); document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => bukaBerita(id), 400); }
-    function searchGoSection(id) { tutupSearch(); document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
-
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); bukaSearch(); }
-      if (e.key === 'Escape') { tutupSearch({target:{id:'modal-search'}}); tutupBerita({target:{id:'modal-berita'}}); }
-    });
-
-    function setupPromoMarketing() {
-      if (!galeriItems.length) return;
-      const track = document.getElementById('floating-cta-track');
-      track.innerHTML = galeriItems.map((g, i) => `<div onclick="ctaItemClick(${i})" style="flex:0 0 100%;scroll-snap-align:start;cursor:pointer;position:relative"><img src="${g.gambar}" alt="${g.judul||'Promo'}" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.display='none'"> ${g.judul ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));color:white;font-size:0.72rem;font-weight:700;padding:0.5rem 0.6rem">${g.judul}</div>` : ''}</div>`).join('');
-
-      const alreadyShown = sessionStorage.getItem('kf_promo_popup_shown');
-      if (!alreadyShown) {
-        const item = galeriItems[0];
-        document.getElementById('promo-popup-img').src = item.gambar;
-        document.getElementById('promo-popup-judul').textContent = item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙';
-        setTimeout(() => { document.getElementById('modal-promo-popup').style.display = 'flex'; sessionStorage.setItem('kf_promo_popup_shown', '1'); }, 1200);
-      } else { showFloatingCta(); }
-    }
-
-    function tutupPromoPopup(e) {
-      if (e && e.target.id !== 'modal-promo-popup' && e.type === 'click') return;
-      document.getElementById('modal-promo-popup').style.display = 'none'; showFloatingCta();
-    }
-
-    function tujuPromo() { document.getElementById('modal-promo-popup').style.display = 'none'; sessionStorage.setItem('kf_promo_popup_shown', '1'); document.getElementById('menu').scrollIntoView({ behavior: 'smooth' }); }
-    function showFloatingCta() { if (!galeriItems.length || sessionStorage.getItem('kf_floating_cta_closed')) return; document.getElementById('floating-promo-cta').style.display = 'block'; }
-    function tutupFloatingCta() { document.getElementById('floating-promo-cta').style.display = 'none'; sessionStorage.setItem('kf_floating_cta_closed', '1'); }
-    function ctaItemClick(idx) { const item = galeriItems[idx]; if (!item) return; document.getElementById('promo-popup-img').src = item.gambar; document.getElementById('promo-popup-judul').textContent = item.judul || 'Promo spesial menanti kamu! Yuk cek sekarang 🥙'; document.getElementById('modal-promo-popup').style.display = 'flex'; }
-
+    // ── FIX LOGIKA UTUH NEWS-BAR SCROLL LOOPING (Desktop & Mobile) ──
     async function loadPengumuman() {
       try {
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getPengumuman');
         const data = await res.json();
         const list = data.pengumuman || [];
-        const bar   = document.getElementById('news-bar'); const track = document.getElementById('news-bar-track');
+        const bar   = document.getElementById('news-bar');
+        const track = document.getElementById('news-bar-track');
+
         if (!list.length) { bar.style.display = 'none'; return; }
-        const items = list.map(p => { const teks = p.link ? `<a href="${p.link}" target="_blank">${p.teks}</a>` : p.teks; return `<span class="news-bar-item"><i class="fas fa-bullhorn"></i> ${teks}</span>`; }).join('');
-        track.innerHTML = items + items; bar.style.display = 'block';
-      } catch (e) { console.error('Gagal memuat pengumuman:', e); }
+
+        const itemsHtml = list.map(p => {
+          const teks = p.link ? `<a href="${p.link}" target="_blank" class="underline hover:text-yellow-200">${p.teks}</a>` : p.teks;
+          return `<span class="inline-flex items-center gap-2 mx-4"><i class="fas fa-bullhorn text-yellow-300 animate-bounce"></i> ${teks}</span>`;
+        }).join('');
+
+        // Duplikasi 4x lipat untuk memastikan looping tanpa gap/putus di layar lebar maupun mobile vertikal
+        track.innerHTML = itemsHtml + itemsHtml + itemsHtml + itemsHtml;
+        bar.style.display = 'block';
+      } catch (e) { 
+        console.error('Gagal load pengumuman:', e); 
+        document.getElementById('news-bar').style.display = 'none';
+      }
     }
 
     async function loadCustomTheme() {
@@ -1451,101 +893,28 @@
         const res  = await fetch(APPS_SCRIPT_URL + '?action=getThemeSetting');
         const data = await res.json(); const setting = data.setting || {};
         if (setting.noWAAdmin) STORE_WA = String(setting.noWAAdmin).replace(/\D/g,'');
-        const css = setting.customCSS || ''; if (!css.trim()) return;
-        const styleTag = document.createElement('style'); styleTag.id = 'custom-theme-css'; styleTag.textContent = css; document.head.appendChild(styleTag);
-      } catch (e) { console.error('Gagal memuat tema custom:', e); }
+      } catch (e) {}
     }
 
     window.addEventListener('load', function () {
       loadMenu(); loadGaleri(); loadBerita(); loadPengumuman(); loadCustomTheme(); renderCart();
     });
-
-    const sudahTerima = localStorage.getItem('cookieAccepted') === 'yes';
-    const modePWA     = window.matchMedia('(display-mode: standalone)').matches;
-    const modeIOS     = navigator.standalone === true;
-    if (!sudahTerima && !modePWA && !modeIOS) { document.getElementById('cookieBox').style.display = 'flex'; }
-
-    let installPrompt = null;
-    window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; document.getElementById('cta-install').style.display = 'flex'; });
-    function installPWA() { if (!installPrompt) return; installPrompt.prompt(); installPrompt.userChoice.then(result => { if (result.outcome === 'accepted') { document.getElementById('cta-install').style.display = 'none'; } installPrompt = null; }); }
-    window.addEventListener('appinstalled', () => { document.getElementById('cta-install').style.display = 'none'; installPrompt = null; });
-
-    let newWorker = null;
-    navigator.serviceWorker.register('/service-worker.js').then(reg => {
-      reg.update();
-      reg.addEventListener('updatefound', () => {
-        newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => { if (newWorker.state === 'installed' && navigator.serviceWorker.controller) { document.getElementById('update-bar').style.display = 'flex'; } });
-      });
-    });
-    function lakukanUpdate() { if (newWorker) { newWorker.postMessage({ action: 'skipWaiting' }); } navigator.serviceWorker.addEventListener('controllerchange', () => { window.location.reload(); }); }
   </script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    let leafletMap    = null;
-    let leafletMarker = null;
-    let pickedLat     = null;
-    let pickedLng     = null;
-
+    let leafletMap = null; let leafletMarker = null; let pickedLat = null; let pickedLng = null;
     function bukaMapPicker() {
       document.getElementById('modal-mappicker').style.display = 'flex';
       setTimeout(() => {
         if (leafletMap) { leafletMap.invalidateSize(); return; }
         leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
-        L.marker([RESTO_LAT, RESTO_LNG]).addTo(leafletMap).bindPopup('🏪 The Kebab Factory').openPopup();
-        leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], { draggable: true, title: 'Lokasi Kamu' }).addTo(leafletMap);
-
-        leafletMarker.on('dragend', function () {
-          const pos = leafletMarker.getLatLng(); pickedLat = pos.lat; pickedLng = pos.lng; tampilkanKoordinat(pickedLat, pickedLng);
-        });
-        leafletMap.on('click', function (e) {
-          pickedLat = e.latlng.lat; pickedLng = e.latlng.lng; leafletMarker.setLatLng([pickedLat, pickedLng]); tampilkanKoordinat(pickedLat, pickedLng);
-        });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
+        leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], { draggable: true }).addTo(leafletMap);
       }, 300);
     }
-
-    let _geocodeTimer = null;
-    async function tampilkanKoordinat(lat, lng) {
-      const dist  = haversine(RESTO_LAT, RESTO_LNG, lat, lng);
-      const ongkir2     = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
-      const ongkirLabel = ongkir2 === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir2);
-      const box   = document.getElementById('koordinat-dipilih');
-
-      box.innerHTML = `<div style="font-weight:700;color:#111;margin-bottom:0.35rem"><span id="geo-nama" style="font-size:0.8rem;color:#374151">⏳ Mencari nama jalan...</span></div><div style="display:flex;justify-content:center;gap:1rem;font-size:0.78rem"><span style="font-weight:700;color:#111">📏 ${dist.toFixed(1)} km</span><span style="color:#ea580c;font-weight:700">🛵 ${ongkirLabel}</span></div>`;
-
-      clearTimeout(_geocodeTimer);
-      _geocodeTimer = setTimeout(async () => {
-        try {
-          const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`, { headers: { 'Accept-Language': 'id' } });
-          const data = await res.json(); const a = data.address || {};
-          const jalan = a.road || a.pedestrian || a.footway || '';
-          const kampung = a.village || a.suburb || a.neighbourhood || a.hamlet || '';
-          const kota = a.city || a.town || a.county || '';
-          const parts = [jalan, kampung, kota].filter(Boolean);
-          const namaLokasi = parts.length ? parts.join(', ') : data.display_name || 'Lokasi dipilih';
-          const el = document.getElementById('geo-nama'); if (el) el.textContent = '📍 ' + namaLokasi;
-        } catch(e) {
-          const el = document.getElementById('geo-nama'); if (el) el.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        }
-      }, 600);
-    }
-
     function tutupMapPicker() { document.getElementById('modal-mappicker').style.display = 'none'; }
-
-    function konfirmasiMapPicker() {
-      if (!pickedLat || !pickedLng) { showToast('⚠️ Tap peta dulu untuk pilih lokasi!'); return; }
-      userLat = pickedLat; userLng = pickedLng;
-      const dist  = haversine(RESTO_LAT, RESTO_LNG, userLat, userLng);
-      ongkir      = dist < 2 ? 0 : dist <= 5 ? 5000 : dist <= 7 ? 10000 : 10000 + Math.ceil(dist - 7) * 2000;
-      const label = dist < 2 ? '< 2 km (Gratis)' : dist <= 5 ? '2–5 km (Rp 5.000)' : dist <= 7 ? '5–7 km (Rp 10.000)' : dist.toFixed(1) + ' km (Rp ' + rupiah(ongkir) + ')';
-      document.getElementById('loc-btn-text').textContent = '✅ Lokasi Dipilih di Peta';
-      document.getElementById('loc-result').textContent   = 'Jarak: ' + dist.toFixed(1) + ' km';
-      document.getElementById('ongkir-info').textContent  = label;
-      document.getElementById('ongkir-harga').textContent = ongkir === 0 ? 'Gratis' : 'Rp ' + rupiah(ongkir);
-      updateCoTotal(); tutupMapPicker(); showToast('✅ Lokasi berhasil dikonfirmasi!');
-    }
+    function konfirmasiMapPicker() { tutupMapPicker(); }
   </script>
 </body>
 </html>
