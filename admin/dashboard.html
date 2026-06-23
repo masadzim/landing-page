@@ -150,6 +150,7 @@
 
     .kpi-header {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
     .kpi-label {font-size:0.75rem;font-weight:600;color:var(--text2);letter-spacing:0.2px;}
+    .kpi-brand i {width:18px;}
     .kpi-icon {width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;}
     .kpi-icon.accent {background:var(--accent-s);color:var(--accent);}
     .kpi-icon.ok     {background:var(--ok-s);color:var(--ok);}
@@ -158,9 +159,6 @@
     .kpi-icon.purple {background:var(--purple-s);color:var(--purple);}
     .kpi-value {font-size:1.6rem;font-weight:800;letter-spacing:-0.8px;color:var(--text);line-height:1;}
     .kpi-sub {font-size:0.72rem;color:var(--muted);margin-top:6px;}
-    .kpi-trend {display:inline-flex;align-items:center;gap:3px;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:20px;margin-top:4px;}
-    .kpi-trend.up {background:var(--ok-s);color:var(--ok);}
-    .kpi-trend.down {background:var(--err-s);color:var(--err);}
 
     /* ── Cards ── */
     .card {background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);}
@@ -219,20 +217,6 @@
     .chart-wrap-lg {position:relative;height:300px;padding:4px 0;}
     .chart-wrap-sm {position:relative;height:180px;}
 
-    /* ── Rush hour heatmap ── */
-    .heatmap {display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin-top:8px;}
-    .heat-cell {
-      height:32px;border-radius:4px;background:var(--bg);
-      display:flex;align-items:center;justify-content:center;
-      font-size:0.55rem;font-weight:600;color:var(--muted);
-      cursor:default;transition:transform 0.1s;
-    }
-    .heat-cell:hover {transform:scaleY(1.1);}
-
-    /* ── Loading skeleton ── */
-    .skeleton {background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
-    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
     /* ── Empty state ── */
     .empty {text-align:center;padding:48px 20px;color:var(--muted);}
     .empty i {font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.4;}
@@ -273,30 +257,17 @@
       .sidebar.open{transform:translateX(0);}
       .main{margin-left:0;}
       .kpi-grid{grid-template-columns:repeat(2,1fr);}
-      .heatmap{grid-template-columns:repeat(12,1fr);}
       .topbar{padding:0 16px;}
       .page{padding:16px;}
     }
     @media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr;}.kpi-value{font-size:1.3rem;}}
-
-    /* ── Misc ── */
-    .section-title {font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-    .section-title i {color:var(--accent);}
-    .text-accent {color:var(--accent);}
-    .text-ok     {color:var(--ok);}
-    .text-err    {color:var(--err);}
-    .text-muted  {color:var(--muted);}
-    .fw-700 {font-weight:700;}
-    .mt-4 {margin-top:16px;}
-    .mb-4 {margin-bottom:16px;}
   </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR ──────────────────────────────────────────────── -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <img src="/main/icon-192.png" alt="Logo" class="sidebar-logo"/>
+    <img src="../logo.png" alt="Logo" class="sidebar-logo" onerror="this.src='../logo.png'"/>
     <div class="sidebar-brand">
       <h2>Kebab Factory</h2>
       <p>Management System</p>
@@ -322,7 +293,7 @@
 
   <div class="nav-section">Laporan</div>
   <a class="nav-item" onclick="showPage('laporan-produk')" href="#">
-    <i class="fas fa-burger"></i> Produk Terlaris
+    <i class="fas fa-hamburger"></i> Produk Terlaris
   </a>
   <a class="nav-item" onclick="showPage('laporan-cabang')" href="#">
     <i class="fas fa-store"></i> Per Cabang
@@ -335,27 +306,13 @@
   </a>
 
   <div class="nav-section">Kelola</div>
-  <a class="nav-item" href="produk.html">
-    <i class="fas fa-boxes-stacked"></i> Produk & Varian
-  </a>
-  <a class="nav-item" href="promo.html">
-    <i class="fas fa-tag"></i> Promo
-  </a>
-  <a class="nav-item" href="cabang.html">
-    <i class="fas fa-code-branch"></i> Cabang
-  </a>
-  <a class="nav-item" href="user.html">
-    <i class="fas fa-users"></i> User & Akses
-  </a>
-  <a class="nav-item" href="konten.html">
-    <i class="fas fa-photo-film"></i> Konten Web
-  </a>
-  <a class="nav-item" href="setting.html">
-    <i class="fas fa-sliders"></i> Pengaturan
-  </a>
-  <a class="nav-item" href="ai-assistant.html">
-  <i class="fas fa-robot"></i> AI Assistant
-  </a>
+  <a class="nav-item" href="produk.html"><i class="fas fa-boxes-stacked"></i> Produk & Varian</a>
+  <a class="nav-item" href="promo.html"><i class="fas fa-tag"></i> Promo</a>
+  <a class="nav-item" href="cabang.html"><i class="fas fa-code-branch"></i> Cabang</a>
+  <a class="nav-item" href="user.html"><i class="fas fa-users"></i> User & Akses</a>
+  <a class="nav-item" href="konten.html"><i class="fas fa-photo-film"></i> Konten Web</a>
+  <a class="nav-item" href="setting.html"><i class="fas fa-sliders"></i> Pengaturan</a>
+  <a class="nav-item" href="ai-assistant.html"><i class="fas fa-robot"></i> AI Assistant</a>
   <div class="sidebar-footer">
     <button class="btn-logout" onclick="doLogout()">
       <i class="fas fa-right-from-bracket"></i> Keluar
@@ -363,9 +320,7 @@
   </div>
 </aside>
 
-<!-- ── MAIN ──────────────────────────────────────────────────── -->
 <div class="main">
-  <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-left">
       <button style="display:none;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text2)" id="menu-toggle" onclick="toggleSidebar()">
@@ -387,11 +342,7 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: OVERVIEW                                          -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page active" id="page-overview">
-    <!-- Filter Bar -->
     <div class="filter-bar">
       <span class="filter-label"><i class="fas fa-calendar-days"></i> Periode:</span>
       <div class="period-tabs" id="period-tabs">
@@ -404,7 +355,6 @@
       </select>
     </div>
 
-    <!-- KPI Cards -->
     <div class="kpi-grid" id="kpi-grid">
       <div class="kpi-card accent">
         <div class="kpi-header">
@@ -456,9 +406,7 @@
       </div>
     </div>
 
-    <!-- Charts Row 1 -->
     <div class="grid-31">
-      <!-- Trend Chart -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -470,8 +418,6 @@
           <div class="chart-wrap-lg"><canvas id="chart-trend"></canvas></div>
         </div>
       </div>
-
-      <!-- Status Donut -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -485,9 +431,7 @@
       </div>
     </div>
 
-    <!-- Charts Row 2 -->
     <div class="grid-2">
-      <!-- Metode Bayar -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -500,8 +444,6 @@
           <div id="bayar-stats" class="mt-4"></div>
         </div>
       </div>
-
-      <!-- Sumber Order -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -516,7 +458,6 @@
       </div>
     </div>
 
-    <!-- Live Orders Table -->
     <div class="card">
       <div class="card-header">
         <div>
@@ -531,15 +472,7 @@
         <table>
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Waktu</th>
-              <th>Pelanggan</th>
-              <th>Pesanan</th>
-              <th>Total</th>
-              <th>Bayar</th>
-              <th>Status</th>
-              <th>Cabang</th>
-              <th>Aksi</th>
+              <th>Order ID</th><th>Waktu</th><th>Pelanggan</th><th>Pesanan</th><th>Total</th><th>Bayar</th><th>Status</th><th>Cabang</th><th>Aksi</th>
             </tr>
           </thead>
           <tbody id="orders-tbody">
@@ -550,9 +483,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: SEMUA ORDER                                        -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page" id="page-orders">
     <div class="filter-bar">
       <span class="filter-label">Filter:</span>
@@ -581,9 +511,7 @@
         <table>
           <thead>
             <tr>
-              <th>Order ID</th><th>Waktu</th><th>Pelanggan</th><th>WA</th>
-              <th>Pesanan</th><th>Total</th><th>Bayar</th><th>Kirim</th>
-              <th>Status</th><th>Cabang</th><th>Sumber</th><th>Bukti</th><th>Aksi</th>
+              <th>Order ID</th><th>Waktu</th><th>Pelanggan</th><th>WA</th><th>Pesanan</th><th>Total</th><th>Bayar</th><th>Kirim</th><th>Status</th><th>Cabang</th><th>Sumber</th><th>Bukti</th><th>Aksi</th>
             </tr>
           </thead>
           <tbody id="all-orders-tbody">
@@ -594,9 +522,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: LAPORAN PRODUK                                     -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page" id="page-laporan-produk">
     <div class="filter-bar">
       <span class="filter-label">Periode:</span>
@@ -627,9 +552,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: LAPORAN CABANG                                     -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page" id="page-laporan-cabang">
     <div class="filter-bar">
       <span class="filter-label">Periode:</span>
@@ -653,9 +575,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: RUSH HOUR                                          -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page" id="page-laporan-rushhour">
     <div class="filter-bar">
       <span class="filter-label">Periode:</span>
@@ -685,9 +604,6 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- PAGE: TREND REVENUE                                      -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="page" id="page-laporan-trend">
     <div class="filter-bar">
       <span class="filter-label">Periode:</span>
@@ -705,25 +621,20 @@
       <div class="card-body"><div class="chart-wrap-lg"><canvas id="chart-trend-full"></canvas></div></div>
     </div>
   </div>
+</div>
 
-</div><!-- /main -->
-
-<!-- ── Order Detail Modal ──────────────────────────────────── -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal" id="modal-content"></div>
 </div>
 
-<!-- ── Toast Container ────────────────────────────────────── -->
 <div id="toast-container"></div>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────────
 const API = '/api/proxy';
 
-// ── STATE ────────────────────────────────────────────────────
-let session     = null;
+let session       = null;
 let currentPage = 'overview';
-let period      = 'hari';
+let period       = 'hari';
 let periodOrders= 'hari';
 let periodProduk= 'hari';
 let periodCabang= 'hari';
@@ -733,10 +644,8 @@ let allOrdersData  = [];
 let autoRefreshTimer = null;
 const charts = {};
 
-// ── VALID STATUS ─────────────────────────────────────────────
 const VALID_STATUS = ['Baru','Diproses','Siap','Diantar','Diambil','Selesai','Batal'];
 
-// ── FORMAT HELPERS ───────────────────────────────────────────
 const fRp = n => 'Rp ' + (Number(n)||0).toLocaleString('id-ID');
 const fRpK = n => { const v=Number(n)||0; return v>=1000000?'Rp '+(v/1000000).toFixed(1)+'jt':v>=1000?'Rp '+(v/1000).toFixed(0)+'rb':'Rp '+v; };
 const fPct= n => (Number(n)||0) + '%';
@@ -780,7 +689,6 @@ function parseTS(s) {
   }catch(e){return null;}
 }
 
-// ── AUTH CHECK ───────────────────────────────────────────────
 function checkAuth() {
   try {
     const raw = localStorage.getItem('kf_session');
@@ -789,13 +697,11 @@ function checkAuth() {
     if (!session?.sessionToken) return redirect();
     if (session.role !== 'admin') return redirect();
 
-    // Set UI
     const ini = (session.nama||'A')[0].toUpperCase();
     document.getElementById('user-avatar').textContent = ini;
     document.getElementById('user-name').textContent   = session.nama||'Admin';
     document.getElementById('user-role').textContent   = (session.role||'admin').toUpperCase();
 
-    // Verify to server (non-blocking)
     fetch(`${API}?action=verifySession&sessionToken=${session.sessionToken}`)
       .then(r=>r.json())
       .then(d=>{ if(!d.success) redirect(); })
@@ -812,7 +718,6 @@ function doLogout() {
   window.location.href='../login.html';
 }
 
-// ── API CALL ─────────────────────────────────────────────────
 async function apiPost(action, extra={}) {
   const body = new URLSearchParams({
     action,
@@ -832,7 +737,6 @@ async function apiGet(params={}) {
   return res.json();
 }
 
-// ── TOAST ────────────────────────────────────────────────────
 function toast(msg, type='info') {
   const icons = { success:'fa-circle-check', error:'fa-circle-xmark', info:'fa-circle-info' };
   const el = document.createElement('div');
@@ -842,20 +746,18 @@ function toast(msg, type='info') {
   setTimeout(()=>el.remove(), 3500);
 }
 
-// ── SYNC STATUS ──────────────────────────────────────────────
 function setSyncing(on) {
   const dot  = document.getElementById('sync-dot');
   const txt  = document.getElementById('sync-text');
   const btn  = document.getElementById('btn-refresh');
-  dot.className  = 'sync-dot' + (on?' syncing':'');
-  txt.textContent= on ? 'Memuat...' : 'Tersinkronisasi';
-  btn.classList.toggle('loading', on);
+  if(dot) dot.className  = 'sync-dot' + (on?' syncing':'');
+  if(txt) txt.textContent= on ? 'Memuat...' : 'Tersinkronisasi';
+  if(btn) btn.classList.toggle('loading', on);
 }
 
-// ── PAGE NAVIGATION ──────────────────────────────────────────
 const PAGE_META = {
-  'overview':          { title:'Overview Dashboard',      sub:'Pemantauan real-time seluruh operasional' },
-  'orders':            { title:'Semua Order',             sub:'Riwayat dan manajemen order' },
+  'overview':       { title:'Overview Dashboard',      sub:'Pemantauan real-time seluruh operasional' },
+  'orders':            { title:'Semua Order',              sub:'Riwayat dan manajemen order' },
   'laporan-produk':    { title:'Laporan Produk',          sub:'Produk terlaris dan penjualan per item' },
   'laporan-cabang':    { title:'Laporan Cabang',          sub:'Performa operasional per cabang' },
   'laporan-rushhour':  { title:'Rush Hour Analysis',      sub:'Jam dan hari tersibuk operasional' },
@@ -878,21 +780,18 @@ function showPage(name) {
 
   currentPage = name;
 
-  // Load data for page
-  if(name==='overview')         loadOverview();
-  if(name==='orders')           loadAllOrders();
-  if(name==='laporan-produk')   loadProduk();
-  if(name==='laporan-cabang')   loadCabangLaporan();
+  if(name==='overview')        loadOverview();
+  if(name==='orders')            loadAllOrders();
+  if(name==='laporan-produk')    loadProduk();
+  if(name==='laporan-cabang')    loadCabangLaporan();
   if(name==='laporan-rushhour') loadRushHour();
   if(name==='laporan-trend')    loadTrend();
 
-  // Close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
 }
 
 function refreshCurrent() { showPage(currentPage); }
 
-// ── PERIOD SETTERS ───────────────────────────────────────────
 function setPeriod(p, el) {
   period=p;
   document.querySelectorAll('#period-tabs .period-tab').forEach(t=>t.classList.remove('active'));
@@ -905,13 +804,9 @@ function setPeriodCabang(p,el){periodCabang=p;document.querySelectorAll('#period
 function setPeriodRush(p,el){periodRush=p;document.querySelectorAll('#period-tabs-rush .period-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadRushHour();}
 function setPeriodTrend(p,el){periodTrend=p;document.querySelectorAll('#period-tabs-trend .period-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadTrend();}
 
-// ── CHART HELPER ─────────────────────────────────────────────
 function destroyChart(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
 const CHART_COLORS = ['#FF6B00','#3B82F6','#10B981','#F59E0B','#8B5CF6','#EF4444','#06B6D4'];
 
-// ════════════════════════════════════════════════════════════
-// LOAD OVERVIEW
-// ════════════════════════════════════════════════════════════
 async function loadOverview() {
   setSyncing(true);
   try {
@@ -926,7 +821,6 @@ async function loadOverview() {
     if (orders.success) {
       allOrdersData = orders.orders||[];
       renderOrdersTable(allOrdersData);
-      // Update pending badge
       const pending = allOrdersData.filter(o=>o.status==='Baru'||o.status==='Diproses').length;
       document.getElementById('badge-pending').textContent = pending||'0';
     }
@@ -950,7 +844,6 @@ function renderKPIs(d) {
 }
 
 function renderOverviewCharts(d) {
-  // Trend chart
   destroyChart('trend');
   if(d.trend?.trend) {
     const ctx = document.getElementById('chart-trend').getContext('2d');
@@ -970,7 +863,6 @@ function renderOverviewCharts(d) {
     });
   }
 
-  // Status donut
   destroyChart('status');
   const ctx2 = document.getElementById('chart-status').getContext('2d');
   const statusLabels = VALID_STATUS;
@@ -983,7 +875,6 @@ function renderOverviewCharts(d) {
       plugins:{legend:{position:'right',labels:{usePointStyle:true,font:{size:11,family:'Inter'},boxWidth:8}}}}
   });
 
-  // Metode bayar
   destroyChart('bayar');
   const bData = d.pembayaran||{};
   const ctx3 = document.getElementById('chart-bayar').getContext('2d');
@@ -1001,7 +892,6 @@ function renderOverviewCharts(d) {
       <div><div style="font-size:1.2rem;font-weight:800;color:var(--ok)">${100-(bData.qrisPct||0)}%</div><div style="font-size:0.72rem;color:var(--muted)">Cash</div></div>
     </div>`;
 
-  // Sumber order
   destroyChart('sumber');
   const sData = d.sumber||{};
   const ctx4 = document.getElementById('chart-sumber').getContext('2d');
@@ -1047,7 +937,6 @@ function renderOrdersTable(orders) {
     </tr>`).join('');
 }
 
-// ── UPDATE STATUS ────────────────────────────────────────────
 async function updateStatus(orderId, select) {
   const newStatus = select.value;
   const oldStatus = allOrdersData.find(o=>o.orderId===orderId)?.status;
@@ -1064,7 +953,6 @@ async function updateStatus(orderId, select) {
     if(d.success) {
       if(badge) badge.innerHTML = statusBadge(newStatus);
       toast(`Status #${orderId} → ${newStatus}`, 'success');
-      // Update local data
       const idx = allOrdersData.findIndex(o=>o.orderId===orderId);
       if(idx>=0) allOrdersData[idx].status = newStatus;
       const pending = allOrdersData.filter(o=>o.status==='Baru'||o.status==='Diproses').length;
@@ -1081,7 +969,6 @@ async function updateStatus(orderId, select) {
   }
 }
 
-// ── ORDER DETAIL MODAL ───────────────────────────────────────
 function showOrderDetail(orderId) {
   const o = allOrdersData.find(x=>x.orderId===orderId);
   if(!o) return;
@@ -1111,7 +998,7 @@ function showOrderDetail(orderId) {
       <div class="modal-divider"></div>
       <div class="modal-row"><span class="key fw-700">TOTAL</span><span class="val fw-700 text-accent" style="font-size:1.05rem">${o.total||'—'}</span></div>
       ${o.linkBukti&&o.linkBukti!=='-'?`<div class="modal-row"><span class="key">Bukti Bayar</span><span class="val"><a href="${o.linkBukti}" target="_blank" style="color:var(--accent)"><i class="fas fa-image"></i> Lihat</a></span></div>`:''}
-      ${o.userLat?`<div class="modal-row"><span class="key">Lokasi</span><span class="val"><a href="https://maps.google.com?q=${o.userLat},${o.userLng}" target="_blank" style="color:var(--accent)"><i class="fas fa-location-dot"></i> Maps</a></span></div>`:''}
+      ${o.userLat?`<div class="modal-row"><span class="key">Lokasi</span><span class="val"><a href="http://googleusercontent.com/maps.google.com/${o.userLat},${o.userLng}" target="_blank" style="color:var(--accent)"><i class="fas fa-location-dot"></i> Maps</a></span></div>`:''}
     </div>`;
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -1120,9 +1007,6 @@ function closeModal(e) {
     document.getElementById('modal-overlay').classList.remove('open');
 }
 
-// ════════════════════════════════════════════════════════════
-// LOAD ALL ORDERS
-// ════════════════════════════════════════════════════════════
 async function loadAllOrders() {
   setSyncing(true);
   try {
@@ -1167,9 +1051,6 @@ async function loadAllOrders() {
   } finally { setSyncing(false); }
 }
 
-// ════════════════════════════════════════════════════════════
-// LAPORAN PRODUK
-// ════════════════════════════════════════════════════════════
 async function loadProduk() {
   setSyncing(true);
   try {
@@ -1177,7 +1058,6 @@ async function loadProduk() {
     if (!d.success) throw new Error(d.error);
     const list = d.data||[];
 
-    // Bar chart
     destroyChart('produk-bar');
     const ctx1 = document.getElementById('chart-produk-bar').getContext('2d');
     charts['produk-bar'] = new Chart(ctx1,{
@@ -1190,7 +1070,6 @@ async function loadProduk() {
         scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}
     });
 
-    // Pie chart
     destroyChart('produk-pie');
     const ctx2 = document.getElementById('chart-produk-pie').getContext('2d');
     charts['produk-pie'] = new Chart(ctx2,{
@@ -1199,7 +1078,6 @@ async function loadProduk() {
       options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{usePointStyle:true,font:{size:10}}}}}
     });
 
-    // Table
     const total = list.reduce((s,p)=>s+p.qty,0)||1;
     document.getElementById('produk-tbody').innerHTML = list.map((p,i)=>`
       <tr>
@@ -1219,9 +1097,6 @@ async function loadProduk() {
   finally { setSyncing(false); }
 }
 
-// ════════════════════════════════════════════════════════════
-// LAPORAN CABANG
-// ════════════════════════════════════════════════════════════
 async function loadCabangLaporan() {
   setSyncing(true);
   try {
@@ -1264,16 +1139,12 @@ async function loadCabangLaporan() {
   finally { setSyncing(false); }
 }
 
-// ════════════════════════════════════════════════════════════
-// RUSH HOUR
-// ════════════════════════════════════════════════════════════
 async function loadRushHour() {
   setSyncing(true);
   try {
     const d = await apiPost('laporanRushHour', { periode: periodRush });
     if (!d.success) throw new Error(d.error);
 
-    // KPIs
     const perJam = d.perJam||[];
     const maxJam = perJam.reduce((a,b)=>b.totalOrder>a.totalOrder?b:a,perJam[0]||{});
     document.getElementById('rush-kpis').innerHTML = `
@@ -1281,7 +1152,6 @@ async function loadRushHour() {
       <div class="kpi-card ok"><div class="kpi-header"><span class="kpi-label">Jam Tersibuk (Top 3)</span><div class="kpi-icon ok"><i class="fas fa-clock"></i></div></div><div class="kpi-value" style="font-size:1rem">${perJam.filter(j=>j.totalOrder>0).sort((a,b)=>b.totalOrder-a.totalOrder).slice(0,3).map(j=>j.label).join(', ')||'—'}</div><div class="kpi-sub">Jam dengan order terbanyak</div></div>
       <div class="kpi-card warn"><div class="kpi-header"><span class="kpi-label">Jam Sepi</span><div class="kpi-icon warn"><i class="fas fa-moon"></i></div></div><div class="kpi-value" style="font-size:1rem">${perJam.filter(j=>j.totalOrder===0).map(j=>j.label).slice(0,3).join(', ')||'—'}</div><div class="kpi-sub">Tidak ada order</div></div>`;
 
-    // Jam chart
     destroyChart('rush-jam');
     const ctx1 = document.getElementById('chart-rush-jam').getContext('2d');
     const maxVal = Math.max(...perJam.map(j=>j.totalOrder))||1;
@@ -1299,7 +1169,6 @@ async function loadRushHour() {
         scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'}},x:{grid:{display:false},ticks:{font:{size:9}}}}}
     });
 
-    // Hari chart
     destroyChart('rush-hari');
     const ctx2 = document.getElementById('chart-rush-hari').getContext('2d');
     const perHari = d.perHari||[];
@@ -1316,9 +1185,6 @@ async function loadRushHour() {
   finally { setSyncing(false); }
 }
 
-// ════════════════════════════════════════════════════════════
-// TREND REVENUE
-// ════════════════════════════════════════════════════════════
 async function loadTrend() {
   setSyncing(true);
   try {
@@ -1327,7 +1193,6 @@ async function loadTrend() {
     if (!d.success) throw new Error(d.error);
     const trend = d.trend||[];
 
-    // KPIs
     const totalPend = trend.reduce((s,t)=>s+t.pendapatan,0);
     const totalOrd  = trend.reduce((s,t)=>s+t.totalOrder,0);
     document.getElementById('trend-kpis').innerHTML = `
@@ -1360,7 +1225,6 @@ async function loadTrend() {
   finally { setSyncing(false); }
 }
 
-// ── LOAD CABANG OPTIONS ──────────────────────────────────────
 async function loadCabangOptions() {
   try {
     const d = await apiGet({ action:'getCabang' });
@@ -1373,10 +1237,8 @@ async function loadCabangOptions() {
   } catch(e) {}
 }
 
-// ── MOBILE SIDEBAR TOGGLE ────────────────────────────────────
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
-// ── AUTO REFRESH ─────────────────────────────────────────────
 function startAutoRefresh() {
   if(autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(()=>{
@@ -1384,17 +1246,15 @@ function startAutoRefresh() {
   }, 30000);
 }
 
-// ── RESPONSIVE: show menu toggle on mobile ───────────────────
 function checkMobile() {
   const btn = document.getElementById('menu-toggle');
-  if(window.innerWidth<=768) btn.style.display='block';
-  else { btn.style.display='none'; document.getElementById('sidebar').classList.remove('open'); }
+  if(window.innerWidth<=768) { if(btn) btn.style.display='block'; }
+  else { if(btn) btn.style.display='none'; document.getElementById('sidebar').classList.remove('open'); }
 }
 
-// ── INIT ─────────────────────────────────────────────────────
 window.addEventListener('resize', checkMobile);
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') document.getElementById('modal-overlay').classList.remove('open'); });
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
   checkMobile();
   loadCabangOptions();
