@@ -926,14 +926,58 @@
   <script>
     let leafletMap = null; let leafletMarker = null; let pickedLat = null; let pickedLng = null;
     function bukaMapPicker() {
-      document.getElementById('modal-mappicker').style.display = 'flex';
-      setTimeout(() => {
-        if (leafletMap) { leafletMap.invalidateSize(); return; }
-        leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
-        leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], { draggable: true }).addTo(leafletMap);
-      }, 300);
+  // 1. Tampilkan kontainer modalnya dulu ke layar
+  document.getElementById('modal-mappicker').style.display = 'flex';
+
+  // 2. Beri jeda sedikit (300ms) agar animasi modal selesai, baru gambar petanya
+  setTimeout(() => {
+    if (leafletMap) {
+      // Jika peta sudah ada, paksa Leaflet hitung ulang ukuran layar & reset fokus posisi
+      leafletMap.invalidateSize();
+      leafletMap.setView([RESTO_LAT, RESTO_LNG], 15);
+      if (leafletMarker) {
+        leafletMarker.setLatLng([RESTO_LAT, RESTO_LNG]);
+      }
+      return;
     }
+
+    // 3. Inisialisasi awal jika peta benar-benar belum dibuat
+    leafletMap = L.map('leaflet-map').setView([RESTO_LAT, RESTO_LNG], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(leafletMap);
+
+    // Marker Restoran (Patokan Tetap)
+    L.marker([RESTO_LAT, RESTO_LNG])
+      .addTo(leafletMap)
+      .bindPopup('🏪 The Kebab Factory')
+      .openPopup();
+
+    // Marker User (Bisa digeser/drag)
+    leafletMarker = L.marker([RESTO_LAT, RESTO_LNG], {
+      draggable: true,
+      title: 'Lokasi Kamu'
+    }).addTo(leafletMap);
+
+    // Event saat pin digeser oleh jari/mouse
+    leafletMarker.on('dragend', function () {
+      const pos = leafletMarker.getLatLng();
+      pickedLat = pos.lat;
+      pickedLng = pos.lng;
+      tampilkanKoordinat(pickedLat, pickedLng);
+    });
+
+    // Event saat peta di-tap di mana saja, pin otomatis pindah ke situ
+    leafletMap.on('click', function (e) {
+      pickedLat = e.latlng.lat;
+      pickedLng = e.latlng.lng;
+      leafletMarker.setLatLng([pickedLat, pickedLng]);
+      tampilkanKoordinat(pickedLat, pickedLng);
+    });
+
+  }, 300);
+}
     function tutupMapPicker() { document.getElementById('modal-mappicker').style.display = 'none'; }
     function konfirmasiMapPicker() { tutupMapPicker(); }
   </script>
