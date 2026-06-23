@@ -31,11 +31,13 @@
     .nav-section{padding:8px 12px 4px;font-size:0.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.15s;font-size:0.84rem;font-weight:500;color:var(--text2);text-decoration:none;}
     .nav-item:hover{background:var(--surface-hover);color:var(--text);}
-    .nav-item.active{background:var(--accent-s);color:var(--accent);font-weight:700;}
-    .nav-item i{width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .nav-item.active {background:var(--accent-s);color:var(--accent);font-weight:700;}
+    .nav-item.active i {color:var(--accent);}
+    .nav-item i {width:18px;text-align:center;font-size:0.9rem;color:var(--muted);}
+    .nav-badge {margin-left:auto;background:var(--err);color:white;font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:20px;}
     .sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
     .btn-logout{width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;background:none;border:none;border-radius:var(--r-sm);cursor:pointer;font-size:0.84rem;font-weight:600;color:var(--err);font-family:'Inter',sans-serif;transition:background 0.15s;}
-    .btn-logout:hover{background:var(--err-s);}
+    .btn-logout:hover {background:var(--err-s);}
     .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
     .topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;}
     .topbar-title{font-size:1rem;font-weight:700;}
@@ -132,7 +134,6 @@
     textarea{resize:vertical;min-height:80px;font-family:'Inter',sans-serif;}
     .field-hint{font-size:0.72rem;color:var(--muted);margin-top:5px;}
 
-    /* Image source tabs (upload/url) */
     .img-method-tabs{display:flex;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:3px;margin-bottom:12px;}
     .img-method-tab{flex:1;padding:7px;border:none;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text2);background:transparent;transition:all 0.15s;text-align:center;}
     .img-method-tab.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
@@ -143,14 +144,6 @@
     .upload-area span{font-size:0.72rem;color:var(--muted);}
     .img-preview{width:100%;height:140px;border-radius:var(--r-sm);border:1px solid var(--border);object-fit:cover;display:none;margin-top:8px;background:var(--bg);}
     .img-preview.show{display:block;}
-
-    /* Toast */
-    #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
-    .toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;box-shadow:var(--sh-md);font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.3s ease;}
-    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .toast.success i{color:var(--ok);}
-    .toast.error i{color:var(--err);}
-    .toast.info i{color:var(--accent);}
 
     /* Confirm */
     .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;align-items:center;justify-content:center;}
@@ -172,7 +165,8 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <img src="https://thekebabfactory.github.io/logo.png" alt="Logo" class="sidebar-logo"/>
+    <!-- FIX LOGO JALUR: Dicari bertahap, jika gagal pakai fallback lokal -->
+    <img src="../logo.png" alt="Logo" class="sidebar-logo" onerror="this.onerror=null;this.src='./logo.png'"/>
     <div class="sidebar-brand"><h2>Kebab Factory</h2><p>Admin Panel</p></div>
   </div>
   <div class="sidebar-user">
@@ -209,14 +203,13 @@
   </div>
 
   <div class="content">
-    <!-- Tabs -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('galeri',this)"><i class="fas fa-images"></i> Galeri</button>
       <button class="tab-btn" onclick="switchTab('berita',this)"><i class="fas fa-newspaper"></i> Berita & Edukasi</button>
       <button class="tab-btn" onclick="switchTab('pengumuman',this)"><i class="fas fa-bullhorn"></i> Pengumuman</button>
     </div>
 
-    <!-- ════════ TAB: GALERI ════════ -->
+    <!-- TAB: GALERI -->
     <div class="tab-pane active" id="tab-galeri">
       <div class="card">
         <div class="card-header">
@@ -232,7 +225,7 @@
       </div>
     </div>
 
-    <!-- ════════ TAB: BERITA ════════ -->
+    <!-- TAB: BERITA -->
     <div class="tab-pane" id="tab-berita">
       <div class="card">
         <div class="card-header">
@@ -248,7 +241,7 @@
       </div>
     </div>
 
-    <!-- ════════ TAB: PENGUMUMAN ════════ -->
+    <!-- TAB: PENGUMUMAN -->
     <div class="tab-pane" id="tab-pengumuman">
       <div class="card">
         <div class="card-header">
@@ -266,7 +259,7 @@
   </div>
 </div>
 
-<!-- ═══════ MODAL: GALERI ═══════ -->
+<!-- MODAL: GALERI -->
 <div class="modal-overlay" id="modal-galeri">
   <div class="modal">
     <div class="modal-header">
@@ -280,38 +273,29 @@
           <label class="flabel">Judul / Caption (opsional)</label>
           <input type="text" id="g-judul" placeholder="cth: Kebab Original fresh dari grill"/>
         </div>
-
-        <!-- Sumber Gambar -->
         <div class="field span2">
           <label class="flabel">Gambar <span class="req">*</span></label>
           <div class="img-method-tabs">
             <button class="img-method-tab active" onclick="switchImgMethod('galeri','upload',this)"><i class="fas fa-upload"></i> Upload File</button>
             <button class="img-method-tab" onclick="switchImgMethod('galeri','url',this)"><i class="fas fa-link"></i> Link URL</button>
           </div>
-
           <div id="galeri-img-upload-area">
-            <div class="upload-area" id="galeri-drop-zone" onclick="document.getElementById('galeri-file-input').click()"
-                 ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="dropFile(event,'galeri')">
+            <div class="upload-area" id="galeri-drop-zone" onclick="document.getElementById('galeri-file-input').click()" ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="dropFile(event,'galeri')">
               <i class="fas fa-cloud-arrow-up"></i>
               <p>Klik atau drag & drop foto di sini</p>
               <span>PNG, JPG, WEBP — maks 5MB</span>
             </div>
             <input type="file" id="galeri-file-input" accept="image/*" style="display:none" onchange="handleFileInput(event,'galeri')"/>
             <img id="galeri-img-preview" class="img-preview" alt="Preview"/>
-            <div id="galeri-upload-progress" style="display:none;margin-top:8px;font-size:0.78rem;color:var(--text2)">
-              <i class="fas fa-spinner fa-spin"></i> Mengupload...
-            </div>
+            <div id="galeri-upload-progress" style="display:none;margin-top:8px;font-size:0.78rem;color:var(--text2)"><i class="fas fa-spinner fa-spin"></i> Mengupload...</div>
           </div>
-
           <div id="galeri-img-url-area" style="display:none;">
             <input type="url" id="g-gambar-url" placeholder="https://contoh.com/foto.jpg" oninput="previewUrl('galeri',this.value)"/>
             <div class="field-hint">Masukkan URL gambar yang bisa diakses publik</div>
             <img id="galeri-url-preview" class="img-preview" alt="Preview URL"/>
           </div>
-
           <input type="hidden" id="g-gambar"/>
         </div>
-
         <div class="field">
           <label class="flabel">Urutan Tampil</label>
           <input type="number" id="g-urutan" placeholder="0" min="0"/>
@@ -333,7 +317,7 @@
   </div>
 </div>
 
-<!-- ═══════ MODAL: BERITA ═══════ -->
+<!-- MODAL: BERITA -->
 <div class="modal-overlay" id="modal-berita">
   <div class="modal">
     <div class="modal-header">
@@ -347,38 +331,29 @@
           <label class="flabel">Judul <span class="req">*</span></label>
           <input type="text" id="b-judul" placeholder="cth: Khasiat Head Lettuce & Bombai"/>
         </div>
-
-        <!-- Sumber Gambar -->
         <div class="field span2">
           <label class="flabel">Gambar</label>
           <div class="img-method-tabs">
             <button class="img-method-tab active" onclick="switchImgMethod('berita','upload',this)"><i class="fas fa-upload"></i> Upload File</button>
             <button class="img-method-tab" onclick="switchImgMethod('berita','url',this)"><i class="fas fa-link"></i> Link URL</button>
           </div>
-
           <div id="berita-img-upload-area">
-            <div class="upload-area" id="berita-drop-zone" onclick="document.getElementById('berita-file-input').click()"
-                 ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="dropFile(event,'berita')">
+            <div class="upload-area" id="berita-drop-zone" onclick="document.getElementById('berita-file-input').click()" ondragover="dragOver(event,this)" ondragleave="dragLeave(event,this)" ondrop="dropFile(event,'berita')">
               <i class="fas fa-cloud-arrow-up"></i>
               <p>Klik atau drag & drop foto di sini</p>
               <span>PNG, JPG, WEBP — maks 5MB</span>
             </div>
             <input type="file" id="berita-file-input" accept="image/*" style="display:none" onchange="handleFileInput(event,'berita')"/>
             <img id="berita-img-preview" class="img-preview" alt="Preview"/>
-            <div id="berita-upload-progress" style="display:none;margin-top:8px;font-size:0.78rem;color:var(--text2)">
-              <i class="fas fa-spinner fa-spin"></i> Mengupload...
-            </div>
+            <div id="berita-upload-progress" style="display:none;margin-top:8px;font-size:0.78rem;color:var(--text2)"><i class="fas fa-spinner fa-spin"></i> Mengupload...</div>
           </div>
-
           <div id="berita-img-url-area" style="display:none;">
             <input type="url" id="b-gambar-url" placeholder="https://contoh.com/foto.jpg" oninput="previewUrl('berita',this.value)"/>
             <div class="field-hint">Masukkan URL gambar yang bisa diakses publik</div>
             <img id="berita-url-preview" class="img-preview" alt="Preview URL"/>
           </div>
-
           <input type="hidden" id="b-gambar"/>
         </div>
-
         <div class="field span2">
           <label class="flabel">Ringkasan</label>
           <textarea id="b-ringkasan" placeholder="Teks pendek yang tampil di card (1-2 kalimat)" style="min-height:60px"></textarea>
@@ -405,7 +380,7 @@
   </div>
 </div>
 
-<!-- ═══════ MODAL: PENGUMUMAN ═══════ -->
+<!-- MODAL: PENGUMUMAN -->
 <div class="modal-overlay" id="modal-pengumuman">
   <div class="modal" style="max-width:520px">
     <div class="modal-header">
@@ -472,7 +447,6 @@ let session = null;
 let galeriList = [], beritaList = [], pengumumanList = [];
 let imgMethod = { galeri: 'upload', berita: 'upload' };
 
-// ── AUTH ─────────────────────────────────────────────────────
 function checkAuth() {
   try {
     const raw = localStorage.getItem('kf_session');
@@ -500,7 +474,6 @@ function toast(msg,type='info'){
   setTimeout(()=>el.remove(),3500);
 }
 
-// ── TABS ─────────────────────────────────────────────────────
 function switchTab(name, el) {
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -508,7 +481,6 @@ function switchTab(name, el) {
   el.classList.add('active');
 }
 
-// ── MODAL HELPERS ────────────────────────────────────────────
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function showConfirm(icon,title,msg,cb){
@@ -530,9 +502,6 @@ function toLocalInput(str) {
   try { return new Date(str).toISOString().slice(0,16); } catch(e) { return ''; }
 }
 
-// ════════════════════════════════════════════════════════════
-// IMAGE HANDLING (shared: galeri & berita)
-// ════════════════════════════════════════════════════════════
 function switchImgMethod(target, method, el) {
   imgMethod[target] = method;
   const tabs = el.parentElement.querySelectorAll('.img-method-tab');
@@ -558,7 +527,7 @@ async function processFile(file,target) {
   const reader = new FileReader();
   reader.onload = e => {
     const prev = document.getElementById(target+'-img-preview');
-    prev.src = e.target.result; prev.classList.add('show');
+    if (prev) { prev.src = e.target.result; prev.classList.add('show'); }
   };
   reader.readAsDataURL(file);
 
@@ -602,8 +571,11 @@ function previewUrl(target, url) {
 
 function resetImgArea(target) {
   imgMethod[target] = 'upload';
-  const container = document.getElementById(target==='galeri'?'modal-galeri':'modal-berita');
-  container.querySelectorAll('.img-method-tab').forEach((t,i)=>t.classList.toggle('active', i===0));
+  const modalId = target==='galeri'?'modal-galeri':'modal-berita';
+  const container = document.getElementById(modalId);
+  if (container) {
+    container.querySelectorAll('.img-method-tab').forEach((t,i)=>t.classList.toggle('active', i===0));
+  }
   document.getElementById(target+'-img-upload-area').style.display = 'block';
   document.getElementById(target+'-img-url-area').style.display    = 'none';
   document.getElementById(target+'-img-preview').classList.remove('show');
@@ -621,24 +593,20 @@ function setExistingImg(target, url) {
   if (!url) return;
 
   if (url.startsWith('http') && !url.includes('drive.google')) {
-    // Treat as URL-sourced
     const tabs = document.querySelectorAll(`#modal-${target} .img-method-tab`);
-    tabs[0].classList.remove('active'); tabs[1].classList.add('active');
+    if(tabs.length >= 2) { tabs[0].classList.remove('active'); tabs[1].classList.add('active'); }
     document.getElementById(target+'-img-upload-area').style.display = 'none';
     document.getElementById(target+'-img-url-area').style.display    = 'block';
     imgMethod[target] = 'url';
     document.getElementById(idPrefix+'-gambar-url').value = url;
     const prev = document.getElementById(target+'-url-preview');
-    prev.src = url; prev.classList.add('show');
+    if (prev) { prev.src = url; prev.classList.add('show'); }
   } else {
     const prev = document.getElementById(target+'-img-preview');
-    prev.src = url; prev.classList.add('show');
+    if (prev) { prev.src = url; prev.classList.add('show'); }
   }
 }
 
-// ════════════════════════════════════════════════════════════
-// GALERI
-// ════════════════════════════════════════════════════════════
 async function loadGaleri() {
   try {
     const d = await apiPost('getGaleriList');
@@ -650,6 +618,7 @@ async function loadGaleri() {
   }
 }
 
+// FIX: Menghilangkan backslash escape (\') gaib di dalam template literal string
 function renderGaleri() {
   const grid = document.getElementById('galeri-grid');
   if (!galeriList.length) {
@@ -663,7 +632,7 @@ function renderGaleri() {
         <span class="order-badge">#${g.urutan}</span>
       </div>
       <div class="galeri-body">
-        <div class="galeri-title">${g.judul || '<span style=\\'color:var(--muted)\\'>Tanpa judul</span>'}</div>
+        <div class="galeri-title">${g.judul || '<span style="color:var(--muted)">Tanpa judul</span>'}</div>
         <div class="galeri-actions">
           <button class="btn btn-secondary btn-sm btn-icon" onclick="editGaleri('${g.id}')" title="Edit"><i class="fas fa-pen"></i></button>
           <button class="btn ${g.status==='Aktif'?'btn-ok':'btn-secondary'} btn-sm btn-icon" onclick="toggleGaleriStatus('${g.id}','${g.status}')" title="${g.status==='Aktif'?'Sembunyikan':'Aktifkan'}">
@@ -675,67 +644,6 @@ function renderGaleri() {
     </div>`).join('');
 }
 
-function openGaleriModal(data=null) {
-  document.getElementById('modal-galeri-title').textContent = data ? 'Edit Foto Galeri' : 'Tambah Foto Galeri';
-  document.getElementById('g-id').value     = data?.id||'';
-  document.getElementById('g-judul').value  = data?.judul||'';
-  document.getElementById('g-urutan').value = data?.urutan ?? (galeriList.length);
-  document.getElementById('g-status').value = data?.status||'Aktif';
-
-  resetImgArea('galeri');
-  if (data?.gambar) setExistingImg('galeri', data.gambar);
-
-  document.getElementById('modal-galeri').classList.add('open');
-  setTimeout(()=>document.getElementById('g-judul').focus(),100);
-}
-function editGaleri(id) { const g = galeriList.find(x=>x.id===id); if(g) openGaleriModal(g); }
-
-async function saveGaleri() {
-  const gambar = document.getElementById('g-gambar').value;
-  if (!gambar) { toast('Gambar wajib diisi (upload atau URL).','error'); return; }
-
-  const btn = document.getElementById('btn-save-galeri');
-  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-
-  try {
-    const d = await apiPost('saveGaleri', {
-      data: JSON.stringify({
-        id:     document.getElementById('g-id').value||undefined,
-        judul:  document.getElementById('g-judul').value.trim(),
-        gambar,
-        urutan: Number(document.getElementById('g-urutan').value)||0,
-        status: document.getElementById('g-status').value,
-      })
-    });
-    if(d.success) { toast('Foto galeri disimpan!','success'); closeModal('modal-galeri'); loadGaleri(); }
-    else toast(d.error||'Gagal.','error');
-  } catch(e) { toast('Error: '+e.message,'error'); }
-  finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> Simpan'; }
-}
-
-async function toggleGaleriStatus(id, current) {
-  const newStatus = current==='Aktif'?'Sembunyikan':'Aktif';
-  try {
-    const g = galeriList.find(x=>x.id===id);
-    const d = await apiPost('saveGaleri', { data: JSON.stringify({ ...g, status:newStatus }) });
-    if(d.success) { toast(`Foto ${newStatus==='Aktif'?'diaktifkan':'disembunyikan'}.`,'success'); loadGaleri(); }
-    else toast(d.error,'error');
-  } catch(e) { toast('Gagal.','error'); }
-}
-
-function hapusGaleri(id) {
-  showConfirm('🗑️','Hapus foto ini?','Foto akan dihapus permanen dari galeri.',async()=>{
-    try {
-      const d = await apiPost('deleteGaleri',{id});
-      if(d.success){toast('Foto dihapus.','success');loadGaleri();}
-      else toast(d.error,'error');
-    } catch(e) { toast('Gagal.','error'); }
-  });
-}
-
-// ════════════════════════════════════════════════════════════
-// BERITA & EDUKASI
-// ════════════════════════════════════════════════════════════
 async function loadBerita() {
   try {
     const d = await apiPost('getBeritaList');
@@ -747,6 +655,7 @@ async function loadBerita() {
   }
 }
 
+// FIX: Menghilangkan backslash escape (\') gaib di dalam template literal string
 function renderBerita() {
   const container = document.getElementById('berita-list');
   if (!beritaList.length) {
@@ -758,7 +667,7 @@ function renderBerita() {
       <img class="berita-img" src="${b.gambar || 'https://via.placeholder.com/80x60?text=No+Img'}" alt="" onerror="this.src='https://via.placeholder.com/80x60?text=No+Img'">
       <div class="berita-info">
         <div class="berita-judul">${b.judul}</div>
-        <div class="berita-ringkasan">${b.ringkasan || '<span style=\\'color:var(--muted)\\'>Tidak ada ringkasan</span>'}</div>
+        <div class="berita-ringkasan">${b.ringkasan || '<span style="color:var(--muted)">Tidak ada ringkasan</span>'}</div>
       </div>
       <span class="badge ${b.status==='Aktif'?'badge-active':'badge-inactive'}">${b.status}</span>
       <div class="berita-actions">
@@ -797,9 +706,9 @@ async function saveBerita() {
   try {
     const d = await apiPost('saveBerita', {
       data: JSON.stringify({
-        id:        document.getElementById('b-id').value||undefined,
+        id:         document.getElementById('b-id').value||undefined,
         judul,
-        gambar:    document.getElementById('b-gambar').value,
+        gambar:     document.getElementById('b-gambar').value,
         ringkasan: document.getElementById('b-ringkasan').value.trim(),
         konten:    document.getElementById('b-konten').value.trim(),
         status:    document.getElementById('b-status').value,
@@ -831,9 +740,6 @@ function hapusBerita(id) {
   });
 }
 
-// ════════════════════════════════════════════════════════════
-// PENGUMUMAN
-// ════════════════════════════════════════════════════════════
 async function loadPengumuman() {
   try {
     const d = await apiPost('getPengumumanList');
@@ -940,7 +846,6 @@ function hapusPengumuman(id) {
   });
 }
 
-// ── MOBILE ───────────────────────────────────────────────────
 function checkMobile(){document.getElementById('menu-toggle').style.display=window.innerWidth<=768?'block':'none';}
 window.addEventListener('resize',checkMobile);
 
@@ -950,16 +855,19 @@ document.addEventListener('keydown',e=>{
     closeConfirm();
   }
 });
-['modal-galeri','modal-berita','modal-pengumuman'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',e=>{ if(e.target===document.getElementById(id)) closeModal(id); });
-});
 
+// FIX LOGIKA EVENT LISTENER CLOSING MODAL: Menghindari Null Pointer & Crash Eksekusi Dom
 document.addEventListener('DOMContentLoaded',()=>{
   checkAuth();
   checkMobile();
   loadGaleri();
   loadBerita();
   loadPengumuman();
+
+  ['modal-galeri','modal-berita','modal-pengumuman'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('click', e => { if(e.target === el) closeModal(id); });
+  });
 });
 </script>
 </body>
