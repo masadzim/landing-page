@@ -19,7 +19,7 @@
 // ============================================================
 
 // ⚠️ GANTI dengan URL Web App Apps Script kamu (yang berakhiran /exec)
-const GAS_URL ='https://kebab-factory-backend-production.up.railway.app';
+const GAS_URL ='https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
 
 export default async function handler(req, res) {
   // ── CORS Headers ─────────────────────────────────────────
