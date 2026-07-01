@@ -2,7 +2,7 @@
 // Service Worker — The Kebab Factory POS
 // Strategi: Network First untuk API, Cache First untuk asset statis
 // ════════════════════════════════════════════════════════════
-const CACHE_NAME = 'kf-pos-v2.1';
+const CACHE_NAME = 'kf-pos-v2.2';
 const ASSETS = [
   './kasir.html',
   './kds.html',
