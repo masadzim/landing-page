@@ -146,6 +146,52 @@
     }
     #news-bar:hover .news-bar-track-layout { animation-play-state: paused; }
   </style>
+
+<meta name="description" content="The Kebab Factory — kebab di Bajang, Mlarak, Ponorogo. Kebab Original Rp10.000, varian telur/sosis/keju, sampai Triple Rp25.000. Buka setiap hari 16.00–00.00 WIB. Menerima pesanan partai untuk acara, pengajian, dan hajatan.">
+<link rel="canonical" href="https://thekebabfactory.biz.id/">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="restaurant">
+<meta property="og:title" content="The Kebab Factory — Kebab Bajang, Mlarak, Ponorogo">
+<meta property="og:description" content="Kebab mulai Rp10.000. Buka 16.00–00.00 WIB. Pesan online & terima pesanan partai untuk acara.">
+<meta property="og:url" content="https://thekebabfactory.biz.id/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "The Kebab Factory",
+  "url": "https://thekebabfactory.biz.id/",
+  "servesCuisine": ["Kebab", "Timur Tengah", "Cepat Saji"],
+  "priceRange": "Rp10.000 - Rp25.000",
+  "telephone": "+6285630999912",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Jl. Raya Bajang (Timur Qoni')",
+    "addressLocality": "Bajang, Mlarak",
+    "addressRegion": "Jawa Timur",
+    "postalCode": "63472",
+    "addressCountry": "ID"
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    "opens": "16:00",
+    "closes": "00:00"
+  },
+  "geo": {"@type": "GeoCoordinates", "latitude": -7.919438, "longitude": 111.496355},
+  "sameAs": ["https://www.instagram.com/the.kebab.factory"],
+  "hasMenu": {
+    "@type": "Menu",
+    "hasMenuItem": [
+      {"@type": "MenuItem", "name": "Kebab Original", "offers": {"@type": "Offer", "price": "10000", "priceCurrency": "IDR"}},
+      {"@type": "MenuItem", "name": "Kebab Telur", "offers": {"@type": "Offer", "price": "15000", "priceCurrency": "IDR"}},
+      {"@type": "MenuItem", "name": "Kebab Sosis", "offers": {"@type": "Offer", "price": "15000", "priceCurrency": "IDR"}},
+      {"@type": "MenuItem", "name": "Kebab Keju", "offers": {"@type": "Offer", "price": "15000", "priceCurrency": "IDR"}},
+      {"@type": "MenuItem", "name": "Kebab Double (kombinasi 2 topping)", "offers": {"@type": "Offer", "price": "20000", "priceCurrency": "IDR"}},
+      {"@type": "MenuItem", "name": "Kebab Triple (telur + sosis + keju)", "offers": {"@type": "Offer", "price": "25000", "priceCurrency": "IDR"}}
+    ]
+  }
+}
+</script>
 </head>
 <body class="bg-gray-50">
 
@@ -354,12 +400,12 @@
             </div>
           </div>
           <div class="flex items-start gap-3"><i class="fas fa-map-marker-alt text-orange-400 mt-1"></i><p>Jl. Mlarak - Jabung, Tepat Timur Qoni' Mart, Ponorogo</p></div>
-          <div class="flex items-center gap-3"><i class="fab fa-whatsapp text-green-400"></i><a href="https://wa.me/6281357683151" class="hover:text-orange-400 transition">0813-5768-3151</a></div>
+          <div class="flex items-center gap-3"><i class="fab fa-whatsapp text-green-400"></i><a href="https://wa.me/6285630999912" class="hover:text-orange-400 transition">0856-3099-9912</a></div>
         </div>
       </div>
       <div class="text-center md:text-left">
         <p class="text-white/60 mb-6 text-lg">Pesanan langsung diproses setelah konfirmasi WhatsApp. Kami siap melayani!</p>
-        <a href="https://wa.me/6281357683151" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition"><i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp</a>
+        <a href="https://wa.me/6285630999912" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 px-10 py-4 rounded-2xl font-black text-xl transition"><i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp</a>
       </div>
     </div>
   </section>
@@ -493,7 +539,7 @@
   <div id="cta-buttons" style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem;z-index:50">
     <div id="cta-labels" style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
       <div style="display:flex;align-items:center;gap:0.5rem"><span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Tanya Mas Aladin</span><button onclick="toggleAIChat()" class="ai-chat-button"><img src="./kebab-bot.png" alt="Kebab Bot"></button></div>
-      <div style="display:flex;align-items:center;gap:0.5rem"><span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span><a href="https://wa.me/6281357683151" target="_blank" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none"><i class="fab fa-whatsapp"></i></a></div>
+      <div style="display:flex;align-items:center;gap:0.5rem"><span style="background:white;color:#111;font-size:0.8rem;font-weight:700;padding:0.4rem 0.875rem;border-radius:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)">Chat WhatsApp</span><a href="https://wa.me/6285630999912" target="_blank" style="width:3.5rem;height:3.5rem;border-radius:50%;background:#16a34a;color:white;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,0.4);display:flex;align-items:center;justify-content:center;text-decoration:none"><i class="fab fa-whatsapp"></i></a></div>
     </div>
   </div>
 
@@ -571,7 +617,7 @@
         <button onclick="kembaliDariHalamanTransaksi()" style="width:100%;background:linear-gradient(135deg,#ea580c,#f97316);color:white;font-weight:900;padding:1rem;border-radius:1rem;border:none;cursor:pointer;font-size:1rem;box-shadow:0 8px 20px rgba(234,88,12,0.3)">
           <i class="fas fa-arrow-rotate-left" style="margin-right:0.5rem"></i>Coba Lagi
         </button>
-        <a href="https://wa.me/6281357683151" target="_blank" style="display:block;width:100%;background:white;color:#16a34a;font-weight:800;padding:0.9rem;border-radius:1rem;border:2px solid #16a34a;cursor:pointer;font-size:0.92rem;text-decoration:none">
+        <a href="https://wa.me/6285630999912" target="_blank" style="display:block;width:100%;background:white;color:#16a34a;font-weight:800;padding:0.9rem;border-radius:1rem;border:2px solid #16a34a;cursor:pointer;font-size:0.92rem;text-decoration:none">
           <i class="fab fa-whatsapp" style="margin-right:0.5rem"></i>Hubungi Kami via WhatsApp
         </a>
       </div>
@@ -641,7 +687,7 @@
     let waVerified = false;
 
     const RESTO_LAT = -7.919438, RESTO_LNG = 111.496355;
-    let STORE_WA = '6281357683151';
+    let STORE_WA = '6285630999912';
     let promoApplied = null;
 
     function toggleMobileMenu() {
@@ -1333,10 +1379,10 @@
         const data = await res.json();
         document.getElementById('typing-indicator')?.remove();
         if (data.success) { addMessage(data.reply, false); } 
-        else { addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0813-5768-3151 😊', false); }
+        else { addMessage('Maaf, ada gangguan sistem. Silakan hubungi WA 0856-3099-9912 😊', false); }
       } catch {
         document.getElementById('typing-indicator')?.remove();
-        addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0813-5768-3151 😊', false);
+        addMessage('Maaf, ada gangguan jaringan. Silakan hubungi kami langsung via WhatsApp 0856-3099-9912 😊', false);
       }
     }
 
@@ -1614,5 +1660,19 @@
       updateCoTotal(); tutupMapPicker(); showToast('✅ Lokasi berhasil dikonfirmasi!');
     }
   </script>
+
+<section id="faq-geo" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:inherit;">
+  <h2>Pertanyaan yang Sering Ditanyakan</h2>
+  <h3>Di mana kebab enak di Mlarak, Ponorogo?</h3>
+  <p>The Kebab Factory di Jl. Raya Bajang (Timur Qoni'), Bajang, Mlarak, Ponorogo — buka setiap hari 16.00–00.00 WIB, harga Rp10.000–Rp25.000.</p>
+  <h3>Berapa harga kebab di The Kebab Factory?</h3>
+  <p>Kebab Original Rp10.000; Kebab Telur, Sosis, dan Keju Rp15.000; Kebab Double (2 topping) Rp20.000; Kebab Triple (telur + sosis + keju) Rp25.000.</p>
+  <h3>Bisakah pesan kebab dalam jumlah banyak untuk acara atau pengajian?</h3>
+  <p>Bisa. The Kebab Factory menerima pesanan partai hingga 1.000 pcs per hari untuk acara, pengajian, hajatan, dan rapat. Pesan maksimal H-2 dengan DP 50%; harga khusus berlaku untuk varian topping mulai 25 pcs.</p>
+  <h3>Jam berapa The Kebab Factory buka?</h3>
+  <p>Setiap hari pukul 16.00–00.00 WIB.</p>
+  <h3>Bagaimana cara memesan?</h3>
+  <p>Pesan online lewat website ini (pembayaran tunai atau QRIS), atau WhatsApp resmi 0856-3099-9912. Ada juga asisten AI "Mas Aladin" di WhatsApp 0859-1068-81973.</p>
+</section>
 </body>
 </html>
