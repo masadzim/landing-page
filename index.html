@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="icon" type="image/png" href="./logo.png">
+  <link rel="icon" type="image/png" href="/logo.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Kebab Factory - A Grilled Passion</title>
@@ -198,7 +198,7 @@
   <nav class="bg-[#3d2010] shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-4 pr-2">
-        <img src="./logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
+        <img src="/logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none';document.getElementById('lt').style.display='block'">
         <div id="lt" style="display:none">
           <span class="text-2xl font-black" style="background:linear-gradient(135deg,#fef08a,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Kebab</span>
           <span class="text-red-400 font-black text-sm tracking-widest block -mt-1">FACTORY</span>
@@ -1424,9 +1424,12 @@
       } catch (e) { console.error('Gagal load berita:', e); }
     }
 
-          const THUMB_JURNAL = ['kebab1.jpeg', 'kebab2.jpeg', 'kebab3.jpg', 'Dagingkebab.png', 'letuce.png'];
+          const THUMB_JURNAL = ['/kebab1.jpeg', '/kebab2.jpeg', '/kebab3.jpg', '/Dagingkebab.png', '/letuce.png', '/Produk/Kebab Keju.png', '/Produk/Kebab Original.jpeg', '/Produk/Kebab Telur.png'];
+      const THUMB_PETA = { '3793591804744549894': '/kebab1.jpeg', '5660234520164668548': '/kebab2.jpeg', '3639193992997350808': '/kebab3.jpg' };
       function thumbJurnal(item) {
         if (item.gambar) return item.gambar;
+        const peta = THUMB_PETA[String(item.id || '')];
+        if (peta) return peta;
         let h = 0; const s = String(item.id || '');
         for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 997;
         return THUMB_JURNAL[h % THUMB_JURNAL.length];
