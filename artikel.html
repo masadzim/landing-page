@@ -186,7 +186,7 @@
         const img = document.getElementById('artikel-gambar');
         img.src = thumbJurnal(item); img.alt = item.judul;
         document.getElementById('artikel-ringkasan').textContent = item.ringkasan || '';
-        document.getElementById('artikel-konten').innerHTML = (item.konten || '').replace(/\n/g, '<br>');
+        document.getElementById('artikel-konten').innerHTML = item.konten || '';
         const bl = document.getElementById('artikel-blogger');
         if (item.link) { bl.href = item.link; } else { bl.style.display = 'none'; }
         setMeta(id, item);
