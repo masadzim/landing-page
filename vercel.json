@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/artikel/:id", "destination": "/artikel.html?id=:id" },
     { "source": "/", "destination": "/index.html" }
   ],
   "headers": [
