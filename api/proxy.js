@@ -23,7 +23,7 @@
 // - Production: GAS_URL = URL /exec produksi (atau kosong = fallback di bawah)
 // - Preview (staging): GAS_URL = URL /exec staging
 // Tanpa env var, perilaku TIDAK berubah (fallback ke produksi).
-const GAS_URL = process.env.GAS_URL || 'https://script.google.com/macros/s/AKfycbyTQQEND8uGxiPvh7RZ7gjoG9LT5NCYBbS_9NCrmVyNwWWdXprN3oAMP_P7lMITlzHx/exec';
+const GAS_URL = process.env.GAS_URL || 'https://script.google.com/macros/s/AKfycbx_p4L2kJFZEciZHpG5cyXDM1wnzB6i0nE5u9p42P08uytzTHBV9etoXp-pgz65NohEkg/exec';
 
 export default async function handler(req, res) {
   // ── CORS Headers ─────────────────────────────────────────
